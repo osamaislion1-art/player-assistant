@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Assistant | الملاحظات والدعم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: #060911;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 40%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* الشريط الفوقاني (الهيدر الموحد) */
+        .top-navbar {
+            background: rgba(6, 9, 17, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+        }
+
+        /* الشعار المعدل (تكبير ومعالجة الوضوح) */
+        .nav-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: crisp-edges;
+            filter: drop-shadow(0 0 12px rgba(0, 242, 254, 0.5));
+            transition: transform 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 30%, #3b82f6 70%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .back-btn {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            color: #00f2fe;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(0, 242, 254, 0.25);
+            color: #ffffff;
+            transform: translateX(-3px);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        /* العنوان الرئيسي للصفحة */
+        .page-hero {
+            text-align: center;
+            margin: 35px 20px 20px;
+        }
+
+        .page-hero h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 40%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .page-hero p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            font-weight: 600;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+
+        /* الحاوية الرئيسية */
+        .container {
+            max-width: 1000px;
+            margin: 20px auto 50px;
+            padding: 0 20px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        /* الكروت والبطاقات */
+        .card-panel {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(6, 9, 17, 0.85) 100%);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, #00f2fe, #3b82f6, transparent);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #00f2fe;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* عناصر النموذج */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 650px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #cbd5e1;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(6, 9, 17, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 14px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+        }
+
+        .form-select option {
+            background: #080d19;
+            color: #fff;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2563eb 0%, #00f2fe 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.35s ease;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0, 242, 254, 0.6);
+            filter: brightness(1.1);
+        }
+
+        /* قوائم الملاحظات والردود */
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 10px;
+        }
+
+        .feedback-item {
+            background: rgba(6, 9, 17, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-right: 4px solid #00f2fe;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .feedback-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .user-name {
+            font-weight: 800;
+            color: #00f2fe;
+            font-size: 1.05rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .type-badge {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #38bdf8;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 8px;
+        }
+
+        .feedback-text {
+            color: #e2e8f0;
+            font-size: 0.98rem;
+            line-height: 1.7;
+            font-weight: 600;
+            white-space: pre-wrap;
+            margin-bottom: 12px;
+        }
+
+        .admin-reply-display {
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px dashed rgba(0, 242, 254, 0.4);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 12px;
+        }
+
+        .admin-reply-header {
+            color: #38bdf8;
+            font-weight: 800;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .admin-reply-text {
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.6;
+        }
+
+        .feedback-date {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: left;
+            direction: ltr;
+            margin-top: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #64748b;
+            padding: 30px 10px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* نظام الإشعارات Toast */
+        .custom-toast {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #080d19;
+            border: 1px solid #00f2fe;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            z-index: 999999;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .custom-toast.show {
+            bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الشريط الفوقاني -->
+    <header class="top-navbar">
+        <a href="index.html" class="nav-brand">
+            <img src="images/logo.png" alt="الشعار" class="nav-logo">
+            <span class="nav-title">Player Assistant</span>
+        </a>
+        <a href="index.html" class="back-btn">
+            <span>الرئيسية</span>
+            <span>↩</span>
+        </a>
+    </header>
+
+    <!-- رأس الصفحة -->
+    <section class="page-hero">
+        <h1>الملاحظات والدعم الفني</h1>
+        <p>نسمع صوتك دائماً! أرسل اقتراحك لتطوير الموقع أو أبلغ عن أي مشكلة، واطلع على الردود المباشرة من المطور أسامة.</p>
+    </section>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="container">
+        <!-- 1. نموذج إرسال الملاحظات -->
+        <div class="card-panel">
+            <h2 class="section-title">
+                <span>📝</span>
+                <span>إرسال ملاحظة جديدة</span>
+            </h2>
+            <form id="feedback-form" onsubmit="handleFormSubmit(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="user-name">اسمك في ماين كرافت / الموقع:</label>
+                        <input type="text" id="user-name" class="form-input" placeholder="أدخل اسمك هنا..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback-type">نوع الرسالة:</label>
+                        <select id="feedback-type" class="form-select" required>
+                            <option value="اقتراح جديد💡">اقتراح جديد 💡</option>
+                            <option value="إبلاغ عن مشكلة⚠️">إبلاغ عن مشكلة ⚠️</option>
+                            <option value="استفسار❓">استفسار ❓</option>
+                            <option value="كلمة شكر❤️">كلمة شكر ❤️</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 22px;">
+                    <label for="user-message">تفاصيل الرسالة أو الاقتراح:</label>
+                    <textarea id="user-message" class="form-textarea" placeholder="اكتب ملاحظتك بالتفصيل..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span>إرسال الملاحظة للمطور</span>
+                    <span style="font-size: 1.1rem;">🚀</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- 2. قائمة الملاحظات والردود الحية -->
+        <div class="card-panel">
+            <h2 class="section-title">
+                <span>💬</span>
+                <span>الرسائل والردود الحية</span>
+            </h2>
+            <div id="feedback-container" class="feedback-list">
+                <!-- يتم تحميل الملاحظات والردود هنا بواسطة JS -->
+            </div>
+        </div>
+    </main>
+
+    <!-- عنصر الإشعارات -->
+    <div id="toast" class="custom-toast">
+        <span id="toast-icon">✨</span>
+        <span id="toast-text">تمت العملية بنجاح!</span>
+    </div>
+
+    <script>
+        // إظهار التوست
+        function showToast(message, icon = "✅") {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = message;
+            document.getElementById('toast-icon').innerText = icon;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // حفظ وإرسال النموذج
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            const nameInput = document.getElementById('user-name');
+            const typeInput = document.getElementById('feedback-type');
+            const messageInput = document.getElementById('user-message');
+
+            const name = nameInput.value.trim();
+            const type = typeInput.value;
+            const message = messageInput.value.trim();
+
+            if (!name || !message) {
+                showToast('يرجى تعبئة كافة الحقول المطلوبة!', '❌');
+                return;
+            }
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            const newFeedback = {
+                name: name,
+                type: type,
+                message: message,
+                date: dateStr,
+                reply: ""
+            };
+
+            // جلب الملاحظات المخزنة وإضافة الملاحظة الجديدة في البداية
+            let suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
+            suggestions.unshift(newFeedback);
+            localStorage.setItem('player_assistant_feedback', JSON.stringify(suggestions));
+
+            // إعادة التعيين والعرض
+            messageInput.value = '';
+            showToast('تم إرسال ملاحظتك للمطور بنجاح!', '🚀');
+            renderPublicFeedback();
+        }
+
+        // عرض الملاحظات والردود بالصفحة
+        function renderPublicFeedback() {
+            const container = document.getElementById('feedback-container');
+            const suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
+
+            if (suggestions.length === 0) {
+                container.innerHTML = '<div class="empty-state">لا توجد أية ملاحظات أو اقتراحات حالياً. كن أول من يشاركنا رأيه! 🌟</div>';
+                return;
+            }
+
+            container.innerHTML = suggestions.map(item => `
+                <div class="feedback-item">
+                    <div class="feedback-header">
+                        <span class="user-name">
+                            <span>👤</span>
+                            <span>${escapeHtml(item.name)}</span>
+                        </span>
+                        <span class="type-badge">${escapeHtml(item.type)}</span>
+                    </div>
+                    <div class="feedback-text">${escapeHtml(item.message)}</div>
+
+                    ${item.reply ? `
+                        <div class="admin-reply-display">
+                            <div class="admin-reply-header">
+                                <span>🛡️</span>
+                                <span>رد المطور أسامة:</span>
+                            </div>
+                            <div class="admin-reply-text">${escapeHtml(item.reply)}</div>
+                        </div>
+                    ` : ''}
+
+                    <div class="feedback-date">${item.date}</div>
+                </div>
+            `).join('');
+        }
+
+        // حماية النص المنشور
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+
+        // تحميل الملاحظات عند فتح الصفحة مباشرة
+        document.addEventListener('DOMContentLoaded', renderPublicFeedback);
+    </script>
+</body>
+</html>

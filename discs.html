@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مشغل الأقراص - Player Assistant</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at top, #0f172a 0%, #070b14 60%, #030712 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar - تم تكبير اللوجو والنص مع إضافة توهج نيون أسطوري */
+        .navbar {
+            background: rgba(10, 16, 35, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.25);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.15);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo-img {
+            height: 65px; /* تكبير حجم اللوجو */
+            width: auto;
+            filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.8)) drop-shadow(0 0 25px rgba(56, 189, 248, 0.4));
+            transition: transform 0.3s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-text {
+            font-size: 2.1rem; /* تكبير خط عنوان اللوجو */
+            font-weight: 800;
+            background: linear-gradient(90deg, #38bdf8, #60a5fa, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 0.8px;
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.5));
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            color: #38bdf8;
+            padding: 10px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            border: 1px solid rgba(56, 189, 248, 0.4);
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
+        }
+
+        .nav-btn:hover {
+            background: #38bdf8;
+            color: #0f172a;
+            border-color: #38bdf8;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+            transform: translateY(-2px);
+        }
+
+        main {
+            padding: 50px 20px;
+            flex: 1;
+        }
+
+        /* الشبكة والتصميم الزجاجي الأسطوري للبطاقات */
+        .disc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 28px;
+            max-width: 1350px;
+            margin: 0 auto;
+        }
+
+        .disc-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-radius: 20px;
+            padding: 30px 20px 24px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .disc-card:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+            transform: translateY(-7px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.25);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .disc-card.active {
+            border: 2px solid #38bdf8;
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), inset 0 0 15px rgba(56, 189, 248, 0.15);
+        }
+
+        .disc-img {
+            width: 90px;
+            height: 90px;
+            margin-bottom: 16px;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
+            transition: transform 0.5s linear;
+        }
+
+        .disc-card.active .disc-img {
+            animation: spin 3s linear infinite;
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.8));
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .disc-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+            color: #f8fafc;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .disc-author {
+            color: #38bdf8;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            opacity: 0.9;
+        }
+
+        .controls-container {
+            width: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .disc-card.active .controls-container {
+            display: flex;
+        }
+
+        .timer {
+            font-size: 0.88rem;
+            color: #38bdf8;
+            direction: ltr;
+            font-weight: 800;
+            font-family: monospace;
+            text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+        }
+
+        .progress-bar {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 6px;
+            background: #1e293b;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #38bdf8;
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(59, 130, 246, 0.12));
+            color: #ffffff;
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 0.95rem;
+            width: 100%;
+            transition: all 0.25s ease;
+        }
+
+        .play-btn:hover {
+            background: #38bdf8;
+            color: #0f172a;
+            border-color: #38bdf8;
+            box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+        }
+
+        .disc-card.active .play-btn {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.12);
+        }
+
+        .disc-card.active .play-btn:hover {
+            background: #ef4444;
+            color: #ffffff;
+            box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-logo">
+            <img src="images/logo.png" alt="Logo" class="logo-img" onerror="this.style.display='none'">
+            <span class="logo-text">Player Assistant</span>
+        </div>
+        <a href="index.html" class="nav-btn">الرئيسية ←</a>
+    </nav>
+
+    <main>
+        <div class="disc-grid" id="discGrid"></div>
+    </main>
+
+    <script>
+        const discs = [
+            { id: "13", title: "13", author: "C418", img: "music_disc_13.png", audio: "13.ogg" },
+            { id: "cat", title: "cat", author: "C418", img: "music_disc_cat.png", audio: "Cat.ogg" },
+            { id: "blocks", title: "blocks", author: "C418", img: "music_disc_blocks.png", audio: "Blocks.ogg" },
+            { id: "chirp", title: "chirp", author: "C418", img: "music_disc_chirp.png", audio: "Chirp.ogg" },
+            { id: "far", title: "far", author: "C418", img: "music_disc_far.png", audio: "Far.ogg" },
+            { id: "mall", title: "mall", author: "C418", img: "music_disc_mall.png", audio: "Mall.ogg" },
+            { id: "mellohi", title: "mellohi", author: "C418", img: "music_disc_mellohi.png", audio: "Mellohi.ogg" },
+            { id: "stal", title: "stal", author: "C418", img: "music_disc_stal.png", audio: "Stal.ogg" },
+            { id: "strad", title: "strad", author: "C418", img: "music_disc_strad.png", audio: "Strad.ogg" },
+            { id: "ward", title: "ward", author: "C418", img: "music_disc_ward.png", audio: "Ward.ogg" },
+            { id: "11", title: "11", author: "C418", img: "music_disc_11.png", audio: "11.ogg" },
+            { id: "wait", title: "wait", author: "C418", img: "music_disc_wait.png", audio: "Five.ogg" },
+            { id: "pigstep", title: "Pigstep", author: "Lena Raine", img: "music_disc_pigstep.png", audio: "Pigstep.ogg" },
+            { id: "otherside", title: "otherside", author: "Lena Raine", img: "music_disc_otherside.png", audio: "Otherside.ogg" },
+            { id: "5", title: "5", author: "Samuel Åberg", img: "music_disc_5.png", audio: "Five.ogg" },
+            { id: "relic", title: "Relic", author: "Aaron Cherof", img: "music_disc_relic.png", audio: "Relic.ogg" },
+            { id: "precipice", title: "Precipice", author: "Aaron Cherof", img: "music_disc_precipice.png", audio: "Precipice.ogg" },
+            { id: "creator", title: "Creator", author: "Lena Raine", img: "music_disc_creator.png", audio: "Creator.ogg" },
+            { id: "creator_music_box", title: "Creator (Music Box)", author: "Lena Raine", img: "music_disc_creator_music_box.png", audio: "creator_box.ogg" },
+            { id: "lava", title: "Lava", author: "C418", img: "music_disc_wait.png", audio: "Lava_Chicken.ogg" },
+            { id: "tears", title: "Tears", author: "C418", img: "music_disc_mall.png", audio: "Tears.ogg" },
+            { id: "interlude", title: "Interlude", author: "C418", img: "music_disc_far.png", audio: "Where_are_we_now.ogg" }
+        ];
+
+        let currentAudio = new Audio();
+        let currentActiveCard = null;
+
+        const discGrid = document.getElementById('discGrid');
+
+        discs.forEach(disc => {
+            const card = document.createElement('div');
+            card.className = 'disc-card';
+            card.id = `card-${disc.id}`;
+
+            card.innerHTML = `
+                <img src="images/mc-items/${disc.img}" alt="${disc.title}" class="disc-img" onerror="this.style.opacity='0.2'">
+                <div class="disc-title">${disc.title}</div>
+                <div class="disc-author">${disc.author}</div>
+                
+                <div class="controls-container">
+                    <div class="timer" id="timer-${disc.id}">0:00 / 0:00</div>
+                    <input type="range" class="progress-bar" id="progress-${disc.id}" value="0" min="0" max="100">
+                </div>
+
+                <button class="play-btn" onclick="togglePlay('${disc.id}')">تشغيل</button>
+            `;
+
+            discGrid.appendChild(card);
+        });
+
+        function togglePlay(discId) {
+            const card = document.getElementById(`card-${discId}`);
+            const btn = card.querySelector('.play-btn');
+            
+            const discData = discs.find(d => d.id === discId);
+            const audioSrc = `sounds/${encodeURIComponent(discData ? discData.audio : discId + '.ogg')}`;
+
+            if (currentActiveCard === card && !currentAudio.paused) {
+                currentAudio.pause();
+                btn.textContent = 'تشغيل';
+                card.classList.remove('active');
+                return;
+            }
+
+            if (currentActiveCard) {
+                currentActiveCard.classList.remove('active');
+                currentActiveCard.querySelector('.play-btn').textContent = 'تشغيل';
+            }
+
+            currentAudio.src = audioSrc;
+            
+            currentAudio.onerror = () => {
+                alert(`تعذر العثور على ملف الصوت أو تحميله:\n${audioSrc}\n\nتأكد أن الملف موجود داخل مجلد sounds.`);
+                btn.textContent = 'تشغيل';
+                card.classList.remove('active');
+                currentActiveCard = null;
+            };
+
+            currentAudio.play().catch(e => {
+                console.log("خطأ في تشغيل الصوت:", e);
+            });
+
+            card.classList.add('active');
+            btn.textContent = 'إيقاف مؤقت';
+            currentActiveCard = card;
+
+            setupAudioEvents(discId);
+        }
+
+        function setupAudioEvents(discId) {
+            const timerDisplay = document.getElementById(`timer-${discId}`);
+            const progressBar = document.getElementById(`progress-${discId}`);
+
+            currentAudio.ontimeupdate = () => {
+                if (!isNaN(currentAudio.duration) && currentAudio.duration > 0) {
+                    const current = formatTime(currentAudio.currentTime);
+                    const total = formatTime(currentAudio.duration);
+                    timerDisplay.textContent = `${current} / ${total}`;
+
+                    const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
+                    progressBar.value = percent;
+                    
+                    progressBar.style.background = `linear-gradient(to right, #ef4444 ${percent}%, #1e293b ${percent}%)`;
+                }
+            };
+
+            progressBar.oninput = (e) => {
+                if (!isNaN(currentAudio.duration)) {
+                    const seekTime = (e.target.value / 100) * currentAudio.duration;
+                    currentAudio.currentTime = seekTime;
+                }
+            };
+
+            currentAudio.onended = () => {
+                if (currentActiveCard) {
+                    currentActiveCard.classList.remove('active');
+                    currentActiveCard.querySelector('.play-btn').textContent = 'تشغيل';
+                    currentActiveCard = null;
+                }
+            };
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+    </script>
+</body>
+</html>

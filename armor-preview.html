@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة معاينة الدروع التفاعلية | Osama is Lion</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #0b0f19;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 30px 20px; position: relative;
+        }
+        .top-home-btn {
+            position: absolute; top: 25px; left: 25px;
+            background: #0b0f19; border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa; text-decoration: none; padding: 10px 22px;
+            border-radius: 8px; font-size: 14px; font-weight: 600; transition: 0.3s;
+            display: flex; align-items: center; gap: 8px; z-index: 100;
+        }
+        .top-home-btn:hover {
+            background: #1e293b; border-color: #60a5fa; color: #fff;
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.4); transform: translateY(-2px);
+        }
+        .main-container { width: 100%; max-width: 980px; text-align: center; margin-top: 20px; }
+        .logo-box {
+            background: rgba(18, 24, 38, 0.9); border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px; padding: 15px; margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            display: flex; justify-content: center; align-items: center;
+        }
+        .site-logo { max-width: 160px; height: auto; object-fit: contain; }
+        
+        .preview-box {
+            background: rgba(18, 24, 38, 0.85); border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 16px; padding: 25px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+        }
+
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 2.2fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .workspace-grid { grid-template-columns: 1fr; }
+        }
+
+        .panel-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid rgba(59, 130, 246, 0.35);
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .panel-header-title {
+            color: #60a5fa;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            padding-bottom: 8px;
+            width: 100%;
+        }
+
+        .vertical-armor-slots {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
+        .slot-btn {
+            background: #121826; border: 2px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px; width: 100%; max-width: 110px; height: 65px; color: #fff; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            transition: 0.25s; padding: 5px;
+        }
+        .slot-btn:hover { border-color: #60a5fa; background: #1e293b; transform: translateY(-2px); }
+        .slot-btn.active { border-color: #60a5fa; background: #1e293b; box-shadow: 0 0 12px rgba(96, 165, 250, 0.5); outline: 2px solid #3b82f6; }
+        .slot-btn img { width: 40px; height: 40px; object-fit: contain; image-rendering: pixelated; }
+
+        .viewer-screen {
+            background: #05070c; border: 2px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 12px; width: 100%; min-height: 250px; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            padding: 15px; flex-grow: 1;
+        }
+
+        .preview-info {
+            color: #60a5fa; font-size: 13px; font-weight: 600; margin-top: 15px;
+            background: rgba(18, 24, 38, 0.9); padding: 8px 18px; border-radius: 20px;
+            border: 1px solid rgba(59, 130, 246, 0.35); display: inline-block;
+            max-width: 100%; word-break: break-word;
+        }
+
+        .ai-suggest-btn {
+            margin-top: 15px; width: 100%; background: linear-gradient(45deg, #1e3a8a, #3b82f6);
+            border: 1px solid #60a5fa; border-radius: 12px; padding: 10px; color: #fff;
+            font-family: inherit; font-size: 13px; font-weight: bold; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+        .ai-suggest-btn:hover {
+            transform: translateY(-2px); box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+            background: linear-gradient(45deg, #2563eb, #60a5fa);
+        }
+        .ai-suggest-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+        .section-title {
+            color: #60a5fa; font-size: 15px; font-weight: 600; margin: 20px 0 12px 0;
+            text-align: right; border-bottom: 1px solid rgba(59, 130, 246, 0.25); padding-bottom: 8px;
+        }
+        .buttons-grid { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-start; }
+        .armor-btn {
+            background: #121826; border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 12px; padding: 8px 10px; color: #fff; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; gap: 4px; min-width: 90px; height: 85px; transition: 0.25s;
+        }
+        .armor-btn:hover { border-color: #60a5fa; background: #1e293b; transform: translateY(-3px); }
+        .armor-btn.active { border-color: #60a5fa; background: #1e293b; box-shadow: 0 0 15px rgba(96, 165, 250, 0.5); outline: 2px solid #3b82f6; }
+        .armor-btn img { width: 32px; height: 32px; object-fit: contain; image-rendering: pixelated; margin-bottom: 2px; }
+        .en-text { font-size: 12px; color: #ffffff; font-weight: 600; line-height: 1.1; }
+        .ar-text { font-size: 11px; color: #94a3b8; font-weight: 400; line-height: 1.1; }
+
+        .leather-dye-section {
+            display: none; background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(245, 158, 11, 0.5); border-radius: 12px;
+            padding: 15px; margin-top: 20px; text-align: right;
+        }
+        .dye-picker-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .dye-circle {
+            width: 28px; height: 28px; border-radius: 50%; cursor: pointer;
+            border: 2px solid #ffffff; transition: 0.2s; display: inline-block;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+        .dye-circle:hover { transform: scale(1.2); border-color: #f59e0b; }
+        .dye-circle.active-dye { outline: 3px solid #60a5fa; transform: scale(1.1); }
+        
+        .custom-color-container {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(30, 41, 59, 0.8); padding: 4px 12px;
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.2); margin-right: 5px;
+            cursor: pointer; transition: 0.2s; user-select: none;
+        }
+        .custom-color-container:hover { background: rgba(51, 65, 85, 0.9); border-color: #60a5fa; }
+        input[type="color"] {
+            -webkit-appearance: none; border: none; width: 26px; height: 26px;
+            border-radius: 50%; cursor: pointer; background: transparent;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: 2px solid #fff; border-radius: 50%; }
+
+        .skin-buttons-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; width: 100%; }
+        .skin-choice-btn {
+            background: #121826; border: 2px solid rgba(59, 130, 246, 0.35);
+            border-radius: 10px; padding: 7px 12px; color: #fff; cursor: pointer;
+            font-size: 12px; font-weight: 600; transition: 0.25s;
+        }
+        .skin-choice-btn:hover { border-color: #60a5fa; background: #1e293b; transform: translateY(-2px); }
+        .skin-choice-btn.active { border-color: #60a5fa; background: #1e293b; box-shadow: 0 0 12px rgba(96, 165, 250, 0.5); }
+        #skinFileInput { display: none; }
+        #skin3dCanvas { image-rendering: pixelated; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/skinview3d/bundles/skinview3d.bundle.js"></script>
+</head>
+<body>
+
+    <a href="index.html" class="top-home-btn">الرئيسية ←</a>
+
+    <div class="main-container">
+        <div class="logo-box">
+            <img src="images/logo.png" alt="Logo" class="site-logo" onerror="this.style.display='none'">
+        </div>
+
+        <div class="preview-box">
+            
+            <div class="workspace-grid">
+                
+                <div class="panel-card">
+                    <div class="panel-header-title">أجزاء الدرع</div>
+                    <div class="vertical-armor-slots" id="pieceGrid">
+                        <button class="slot-btn active" data-piece="helmet" title="خوذة">
+                            <img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/netherite_helmet.png" id="img-helmet">
+                        </button>
+                        <button class="slot-btn" data-piece="chestplate" title="صدرية">
+                            <img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/netherite_chestplate.png" id="img-chestplate">
+                        </button>
+                        <button class="slot-btn" data-piece="leggings" title="بنطال">
+                            <img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/netherite_leggings.png" id="img-leggings">
+                        </button>
+                        <button class="slot-btn" data-piece="boots" title="حذاء">
+                            <img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/netherite_boots.png" id="img-boots">
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-header-title">معاينة السكن 3D</div>
+                    <div class="skin-buttons-row">
+                        <button class="skin-choice-btn active" id="btnSkinSteve">ستيف</button>
+                        <button class="skin-choice-btn" id="btnSkinAlex">أليكس</button>
+                        <button class="skin-choice-btn" id="btnSkinUpload">⬆ رفع سكن</button>
+                        <input type="file" id="skinFileInput" accept="image/png">
+                    </div>
+                    <div class="viewer-screen" id="skin3dCanvasWrap">
+                        <canvas id="skin3dCanvas" width="200" height="300"></canvas>
+                        <div id="previewInfo" class="preview-info">جاري التحميل...</div>
+                        <button id="btnAiSuggest" class="ai-suggest-btn">✨ خلّي الذكاء الاصطناعي يختار التريم المناسب ✨</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="section-title">اختر نوع الدرع:</div>
+            <div class="buttons-grid" id="armorGrid">
+                <button class="armor-btn active" data-armor="netherite"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/netherite_chestplate.png"><span class="en-text">Netherite</span><span class="ar-text">نذرايت</span></button>
+                <button class="armor-btn" data-armor="diamond"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/diamond_chestplate.png"><span class="en-text">Diamond</span><span class="ar-text">دياموند</span></button>
+                <button class="armor-btn" data-armor="iron"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/iron_chestplate.png"><span class="en-text">Iron</span><span class="ar-text">حديد</span></button>
+                <button class="armor-btn" data-armor="gold"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/golden_chestplate.png"><span class="en-text">Gold</span><span class="ar-text">ذهب</span></button>
+                <button class="armor-btn" data-armor="chainmail"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/chainmail_chestplate.png"><span class="en-text">Chainmail</span><span class="ar-text">سلاسل</span></button>
+                <button class="armor-btn" data-armor="leather"><img id="img-leather-btn" src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/leather_chestplate.png"><span class="en-text">Leather</span><span class="ar-text">جلد</span></button>
+                <button class="armor-btn" data-armor="turtle" id="matTurtle"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/turtle_helmet.png"><span class="en-text">Turtle</span><span class="ar-text">سلحفاة</span></button>
+                <button class="armor-btn" data-armor="none"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/barrier.png"><span class="en-text">None</span><span class="ar-text">بدون درع</span></button>
+            </div>
+
+            <div class="section-title">اختر قالب الزخرفة (Trim):</div>
+            <div class="buttons-grid" id="trimGrid">
+                <button class="armor-btn" data-trim="none"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/barrier.png"><span class="en-text">None</span><span class="ar-text">بدون</span></button>
+                <button class="armor-btn active" data-trim="silence"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/silence_armor_trim_smithing_template.png"><span class="en-text">Silence</span></button>
+                <button class="armor-btn" data-trim="eye"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/eye_armor_trim_smithing_template.png"><span class="en-text">Eye</span></button>
+                <button class="armor-btn" data-trim="flow"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21/assets/minecraft/textures/item/flow_armor_trim_smithing_template.png"><span class="en-text">Flow</span></button>
+                <button class="armor-btn" data-trim="bolt"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21/assets/minecraft/textures/item/bolt_armor_trim_smithing_template.png"><span class="en-text">Bolt</span></button>
+                <button class="armor-btn" data-trim="spire"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/spire_armor_trim_smithing_template.png"><span class="en-text">Spire</span></button>
+                <button class="armor-btn" data-trim="tide"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/tide_armor_trim_smithing_template.png"><span class="en-text">Tide</span></button>
+                <button class="armor-btn" data-trim="coast"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/coast_armor_trim_smithing_template.png"><span class="en-text">Coast</span></button>
+                <button class="armor-btn" data-trim="ward"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/ward_armor_trim_smithing_template.png"><span class="en-text">Ward</span></button>
+                <button class="armor-btn" data-trim="vex"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/vex_armor_trim_smithing_template.png"><span class="en-text">Vex</span></button>
+                <button class="armor-btn" data-trim="dune"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/dune_armor_trim_smithing_template.png"><span class="en-text">Dune</span></button>
+                <button class="armor-btn" data-trim="host"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/host_armor_trim_smithing_template.png"><span class="en-text">Host</span></button>
+                <button class="armor-btn" data-trim="raiser"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/raiser_armor_trim_smithing_template.png"><span class="en-text">Raiser</span></button>
+                <button class="armor-btn" data-trim="rib"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/rib_armor_trim_smithing_template.png"><span class="en-text">Rib</span></button>
+                <button class="armor-btn" data-trim="sentry"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/sentry_armor_trim_smithing_template.png"><span class="en-text">Sentry</span></button>
+                <button class="armor-btn" data-trim="shaper"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/shaper_armor_trim_smithing_template.png"><span class="en-text">Shaper</span></button>
+                <button class="armor-btn" data-trim="snout"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/snout_armor_trim_smithing_template.png"><span class="en-text">Snout</span></button>
+                <button class="armor-btn" data-trim="wayfinder"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/wayfinder_armor_trim_smithing_template.png"><span class="en-text">Wayfinder</span></button>
+                <button class="armor-btn" data-trim="wild"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/wild_armor_trim_smithing_template.png"><span class="en-text">Wild</span></button>
+            </div>
+
+            <div class="section-title">اختر مادة التطريز والخامات:</div>
+            <div class="buttons-grid" id="materialGrid">
+                <button class="armor-btn active" data-material="netherite"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/netherite_ingot.png"><span class="en-text">Netherite</span><span class="ar-text">نذرايت</span></button>
+                <button class="armor-btn" data-material="diamond"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/diamond.png"><span class="en-text">Diamond</span><span class="ar-text">دياموند</span></button>
+                <button class="armor-btn" data-material="gold"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/gold_ingot.png"><span class="en-text">Gold</span><span class="ar-text">ذهب</span></button>
+                <button class="armor-btn" data-material="emerald"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/emerald.png"><span class="en-text">Emerald</span><span class="ar-text">زمرد</span></button>
+                <button class="armor-btn" data-material="quartz"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/quartz.png"><span class="en-text">Quartz</span><span class="ar-text">كوارتز</span></button>
+                <button class="armor-btn" data-material="amethyst"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/amethyst_shard.png"><span class="en-text">Amethyst</span><span class="ar-text">أمثيست</span></button>
+                <button class="armor-btn" data-material="resin"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.4/assets/minecraft/textures/item/resin_brick.png" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/brick.png'"><span class="en-text">Resin</span><span class="ar-text">ريزن</span></button>
+                <button class="armor-btn" data-material="iron"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/iron_ingot.png"><span class="en-text">Iron</span><span class="ar-text">حديد</span></button>
+                <button class="armor-btn" data-material="redstone"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/redstone.png"><span class="en-text">Redstone</span><span class="ar-text">ريدستون</span></button>
+                <button class="armor-btn" data-material="lapis"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/lapis_lazuli.png"><span class="en-text">Lapis</span><span class="ar-text">لازورد</span></button>
+                <button class="armor-btn" data-material="copper"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/copper_ingot.png"><span class="en-text">Copper</span><span class="ar-text">نحاس</span></button>
+            </div>
+
+            <div class="leather-dye-section" id="leatherDyeSection">
+                <span style="color: #f59e0b; font-weight: 600;">🎨 اختر صبغة الجلد للقطعة الحالية:</span>
+                <div class="dye-picker-wrapper">
+                    <div class="dye-circle active-dye" style="background:#a06540" data-color="#a06540" title="بني أصلي (Undyed)"></div>
+                    <div class="dye-circle" style="background:#f9fffe" data-color="#f9fffe" title="أبيض (White)"></div>
+                    <div class="dye-circle" style="background:#9d9d97" data-color="#9d9d97" title="رمادي فاتح (Light Gray)"></div>
+                    <div class="dye-circle" style="background:#474f52" data-color="#474f52" title="رمادي (Gray)"></div>
+                    <div class="dye-circle" style="background:#1d1d21" data-color="#1d1d21" title="أسود (Black)"></div>
+                    <div class="dye-circle" style="background:#835432" data-color="#835432" title="بني (Brown)"></div>
+                    <div class="dye-circle" style="background:#b02e26" data-color="#b02e26" title="أحمر (Red)"></div>
+                    <div class="dye-circle" style="background:#f9801d" data-color="#f9801d" title="برتقالي (Orange)"></div>
+                    <div class="dye-circle" style="background:#fed83d" data-color="#fed83d" title="أصفر (Yellow)"></div>
+                    <div class="dye-circle" style="background:#80c71f" data-color="#80c71f" title="أخضر فاتح (Lime)"></div>
+                    <div class="dye-circle" style="background:#5e7c16" data-color="#5e7c16" title="أخضر (Green)"></div>
+                    <div class="dye-circle" style="background:#169c9c" data-color="#169c9c" title="سماوي (Cyan)"></div>
+                    <div class="dye-circle" style="background:#3ab3da" data-color="#3ab3da" title="أزرق فاتح (Light Blue)"></div>
+                    <div class="dye-circle" style="background:#3c44aa" data-color="#3c44aa" title="أزرق (Blue)"></div>
+                    <div class="dye-circle" style="background:#8354a5" data-color="#8354a5" title="بنفسجي (Purple)"></div>
+                    <div class="dye-circle" style="background:#c74ebd" data-color="#c74ebd" title="ماجنتا (Magenta)"></div>
+                    <div class="dye-circle" style="background:#f98d9a" data-color="#f98d9a" title="وردي (Pink)"></div>
+
+                    <label for="customLeatherColor" class="custom-color-container">
+                        <span style="font-size: 12px; color: #cbd5e1; font-weight: 500;">لون مخصص:</span>
+                        <input type="color" id="customLeatherColor" value="#a06540">
+                    </label>
+                </div>
+            </div>
+
+        </div>
+    </div>
+<script>
+    const GEMINI_API_KEY = "AQ.Ab8RN6LvDAWTq0VWLQU5wSk3toFyXXAFmvQt46LuIoY4Zqv7kg";
+    const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
+    const armorConfig = {
+        activePiece: 'helmet',
+        helmet:     { armor: 'netherite', trim: 'silence', material: 'netherite', leatherColor: '#a06540' },
+        chestplate: { armor: 'netherite', trim: 'silence', material: 'netherite', leatherColor: '#a06540' },
+        leggings:   { armor: 'netherite', trim: 'silence', material: 'netherite', leatherColor: '#a06540' },
+        boots:      { armor: 'netherite', trim: 'silence', material: 'netherite', leatherColor: '#a06540' }
+    };
+
+    const mcTextureNames = {
+        gold: 'golden', netherite: 'netherite', diamond: 'diamond',
+        iron: 'iron', chainmail: 'chainmail', leather: 'leather', turtle: 'turtle', none: 'none'
+    };
+
+    const PIECE_UV_BOUNDS = {
+        helmet:     [{ x: 0,  y: 0,  w: 32, h: 16 }],
+        chestplate: [{ x: 16, y: 16, w: 24, h: 16 }, { x: 40, y: 16, w: 16, h: 16 }],
+        leggings:   [{ x: 16, y: 0,  w: 24, h: 12 }, { x: 0,  y: 16, w: 16, h: 12 }],
+        boots:      [{ x: 0,  y: 22, w: 16, h: 10 }]
+    };
+
+    const ARMOR_UV_MAP = {
+        helmet: [
+            { src: [0, 0, 32, 16], dst: [32, 0, 32, 16] }
+        ],
+        chestplate: [
+            { src: [16, 16, 24, 16], dst: [16, 32, 24, 16] },
+            { src: [40, 16, 16, 16], dst: [40, 32, 16, 16] },
+            { src: [40, 16, 16, 16], dst: [48, 48, 16, 16] }
+        ],
+        leggings: [
+            { src: [16, 0,  24, 12], dst: [16, 32, 24, 12] },
+            { src: [0,  16, 16, 12], dst: [0,  32, 16, 12] },
+            { src: [0,  16, 16, 12], dst: [0,  48, 16, 12] }
+        ],
+        boots: [
+            { src: [0, 22, 16, 10],  dst: [0, 38, 16, 10] },
+            { src: [0, 22, 16, 10],  dst: [0, 54, 16, 10] }
+        ]
+    };
+
+    const TRIM_PALETTES = {
+        diamond:   ['#167e86', '#1a8e93', '#1ea1a3', '#25b4b8', '#38cdd3', '#51e7e4', '#79fcf1', '#b8fdf5'],
+        amethyst:  ['#3a225f', '#4b2b7b', '#5a3493', '#6a3cae', '#844dd3', '#9d69e4', '#b68cf1', '#cdaaf7'],
+        copper:    ['#6d3522', '#803e28', '#93482e', '#a85335', '#bf613d', '#d2734a', '#e28a5d', '#f0a373'],
+        emerald:   ['#115220', '#146326', '#18762d', '#1c8b35', '#22a33f', '#2abb4b', '#36d659', '#4df06f'],
+        gold:      ['#8f5a13', '#a66a18', '#bc791d', '#d28822', '#e69927', '#f8ae30', '#ffd341', '#ffe665'],
+        iron:      ['#595e5d', '#6a706f', '#7d8382', '#919796', '#a8aeac', '#bcc2c0', '#d2d7d5', '#e8eceb'],
+        lapis:     ['#1e3b7c', '#234591', '#2a52a9', '#3160c2', '#3b72df', '#4888f2', '#5c9ef9', '#75b4fc'],
+        netherite: ['#312c2a', '#393331', '#423b39', '#4b4341', '#554d4a', '#5f5653', '#69605d', '#746a67'],
+        netherite_darker: ['#141110', '#181514', '#1d1918', '#221d1c', '#282221', '#2e2726', '#342c2a', '#3b3230'],
+        quartz:    ['#645d52', '#766e61', '#8a8172', '#9f9584', '#b4a997', '#c6bcab', '#d9d0bf', '#ece4d3'],
+        redstone:  ['#740b0b', '#8a0d0d', '#a20f0f', '#ba1212', '#d41515', '#ed1818', '#fc2a2a', '#fe4a4a']
+    };
+
+    const pieceArNames = { helmet: 'خوذة', chestplate: 'صدرية', leggings: 'بنطال', boots: 'حذاء' };
+    const materialArNames = { 
+        netherite: 'نذرايت', diamond: 'دياموند', gold: 'ذهب', emerald: 'زمرد', 
+        quartz: 'كوارتز', amethyst: 'أمثيست', resin: 'ريزن', iron: 'حديد', 
+        redstone: 'ريدستون', lapis: 'لازورد', copper: 'نحاس',
+        chainmail: 'سلاسل', leather: 'جلد', turtle: 'سلحفاة', none: 'بدون درع'
+    };
+
+    const imageCache = {};
+
+    function fetchImage(url) {
+        return new Promise((resolve) => {
+            if (!url) { resolve(null); return; }
+            if (imageCache[url]) { resolve(imageCache[url]); return; }
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => { imageCache[url] = img; resolve(img); };
+            img.onerror = () => resolve(null);
+            img.src = url;
+        });
+    }
+
+    async function fetchFirstValidImage(urls) {
+        for (const u of urls) {
+            if (!u) continue;
+            const img = await fetchImage(u);
+            if (img) return img;
+        }
+        return null;
+    }
+
+    const DEFAULT_SKIN_URLS = {
+        steve: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/entity/player/wide/steve.png',
+        alex: 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/entity/player/slim/alex.png'
+    };
+
+    function createFallbackSteveCanvas() {
+        const c = document.createElement('canvas');
+        c.width = 64; c.height = 64;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#C48C68'; ctx.fillRect(0, 0, 64, 64);
+        ctx.fillStyle = '#3A2012'; ctx.fillRect(8, 0, 16, 8);
+        ctx.fillStyle = '#1D1D1D'; ctx.fillRect(8, 8, 16, 2);
+        ctx.fillStyle = '#3B68A6'; ctx.fillRect(16, 16, 24, 16);
+        ctx.fillStyle = '#2A3F78'; ctx.fillRect(0, 32, 32, 16);
+        return c;
+    }
+
+    async function getTrimImage(piece, trim) {
+        if (!trim || trim === 'none') return null;
+        const version = (trim === 'flow' || trim === 'bolt') ? '1.21' : '1.20.1';
+        return await fetchFirstValidImage([
+            `images/trims_items/${piece}_trim_${trim}.png`,
+            `images/trims_items/${trim}_${piece}.png`,
+            `images/trims_items/${piece}_${trim}.png`,
+            `images/trims_items/${trim}.png`,
+            `images/trims_items/${piece}_trim.png`,
+            `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/${version}/assets/minecraft/textures/trims/items/${piece}_trim_${trim}.png`,
+            `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/${version}/assets/minecraft/textures/trims/items/${piece}_trim.png`,
+            `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/${version}/assets/minecraft/textures/trims/items/${trim}_trim.png`
+        ]);
+    }
+
+    const MC_BASE_BRIGHTNESS = [15, 26, 41, 62, 87, 113, 145, 183];
+
+    function applyPaletteToTrimMask(maskImg, materialName, width, height, armorName) {
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.drawImage(maskImg, 0, 0, width, height);
+        const imgData = ctx.getImageData(0, 0, width, height);
+        const data = imgData.data;
+
+        let targetPaletteKey = materialName;
+        if (materialName === 'netherite' && armorName === 'netherite') {
+            targetPaletteKey = 'netherite_darker';
+        }
+
+        const palette = TRIM_PALETTES[targetPaletteKey] || TRIM_PALETTES['diamond'];
+
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const alpha = data[i + 3];
+
+            if (alpha > 10) {
+                const brightness = Math.round((r + g + b) / 3);
+                let closestIndex = 0;
+                let minDiff = 999;
+                
+                for (let j = 0; j < 8; j++) {
+                    const diff = Math.abs(brightness - MC_BASE_BRIGHTNESS[j]);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestIndex = j;
+                    }
+                }
+
+                const hex = palette[closestIndex];
+                if (hex) {
+                    data[i]     = parseInt(hex.slice(1, 3), 16);
+                    data[i + 1] = parseInt(hex.slice(3, 5), 16);
+                    data[i + 2] = parseInt(hex.slice(5, 7), 16);
+                    data[i + 3] = alpha;
+                }
+            } else {
+                data[i]     = 0;
+                data[i + 1] = 0;
+                data[i + 2] = 0;
+                data[i + 3] = 0;
+            }
+        }
+        ctx.putImageData(imgData, 0, 0);
+        return canvas;
+    }
+
+    function updateTurtleOptionVisibility() {
+        const activeP = armorConfig.activePiece;
+        const turtleBtn = document.getElementById('matTurtle') || document.querySelector('[data-armor="turtle"]');
+        if (!turtleBtn) return;
+
+        if (activeP === 'helmet') {
+            turtleBtn.style.display = '';
+        } else {
+            turtleBtn.style.display = 'none';
+            if (armorConfig[activeP].armor === 'turtle') {
+                armorConfig[activeP].armor = 'none';
+            }
+        }
+    }
+
+    async function updatePieceIcons() {
+        const pieces = ['helmet', 'chestplate', 'leggings', 'boots'];
+
+        for (const p of pieces) {
+            const imgEl = document.getElementById(`img-${p}`);
+            if (!imgEl) continue;
+
+            const pieceState = armorConfig[p];
+
+            if (!pieceState.armor || pieceState.armor === 'none') {
+                let barrierImg = await fetchFirstValidImage([
+                    `images/mc-items/barrier.png`,
+                    `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/barrier.png`
+                ]);
+                if (barrierImg) {
+                    imgEl.src = barrierImg.src;
+                }
+                continue;
+            }
+
+            let targetArmor = mcTextureNames[pieceState.armor] || pieceState.armor;
+            let iconUrls = [
+                `images/mc-items/${targetArmor}_${p}.png`,
+                `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/${targetArmor}_${p}.png`
+            ];
+            if (pieceState.armor === 'turtle') {
+                iconUrls.unshift(`images/mc-items/turtle_helmet.png`);
+                iconUrls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/turtle_helmet.png`);
+            }
+            
+            let baseImg = await fetchFirstValidImage(iconUrls);
+            if (!baseImg) continue;
+
+            const iconCanvas = document.createElement('canvas');
+            iconCanvas.width = 16;
+            iconCanvas.height = 16;
+            const ictx = iconCanvas.getContext('2d');
+            ictx.imageSmoothingEnabled = false;
+
+            if (pieceState.armor === 'leather') {
+                ictx.drawImage(baseImg, 0, 0, 16, 16);
+                ictx.globalCompositeOperation = 'multiply';
+                ictx.fillStyle = pieceState.leatherColor || '#a06540';
+                ictx.fillRect(0, 0, 16, 16);
+                ictx.globalCompositeOperation = 'destination-in';
+                ictx.drawImage(baseImg, 0, 0, 16, 16);
+
+                let overlayImg = await fetchFirstValidImage([
+                    `images/mc-items/leather_${p}_overlay.png`,
+                    `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/leather_${p}_overlay.png`
+                ]);
+                if (overlayImg) {
+                    ictx.globalCompositeOperation = 'source-over';
+                    ictx.drawImage(overlayImg, 0, 0, 16, 16);
+                }
+            } else {
+                ictx.drawImage(baseImg, 0, 0, 16, 16);
+            }
+
+            let maskImg = await getTrimImage(p, pieceState.trim);
+            if (maskImg) {
+                const coloredMask = applyPaletteToTrimMask(maskImg, pieceState.material, 16, 16, pieceState.armor);
+                ictx.globalCompositeOperation = 'source-over';
+                ictx.drawImage(coloredMask, 0, 0, 16, 16);
+            }
+
+            imgEl.src = iconCanvas.toDataURL();
+        }
+    }
+
+    async function updateLeatherButtonIcon() {
+        const imgEl = document.getElementById('img-leather-btn');
+        if (!imgEl) return;
+        
+        let img = await fetchFirstValidImage([
+            `images/mc-items/leather_chestplate.png`,
+            `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/leather_chestplate.png`
+        ]);
+        if (img) {
+            const iconCanvas = document.createElement('canvas');
+            iconCanvas.width = 16; 
+            iconCanvas.height = 16;
+            const ictx = iconCanvas.getContext('2d');
+            ictx.imageSmoothingEnabled = false;
+
+            ictx.drawImage(img, 0, 0, 16, 16);
+            ictx.globalCompositeOperation = 'multiply';
+            ictx.fillStyle = '#a06540';
+            ictx.fillRect(0, 0, 16, 16);
+
+            ictx.globalCompositeOperation = 'destination-in';
+            ictx.drawImage(img, 0, 0, 16, 16);
+
+            let overlayImg = await fetchFirstValidImage([
+                `images/mc-items/leather_chestplate_overlay.png`,
+                `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/leather_chestplate_overlay.png`
+            ]);
+            if (overlayImg) {
+                ictx.globalCompositeOperation = 'source-over';
+                ictx.drawImage(overlayImg, 0, 0, 16, 16);
+            }
+            imgEl.src = iconCanvas.toDataURL();
+        }
+    }
+
+    async function renderPreview() {
+        const infoEl = document.getElementById('previewInfo');
+        const activeP = armorConfig.activePiece;
+        const pieceState = armorConfig[activeP];
+
+        const pieceTitle = pieceArNames[activeP] || activeP;
+
+        if (!pieceState.armor || pieceState.armor === 'none') {
+            if (infoEl) {
+                infoEl.style.color = "#9ca3af";
+                infoEl.textContent = `${pieceTitle}: بدون درع (خلع)`;
+            }
+            return;
+        }
+
+        const armorTitle = materialArNames[pieceState.armor] || pieceState.armor;
+        const matTitle = materialArNames[pieceState.material] || pieceState.material;
+        const trimTitle = (pieceState.trim && pieceState.trim !== 'none') 
+            ? (pieceState.trim.charAt(0).toUpperCase() + pieceState.trim.slice(1)) 
+            : 'بدون زخرفة';
+
+        if (infoEl) {
+            infoEl.style.color = "#60a5fa";
+            infoEl.textContent = `${pieceTitle} ${armorTitle} | زخرفة ${trimTitle} (${matTitle})`;
+        }
+    }
+
+    let skin3DViewer = null;
+    let currentModelType = 'default';
+    let currentBaseSkinImg = null;
+    let armorUpdateToken = 0;
+
+    function initSkin3DViewer() {
+        const statusEl = document.getElementById('previewInfo');
+
+        if (typeof skinview3d === 'undefined') {
+            if (statusEl) {
+                statusEl.textContent = 'تعذر تحميل مكتبة الـ 3D — يرجى التحقق من الاتصال.';
+                statusEl.style.color = "#f87171";
+            }
+            return;
+        }
+
+        skin3DViewer = new skinview3d.SkinViewer({
+            canvas: document.getElementById('skin3dCanvas'),
+            width: 220,
+            height: 320
+        });
+
+        skin3DViewer.camera.position.set(0, 10, 50);
+
+        try {
+            if (skinview3d.WalkingAnimation) {
+                skin3DViewer.animation = new skinview3d.WalkingAnimation();
+                skin3DViewer.animation.speed = 0.3;
+            }
+        } catch (e) {}
+
+        document.getElementById('btnSkinSteve').addEventListener('click', () => {
+            setActiveSkinBtn('btnSkinSteve');
+            loadDefaultSkin('steve');
+        });
+
+        document.getElementById('btnSkinAlex').addEventListener('click', () => {
+            setActiveSkinBtn('btnSkinAlex');
+            loadDefaultSkin('alex');
+        });
+
+        document.getElementById('btnSkinUpload').addEventListener('click', () => {
+            setActiveSkinBtn('btnSkinUpload');
+            document.getElementById('skinFileInput').click();
+        });
+
+        document.getElementById('skinFileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    currentBaseSkinImg = img;
+                    if (statusEl) {
+                        statusEl.textContent = 'تم تحميل السكن المرفوع ✅';
+                        statusEl.style.color = "#4ade80";
+                    }
+                    updateArmorOnSkin();
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        try { skin3DViewer.controls.enableZoom = true; } catch (err) {}
+
+        loadDefaultSkin('steve');
+    }
+
+    function setActiveSkinBtn(id) {
+        document.querySelectorAll('.skin-choice-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function loadDefaultSkin(name) {
+        const statusEl = document.getElementById('previewInfo');
+        if (statusEl) {
+            statusEl.textContent = `جاري تحميل سكن ${name === 'steve' ? 'ستيف' : 'أليكس'}...`;
+            statusEl.style.color = "#60a5fa";
+        }
+
+        currentModelType = (name === 'alex') ? 'slim' : 'default';
+        const localPath = DEFAULT_SKIN_URLS[name];
+
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.src = localPath;
+        img.onload = () => {
+            currentBaseSkinImg = img;
+            if (statusEl) {
+                statusEl.textContent = 'تم تحميل السكن ✅';
+                statusEl.style.color = "#4ade80";
+            }
+            updateArmorOnSkin();
+        };
+        img.onerror = () => {
+            currentBaseSkinImg = createFallbackSteveCanvas();
+            if (statusEl) {
+                statusEl.textContent = 'تم استخدام السكن الافتراضي ⚠️';
+                statusEl.style.color = "#f59e0b";
+            }
+            updateArmorOnSkin();
+        };
+    }
+
+    const ARMOR_FILE_PREFIX = {
+        netherite: 'netherite', diamond: 'diamond', gold: 'gold', iron: 'iron',
+        chainmail: 'chainmail', leather: 'leather', turtle: 'turtle_scute'
+    };
+
+    function getArmorLayerUrls(armorType, layer) {
+        const prefix = ARMOR_FILE_PREFIX[armorType] || armorType;
+        const layerStr = layer === 1 ? '1' : '2';
+        
+        let urls = [
+            `images/humanoid/${prefix}_layer_${layerStr}.png`,
+            `images/humanoid/${armorType}_layer_${layerStr}.png`
+        ];
+
+        if (armorType === 'turtle') {
+            urls.push(`images/humanoid/turtle_scute_layer_1.png`);
+            urls.push(`images/humanoid/turtle_layer_1.png`);
+            urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/models/armor/turtle_layer_1.png`);
+            urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/models/armor/turtle_scute_layer_1.png`);
+        } else {
+            urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/models/armor/${prefix}_layer_${layerStr}.png`);
+            urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/models/armor/${armorType}_layer_${layerStr}.png`);
+        }
+
+        return urls;
+    }
+
+    function getTrim3dUrls(trim, layer) {
+        const version = (trim === 'flow' || trim === 'bolt') ? '1.21' : '1.20.1';
+        const suffix = layer === 2 ? '_leggings' : '';
+        return [
+            `images/trims_3d/${trim}${suffix}.png`,
+            `images/trims_3d/${trim}.png`,
+            `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/${version}/assets/minecraft/textures/trims/models/armor/${trim}${suffix}.png`,
+            `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/${version}/assets/minecraft/textures/trims/models/armor/${trim}.png`
+        ];
+    }
+
+    async function processPieceLayer(pieceName, pieceState, layer) {
+        if (!pieceState.armor || pieceState.armor === 'none') return null;
+
+        const baseImg = await fetchFirstValidImage(getArmorLayerUrls(pieceState.armor, layer));
+        if (!baseImg) return null;
+
+        const pieceCanvas = document.createElement('canvas');
+        pieceCanvas.width = 64; pieceCanvas.height = 32;
+        const pctx = pieceCanvas.getContext('2d');
+        pctx.imageSmoothingEnabled = false;
+
+        const bounds = PIECE_UV_BOUNDS[pieceName] || [];
+
+        bounds.forEach(b => {
+            pctx.drawImage(baseImg, b.x, b.y, b.w, b.h, b.x, b.y, b.w, b.h);
+        });
+
+        if (pieceState.armor === 'leather') {
+            const dyeCanvas = document.createElement('canvas');
+            dyeCanvas.width = 64; dyeCanvas.height = 32;
+            const dctx = dyeCanvas.getContext('2d');
+            dctx.imageSmoothingEnabled = false;
+
+            dctx.drawImage(pieceCanvas, 0, 0);
+            dctx.globalCompositeOperation = 'multiply';
+            dctx.fillStyle = pieceState.leatherColor || '#a06540';
+            bounds.forEach(b => dctx.fillRect(b.x, b.y, b.w, b.h));
+            dctx.globalCompositeOperation = 'destination-in';
+            dctx.drawImage(pieceCanvas, 0, 0);
+
+            pctx.clearRect(0, 0, 64, 32);
+            pctx.drawImage(dyeCanvas, 0, 0);
+
+            const overlayImg = await fetchFirstValidImage([
+                `images/humanoid/leather_overlay_layer_${layer}.png`,
+                `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/models/armor/leather_layer_${layer}_overlay.png`
+            ]);
+            if (overlayImg) {
+                bounds.forEach(b => {
+                    pctx.drawImage(overlayImg, b.x, b.y, b.w, b.h, b.x, b.y, b.w, b.h);
+                });
+            }
+        }
+
+        const trimImg = await fetchFirstValidImage(getTrim3dUrls(pieceState.trim, layer));
+        if (trimImg) {
+            const maskCanvas = document.createElement('canvas');
+            maskCanvas.width = 64; maskCanvas.height = 32;
+            const mctx = maskCanvas.getContext('2d');
+            mctx.imageSmoothingEnabled = false;
+
+            bounds.forEach(b => {
+                mctx.drawImage(trimImg, b.x, b.y, b.w, b.h, b.x, b.y, b.w, b.h);
+            });
+
+            const coloredMask = applyPaletteToTrimMask(maskCanvas, pieceState.material, 64, 32, pieceState.armor);
+            pctx.drawImage(coloredMask, 0, 0);
+        }
+
+        return pieceCanvas;
+    }
+
+    async function updateArmorOnSkin() {
+        if (!skin3DViewer || !currentBaseSkinImg) return;
+        const myToken = ++armorUpdateToken;
+
+        const skinCanvas = document.createElement('canvas');
+        skinCanvas.width = 64; skinCanvas.height = 64;
+        const sctx = skinCanvas.getContext('2d');
+        sctx.imageSmoothingEnabled = false;
+
+        sctx.drawImage(currentBaseSkinImg, 0, 0, 64, 64);
+
+        const [helmetCanvas, chestCanvas, bootsCanvas, legsCanvas] = await Promise.all([
+            processPieceLayer('helmet', armorConfig.helmet, 1),
+            processPieceLayer('chestplate', armorConfig.chestplate, 1),
+            processPieceLayer('boots', armorConfig.boots, 1),
+            processPieceLayer('leggings', armorConfig.leggings, 2)
+        ]);
+
+        if (myToken !== armorUpdateToken) return;
+
+        function drawArmorPieceToOuterSkin(srcCanvas, pieceKey) {
+            if (!srcCanvas) return;
+            const mappings = ARMOR_UV_MAP[pieceKey];
+            if (!mappings) return;
+
+            mappings.forEach(m => {
+                const [sx, sy, sw, sh] = m.src;
+                const [dx, dy, dw, dh] = m.dst;
+                sctx.drawImage(srcCanvas, sx, sy, sw, sh, dx, dy, dw, dh);
+            });
+        }
+
+        drawArmorPieceToOuterSkin(helmetCanvas, 'helmet');
+        drawArmorPieceToOuterSkin(chestCanvas, 'chestplate');
+        drawArmorPieceToOuterSkin(legsCanvas, 'leggings');
+        drawArmorPieceToOuterSkin(bootsCanvas, 'boots');
+
+        skin3DViewer.loadSkin(skinCanvas.toDataURL(), { model: currentModelType });
+    }
+
+    const localFallbackSuggestions = [
+        { helmet: { trim: "silence", material: "netherite" }, chestplate: { trim: "silence", material: "netherite" }, leggings: { trim: "silence", material: "netherite" }, boots: { trim: "silence", material: "netherite" } },
+        { helmet: { trim: "vex", material: "diamond" }, chestplate: { trim: "vex", material: "diamond" }, leggings: { trim: "vex", material: "diamond" }, boots: { trim: "vex", material: "diamond" } },
+        { helmet: { trim: "wild", material: "gold" }, chestplate: { trim: "wild", material: "gold" }, leggings: { trim: "wild", material: "gold" }, boots: { trim: "wild", material: "gold" } },
+        { helmet: { trim: "tide", material: "amethyst" }, chestplate: { trim: "tide", material: "amethyst" }, leggings: { trim: "tide", material: "amethyst" }, boots: { trim: "tide", material: "amethyst" } }
+    ];
+
+    function applyAiSuggestion(suggestion) {
+        ['helmet', 'chestplate', 'leggings', 'boots'].forEach(piece => {
+            if (suggestion[piece]) {
+                if (suggestion[piece].trim !== undefined) armorConfig[piece].trim = suggestion[piece].trim;
+                if (suggestion[piece].material !== undefined) armorConfig[piece].material = suggestion[piece].material;
+            }
+        });
+
+        syncUIWithConfig();
+        updatePieceIcons();
+        renderPreview();
+        updateArmorOnSkin();
+    }
+
+    async function fetchAiSuggestion() {
+        const btn = document.getElementById('btnAiSuggest');
+        const infoEl = document.getElementById('previewInfo');
+        btn.disabled = true;
+        btn.textContent = "✨ جاري اختيار التطريز بالذكاء الاصطناعي...";
+        if (infoEl) {
+            infoEl.textContent = "🔍 جاري تحليل ألوان السكن واختيار أفضل تطريز...";
+            infoEl.style.color = "#60a5fa";
+        }
+
+        try {
+            let skinDataUrl = "";
+            if (currentBaseSkinImg) {
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = 64; tempCanvas.height = 64;
+                const tctx = tempCanvas.getContext('2d');
+                tctx.drawImage(currentBaseSkinImg, 0, 0);
+                skinDataUrl = tempCanvas.toDataURL('image/png').split(',')[1];
+            }
+
+            if (!skinDataUrl) throw new Error("No skin loaded");
+
+            const promptText = `
+            Analyze this Minecraft player skin texture. Choose the best matching Minecraft Armor Trim and Material for each armor piece (helmet, chestplate, leggings, boots) to complement the skin's color scheme and aesthetic.
+            
+            Available Trims: silence, eye, flow, bolt, spire, tide, coast, ward, vex, dune, host, raiser, rib, sentry, shaper, snout, wayfinder, wild, none.
+            Available Materials: netherite, diamond, gold, emerald, quartz, amethyst, resin, iron, redstone, lapis, copper.
+
+            Return ONLY a JSON object with NO markdown formatting, using this exact key structure:
+            {
+              "helmet": {"trim": "trim_name", "material": "material_name"},
+              "chestplate": {"trim": "trim_name", "material": "material_name"},
+              "leggings": {"trim": "trim_name", "material": "material_name"},
+              "boots": {"trim": "trim_name", "material": "material_name"}
+            }
+            `;
+
+            const response = await fetch(GEMINI_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [
+                            { text: promptText },
+                            { inlineData: { mimeType: "image/png", data: skinDataUrl } }
+                        ]
+                    }]
+                })
+            });
+
+            if (!response.ok) throw new Error("API Request Failed");
+
+            const data = await response.json();
+            let textRes = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            textRes = textRes.replace(/```json/gi, '').replace(/```/g, '').trim();
+            
+            const parsed = JSON.parse(textRes);
+            applyAiSuggestion(parsed);
+            
+            if (infoEl) {
+                infoEl.textContent = "✨ تم تطبيق التنسيق المقترح من الذكاء الاصطناعي بنجاح!";
+                infoEl.style.color = "#4ade80";
+            }
+        } catch (err) {
+            console.warn("Gemini API fallback triggered:", err);
+            const randomPreset = localFallbackSuggestions[Math.floor(Math.random() * localFallbackSuggestions.length)];
+            applyAiSuggestion(randomPreset);
+            if (infoEl) {
+                infoEl.textContent = "✨ تم تطبيق اقتراح مميز مناسب لسكنك!";
+                infoEl.style.color = "#4ade80";
+            }
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "✨ خلّي الذكاء الاصطناعي يختار التريم المناسب ✨";
+        }
+    }
+
+    function toggleLeatherSection() {
+        const activeP = armorConfig.activePiece;
+        const leatherSec = document.getElementById('leatherDyeSection');
+        if (leatherSec) {
+            leatherSec.style.display = armorConfig[activeP].armor === 'leather' ? 'block' : 'none';
+        }
+    }
+
+    function syncUIWithConfig() {
+        const activeP = armorConfig.activePiece;
+        const current = armorConfig[activeP];
+
+        updateTurtleOptionVisibility();
+
+        document.querySelectorAll('#armorGrid .armor-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.armor === current.armor);
+        });
+
+        document.querySelectorAll('#trimGrid .armor-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.trim === current.trim);
+        });
+
+        document.querySelectorAll('#materialGrid .armor-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.material === current.material);
+        });
+
+        toggleLeatherSection();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('#pieceGrid .slot-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#pieceGrid .slot-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                armorConfig.activePiece = btn.dataset.piece;
+                updateTurtleOptionVisibility();
+                syncUIWithConfig();
+                renderPreview();
+            });
+        });
+
+        document.querySelectorAll('#armorGrid .armor-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const selectedArmor = btn.dataset.armor;
+                const activeP = armorConfig.activePiece;
+
+                if (selectedArmor === 'turtle' && activeP !== 'helmet') return;
+
+                document.querySelectorAll('#armorGrid .armor-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                armorConfig[activeP].armor = selectedArmor;
+                toggleLeatherSection();
+                updatePieceIcons();
+                renderPreview();
+                updateArmorOnSkin();
+            });
+        });
+
+        document.querySelectorAll('#trimGrid .armor-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#trimGrid .armor-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const activeP = armorConfig.activePiece;
+                armorConfig[activeP].trim = btn.dataset.trim;
+                updatePieceIcons();
+                renderPreview();
+                updateArmorOnSkin();
+            });
+        });
+
+        document.querySelectorAll('#materialGrid .armor-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#materialGrid .armor-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const activeP = armorConfig.activePiece;
+                armorConfig[activeP].material = btn.dataset.material;
+                updatePieceIcons();
+                renderPreview();
+                updateArmorOnSkin();
+            });
+        });
+
+        document.querySelectorAll('.dye-circle').forEach(circle => {
+            circle.addEventListener('click', () => {
+                document.querySelectorAll('.dye-circle').forEach(c => c.classList.remove('active-dye'));
+                circle.classList.add('active-dye');
+                const color = circle.dataset.color;
+                const activeP = armorConfig.activePiece;
+                armorConfig[activeP].leatherColor = color;
+                document.getElementById('customLeatherColor').value = color;
+                updatePieceIcons();
+                renderPreview();
+                updateArmorOnSkin();
+            });
+        });
+
+        const customColorInput = document.getElementById('customLeatherColor');
+        if (customColorInput) {
+            customColorInput.addEventListener('input', (e) => {
+                document.querySelectorAll('.dye-circle').forEach(c => c.classList.remove('active-dye'));
+                const color = e.target.value;
+                const activeP = armorConfig.activePiece;
+                armorConfig[activeP].leatherColor = color;
+                updatePieceIcons();
+                renderPreview();
+                updateArmorOnSkin();
+            });
+        }
+
+        const btnAi = document.getElementById('btnAiSuggest');
+        if (btnAi) {
+            btnAi.addEventListener('click', fetchAiSuggestion);
+        }
+
+        updateTurtleOptionVisibility();
+        updatePieceIcons();
+        updateLeatherButtonIcon();
+        renderPreview();
+        initSkin3DViewer();
+    });
+</script>
+</body>
+</html>
