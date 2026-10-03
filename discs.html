@@ -22,7 +22,7 @@
             flex-direction: column;
         }
 
-        /* Navbar - تم تكبير اللوجو والنص مع إضافة توهج نيون أسطوري */
+        /* Navbar */
         .navbar {
             background: rgba(10, 16, 35, 0.85);
             backdrop-filter: blur(16px);
@@ -42,7 +42,7 @@
         }
 
         .logo-img {
-            height: 65px; /* تكبير حجم اللوجو */
+            height: 65px;
             width: auto;
             filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.8)) drop-shadow(0 0 25px rgba(56, 189, 248, 0.4));
             transition: transform 0.3s ease;
@@ -53,7 +53,7 @@
         }
 
         .logo-text {
-            font-size: 2.1rem; /* تكبير خط عنوان اللوجو */
+            font-size: 2.1rem;
             font-weight: 800;
             background: linear-gradient(90deg, #38bdf8, #60a5fa, #93c5fd);
             -webkit-background-clip: text;
@@ -84,11 +84,50 @@
         }
 
         main {
-            padding: 50px 20px;
+            padding: 40px 20px 60px 20px;
             flex: 1;
         }
 
-        /* الشبكة والتصميم الزجاجي الأسطوري للبطاقات */
+        /* تصميم قسم العنوان الرئيسي مع الجوك بوكس */
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .jukebox-img {
+            width: 55px;
+            height: 55px;
+            image-rendering: pixelated;
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.7));
+        }
+
+        .page-title {
+            font-size: 2.3rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #38bdf8, #60a5fa, #93c5fd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.4));
+        }
+
+        .page-subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* الشبكة والتصميم الزجاجي للبطاقات */
         .disc-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -183,12 +222,14 @@
 
         .progress-bar {
             -webkit-appearance: none;
+            appearance: none;
             width: 100%;
             height: 6px;
             border-radius: 6px;
             background: #1e293b;
             outline: none;
             cursor: pointer;
+            direction: ltr;
         }
 
         .progress-bar::-webkit-slider-thumb {
@@ -245,6 +286,14 @@
     </nav>
 
     <main>
+        <div class="page-header">
+            <div class="header-title-wrapper">
+                <img src="images/Jukebox.png" alt="Jukebox" class="jukebox-img" onerror="this.src='images/jukebox.png'; this.onerror=null;">
+                <h1 class="page-title">إستمع إلى جميع الأقراص</h1>
+            </div>
+            <p class="page-subtitle">استمع واستكشف جميع أقراص الموسيقى المتاحة في ماين كرافت</p>
+        </div>
+
         <div class="disc-grid" id="discGrid"></div>
     </main>
 
@@ -268,7 +317,7 @@
             { id: "relic", title: "Relic", author: "Aaron Cherof", img: "music_disc_relic.png", audio: "Relic.ogg" },
             { id: "precipice", title: "Precipice", author: "Aaron Cherof", img: "music_disc_precipice.png", audio: "Precipice.ogg" },
             { id: "creator", title: "Creator", author: "Lena Raine", img: "music_disc_creator.png", audio: "Creator.ogg" },
-            { id: "creator_music_box", title: "Creator (Music Box)", author: "Lena Raine", img: "music_disc_creator_music_box.png", audio: "creator_box.ogg" },
+            { id: "creator_music_box", title: "Creator (Music Box)", author: "Lena Raine", img: "music_disc_creator_music_box.png", audio: "Creator_(Music_Box_Version).ogg" },
             { id: "lava", title: "Lava", author: "C418", img: "music_disc_wait.png", audio: "Lava_Chicken.ogg" },
             { id: "tears", title: "Tears", author: "C418", img: "music_disc_mall.png", audio: "Tears.ogg" },
             { id: "interlude", title: "Interlude", author: "C418", img: "music_disc_far.png", audio: "Where_are_we_now.ogg" }

@@ -19,7 +19,7 @@
             width: 100%;
             background: #0d121f;
             border-bottom: 1px solid rgba(59, 130, 246, 0.25);
-            padding: 14px 40px;
+            padding: 22px 45px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -32,8 +32,8 @@
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 20px;
+            gap: 14px;
+            font-size: 24px;
             font-weight: 800;
             color: #ffffff;
             cursor: pointer;
@@ -45,7 +45,7 @@
         }
 
         .brand-logo-img {
-            height: 38px;
+            height: 50px;
             width: auto;
             object-fit: contain;
         }
@@ -55,9 +55,9 @@
             border: 1px solid rgba(59, 130, 246, 0.5);
             color: #60a5fa;
             text-decoration: none;
-            padding: 8px 24px;
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 10px 28px;
+            border-radius: 10px;
+            font-size: 15.5px;
             font-weight: 700;
             transition: all 0.3s ease;
         }
@@ -102,7 +102,9 @@
         }
         @media (max-width: 768px) {
             .news-feed { grid-template-columns: 1fr; }
-            .top-navbar { padding: 14px 20px; }
+            .top-navbar { padding: 16px 20px; }
+            .brand-logo { font-size: 20px; }
+            .brand-logo-img { height: 40px; }
         }
 
         /* Featured First Card */
@@ -137,6 +139,7 @@
             height: 230px;
             background: #05070c;
             overflow: hidden;
+            position: relative;
         }
         .news-card.featured .card-img-wrap {
             height: 100%;
@@ -150,6 +153,20 @@
         }
         .news-card:hover .card-img {
             transform: scale(1.04);
+        }
+
+        .image-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(13, 19, 34, 0.85);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #60a5fa;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
         }
 
         .card-content {
@@ -209,7 +226,7 @@
             background: #0d1322;
             border: 1px solid rgba(59, 130, 246, 0.4);
             border-radius: 16px;
-            max-width: 850px; /* توسيع حجم النوافذ لتظهر الصورة بوضوح */
+            max-width: 880px;
             width: 92%;
             max-height: 90vh;
             overflow-y: auto;
@@ -218,7 +235,6 @@
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
         }
         
-        /* زر الإغلاق X المميز */
         .close-modal {
             position: absolute;
             top: 15px;
@@ -243,16 +259,25 @@
             border-color: #ef4444;
         }
 
-        /* عرض الصورة الكاملة بدون قص */
-        .modal-img {
+        /* المعرض المنبثق للصور */
+        .modal-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+        .modal-gallery.single-mode {
+            grid-template-columns: 1fr;
+        }
+        .modal-gallery-item {
             width: 100%;
-            max-height: 480px;
-            object-fit: contain; /* إظهار الصورة كاملة بدون قطع */
+            max-height: 420px;
+            object-fit: contain;
             background: #05070c;
             border-radius: 12px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
         .modal-body {
             color: #cbd5e1;
             line-height: 1.8;
@@ -289,7 +314,7 @@
             min-height: 130px;
         }
 
-        /* Image File Upload Dropzone */
+        /* Multi Image Upload Box & Thumbnails */
         .image-upload-box {
             border: 2px dashed rgba(59, 130, 246, 0.4);
             border-radius: 10px;
@@ -308,13 +333,46 @@
             color: #94a3b8;
             margin-top: 5px;
         }
-        .preview-img {
-            max-width: 100%;
-            max-height: 180px;
-            border-radius: 8px;
-            margin-top: 10px;
-            display: none;
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .preview-thumb-wrap {
+            position: relative;
+            height: 75px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+        .preview-thumb-wrap img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+        }
+        .remove-thumb-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: rgba(239, 68, 68, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .submit-news-btn {
@@ -325,14 +383,30 @@
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            width: 100%;
+            flex: 1;
             font-size: 15px;
             transition: 0.25s;
-            margin-top: 5px;
         }
         .submit-news-btn:hover {
             background: #3b82f6;
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .cancel-edit-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            font-size: 14px;
+            transition: 0.25s;
+        }
+        .cancel-edit-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
         }
 
         .manage-news-item {
@@ -345,6 +419,23 @@
             margin-top: 10px;
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+        .edit-news-btn {
+            background: #eab308;
+            color: #000;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .edit-news-btn:hover { background: #ca8a04; color: #fff; }
+
         .delete-news-btn {
             background: #ef4444;
             color: #fff;
@@ -354,6 +445,7 @@
             font-size: 12px;
             cursor: pointer;
             font-weight: bold;
+            transition: 0.2s;
         }
         .delete-news-btn:hover { background: #dc2626; }
 
@@ -376,8 +468,15 @@
             font-size: 14.5px;
             line-height: 1.6;
         }
-        .bottom-notice strong {
+        .notice-link {
             color: #60a5fa;
+            font-weight: 800;
+            text-decoration: underline;
+            transition: color 0.2s ease, text-shadow 0.2s ease;
+        }
+        .notice-link:hover {
+            color: #93c5fd;
+            text-shadow: 0 0 10px rgba(96, 165, 250, 0.6);
         }
     </style>
 </head>
@@ -405,11 +504,11 @@
 
         <!-- Bottom Notice Message -->
         <div class="bottom-notice">
-            📢 لو تريد أن يتم إضافة أخبار جديدة فاذهب إلى <strong>قسم الملاحظات والدعم</strong> واكتب الخبر الذي تريد إضافته.
+            📢 لو تريد أن يتم إضافة أخبار جديدة فاذهب إلى <a href="feedback.html" class="notice-link">قسم الملاحظات والدعم</a> واكتب الخبر الذي تريد إضافته.
         </div>
     </div>
 
-    <!-- Modal 1: Password Prompt Modal with Warning Emoji -->
+    <!-- Modal 1: Password Prompt Modal -->
     <div class="modal-overlay" id="passwordModal">
         <div class="modal-content" style="max-width: 420px; text-align: center;">
             <button class="close-modal">✕</button>
@@ -419,16 +518,16 @@
                     <label style="margin-bottom: 10px; font-size: 14px;">أدخل كلمة المرور للدخول:</label>
                     <input type="password" id="passwordInput" class="admin-input" style="text-align: center; font-size: 16px; padding: 12px;" placeholder="• • • • • •" required autocomplete="off">
                 </div>
-                <button type="submit" class="submit-news-btn">تأكيد الدخول</button>
+                <button type="submit" class="submit-news-btn" style="width:100%;">تأكيد الدخول</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal 2: Expanded Reader Modal with Full Image View and Close Button -->
+    <!-- Modal 2: Expanded Reader Modal -->
     <div class="modal-overlay" id="readerModal">
         <div class="modal-content">
             <button class="close-modal">✕</button>
-            <img src="" id="modalImg" class="modal-img" alt="صورة الخبر">
+            <div id="modalGallery" class="modal-gallery"></div>
             <h2 id="modalTitle" style="color:#fff; font-size:24px; margin-bottom:8px; font-weight: 800;"></h2>
             <div id="modalDate" style="color:#64748b; font-size:13px; margin-bottom:18px; font-weight:600;"></div>
             <div id="modalBody" class="modal-body"></div>
@@ -437,9 +536,9 @@
 
     <!-- Modal 3: Secret Admin Panel -->
     <div class="modal-overlay" id="adminModal">
-        <div class="modal-content" style="max-width: 550px;">
+        <div class="modal-content" style="max-width: 580px;" id="adminModalContent">
             <button class="close-modal">✕</button>
-            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;">⚙️ القائمة الخاصة بالمطور</h2>
+            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;" id="formHeaderTitle">⚙️ القائمة الخاصة بالمطور</h2>
             
             <form id="addNewsForm">
                 <div class="admin-form-group">
@@ -453,13 +552,13 @@
                 </div>
 
                 <div class="admin-form-group">
-                    <label>صورة الخبر (ارفع صورة أو انسخ والصق مباشرة):</label>
+                    <label>صور الخبر (يمكنك تحديد أكثر من صورة أو إلصاقها متعاقبة Ctrl+V):</label>
                     <div class="image-upload-box" onclick="document.getElementById('newsFileInput').click()">
                         <span style="font-size:24px;">📁</span>
-                        <p id="uploadText">اضغط هنا لاختيار صورة، أو قم بـ <b>لصق الصورة (Ctrl+V)</b></p>
-                        <input type="file" id="newsFileInput" accept="image/*" style="display:none;">
-                        <img id="imagePreview" class="preview-img" alt="معاينة الصورة">
+                        <p id="uploadText">اضغط هنا لاختيار صورة أو أكثر، أو قم بـ <b>لصق الصور (Ctrl+V)</b></p>
+                        <input type="file" id="newsFileInput" accept="image/*" multiple style="display:none;">
                     </div>
+                    <div id="previewGrid" class="preview-grid"></div>
                 </div>
 
                 <div class="admin-form-group">
@@ -467,7 +566,10 @@
                     <textarea id="newsContentInput" class="admin-textarea" required placeholder="اكتب الشرح والتفاصيل الكاملة هنا مباشرة..."></textarea>
                 </div>
 
-                <button type="submit" class="submit-news-btn">➕ نشر الخبر الآن</button>
+                <div class="form-actions">
+                    <button type="submit" class="submit-news-btn" id="submitBtn">➕ نشر الخبر الآن</button>
+                    <button type="button" class="cancel-edit-btn" id="cancelEditBtn" onclick="resetFormState()">إلغاء التعديل</button>
+                </div>
             </form>
 
             <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin: 22px 0;">
@@ -479,22 +581,32 @@
 
     <script>
         const ADMIN_PASSWORD = "سعد نار";
-        let currentBase64Image = "";
+        let currentBase64Images = [];
+        let editingNewsId = null; // متغيّر لمتابعة وضع التعديل
 
-        let newsList = JSON.parse(localStorage.getItem('pa_minecraft_news')) || [
+        let rawNews = JSON.parse(localStorage.getItem('pa_minecraft_news'));
+        let newsList = rawNews || [
             {
                 id: Date.now(),
                 title: "عالم جديد باسم The Sift",
                 date: "27/9/2026",
-                image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop",
+                images: ["https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop"],
                 content: `هذا العالم إضيف إلى Minecraft Dungeons II وسيضاف إلى ماين كرافت عام 2027.\n\nليس هناك معلومات كثيرة عنه، ويقال أنه للوصول إليه يجب فتح بوابة الواردن.`
             }
         ];
 
+        function getNewsImages(item) {
+            if (Array.isArray(item.images) && item.images.length > 0) return item.images;
+            if (item.image) return [item.image];
+            return ['https://via.placeholder.com/800x450/0b0f19/60a5fa?text=Minecraft+News'];
+        }
+
         const newsFeed = document.getElementById('newsFeed');
         const fileInput = document.getElementById('newsFileInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const uploadText = document.getElementById('uploadText');
+        const previewGrid = document.getElementById('previewGrid');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const addNewsForm = document.getElementById('addNewsForm');
 
         function saveAndRender() {
             localStorage.setItem('pa_minecraft_news', JSON.stringify(newsList));
@@ -512,12 +624,17 @@
 
             newsList.forEach((item, index) => {
                 const isFeatured = index === 0 ? 'featured' : '';
+                const imgs = getNewsImages(item);
+                const coverImg = imgs[0];
+                const countBadge = imgs.length > 1 ? `<div class="image-badge">📷 ${imgs.length} صور</div>` : '';
+
                 const card = document.createElement('article');
                 card.className = `news-card ${isFeatured}`;
 
                 card.innerHTML = `
                     <div class="card-img-wrap">
-                        <img src="${item.image}" alt="${item.title}" class="card-img" onerror="this.src='https://via.placeholder.com/800x450/0b0f19/60a5fa?text=Minecraft+News'">
+                        ${countBadge}
+                        <img src="${coverImg}" alt="${item.title}" class="card-img" onerror="this.src='https://via.placeholder.com/800x450/0b0f19/60a5fa?text=Minecraft+News'">
                     </div>
                     <div class="card-content">
                         <div>
@@ -531,21 +648,38 @@
             });
         }
 
-        function processImageFile(file) {
+        function renderPreviewGrid() {
+            previewGrid.innerHTML = '';
+            currentBase64Images.forEach((imgSrc, idx) => {
+                const wrap = document.createElement('div');
+                wrap.className = 'preview-thumb-wrap';
+                wrap.innerHTML = `
+                    <img src="${imgSrc}" alt="معاينة">
+                    <button type="button" class="remove-thumb-btn" onclick="removeImage(${idx})">✕</button>
+                `;
+                previewGrid.appendChild(wrap);
+            });
+        }
+
+        window.removeImage = function(index) {
+            currentBase64Images.splice(index, 1);
+            renderPreviewGrid();
+        };
+
+        function addImageFile(file) {
             if (!file || !file.type.startsWith('image/')) return;
             const reader = new FileReader();
             reader.onload = function(e) {
-                currentBase64Image = e.target.result;
-                imagePreview.src = currentBase64Image;
-                imagePreview.style.display = 'block';
-                uploadText.style.display = 'none';
+                currentBase64Images.push(e.target.result);
+                renderPreviewGrid();
             };
             reader.readAsDataURL(file);
         }
 
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
-                processImageFile(e.target.files[0]);
+                Array.from(e.target.files).forEach(addImageFile);
+                e.target.value = '';
             }
         });
 
@@ -556,8 +690,7 @@
                 for (let item of items) {
                     if (item.type.indexOf('image') !== -1) {
                         const blob = item.getAsFile();
-                        processImageFile(blob);
-                        break;
+                        addImageFile(blob);
                     }
                 }
             }
@@ -571,7 +704,23 @@
             const item = newsList.find(n => n.id === id);
             if (!item) return;
 
-            document.getElementById('modalImg').src = item.image;
+            const modalGallery = document.getElementById('modalGallery');
+            modalGallery.innerHTML = '';
+
+            const imgs = getNewsImages(item);
+            modalGallery.className = imgs.length === 1 ? 'modal-gallery single-mode' : 'modal-gallery';
+
+            imgs.forEach(src => {
+                const imgEl = document.createElement('img');
+                imgEl.src = src;
+                imgEl.className = 'modal-gallery-item';
+                imgEl.alt = item.title;
+                imgEl.onerror = function() {
+                    this.src = 'https://via.placeholder.com/800x450/0b0f19/60a5fa?text=Minecraft+News';
+                };
+                modalGallery.appendChild(imgEl);
+            });
+
             document.getElementById('modalTitle').textContent = item.title;
             document.getElementById('modalDate').textContent = "📅 " + (item.date || 'اليوم');
             document.getElementById('modalBody').textContent = item.content;
@@ -584,6 +733,7 @@
                 readerModal.style.display = 'none';
                 adminModal.style.display = 'none';
                 passwordModal.style.display = 'none';
+                resetFormState();
             });
         });
 
@@ -595,9 +745,7 @@
             logoClickCount++;
 
             clearTimeout(logoClickTimer);
-            logoClickTimer = setTimeout(() => {
-                logoClickCount = 0;
-            }, 1200);
+            logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1200);
 
             if (logoClickCount === 3) {
                 logoClickCount = 0;
@@ -623,33 +771,76 @@
             }
         });
 
-        document.getElementById('addNewsForm').addEventListener('submit', (e) => {
+        // تقديم النموذج سواءً للإضافة أو للتعديل
+        addNewsForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            if (!currentBase64Image) {
-                alert("يرجى اختيار صورة أو لصق صورة للخبر أولاً!");
+            if (currentBase64Images.length === 0) {
+                alert("يرجى اختيار صورة واحدة على الأقل للخبر!");
                 return;
             }
 
-            const newArticle = {
-                id: Date.now(),
-                title: document.getElementById('newsTitleInput').value.trim(),
-                date: document.getElementById('newsDateInput').value.trim() || 'اليوم',
-                image: currentBase64Image,
-                content: document.getElementById('newsContentInput').value.trim()
-            };
+            const title = document.getElementById('newsTitleInput').value.trim();
+            const date = document.getElementById('newsDateInput').value.trim() || 'اليوم';
+            const content = document.getElementById('newsContentInput').value.trim();
 
-            newsList.unshift(newArticle);
+            if (editingNewsId !== null) {
+                // وضع التعديل
+                const newsIndex = newsList.findIndex(n => n.id === editingNewsId);
+                if (newsIndex !== -1) {
+                    newsList[newsIndex].title = title;
+                    newsList[newsIndex].date = date;
+                    newsList[newsIndex].images = [...currentBase64Images];
+                    newsList[newsIndex].content = content;
+                    alert("تم حفظ التعديلات على الخبر بنجاح!");
+                }
+            } else {
+                // وضع الإضافة
+                const newArticle = {
+                    id: Date.now(),
+                    title: title,
+                    date: date,
+                    images: [...currentBase64Images],
+                    content: content
+                };
+                newsList.unshift(newArticle);
+                alert("تم نشر الخبر وجميع صوره بنجاح!");
+            }
+
             saveAndRender();
-
-            e.target.reset();
-            currentBase64Image = "";
-            imagePreview.style.display = 'none';
-            uploadText.style.display = 'block';
-
+            resetFormState();
             adminModal.style.display = 'none';
-            alert("تم نشر الخبر بنجاح في الصفحة!");
         });
+
+        // دالة تفعيل وضع التعديل للخبر
+        window.editNews = function(id) {
+            const item = newsList.find(n => n.id === id);
+            if (!item) return;
+
+            editingNewsId = id;
+            document.getElementById('newsTitleInput').value = item.title;
+            document.getElementById('newsDateInput').value = item.date || '';
+            document.getElementById('newsContentInput').value = item.content;
+
+            currentBase64Images = [...getNewsImages(item)];
+            renderPreviewGrid();
+
+            submitBtn.textContent = "✏️ حفظ التعديلات";
+            cancelEditBtn.style.display = "block";
+
+            // التمرير لأعلى النموذج للبدء في التعديل
+            document.getElementById('adminModalContent').scrollTop = 0;
+        };
+
+        // دالة إعادة النموذج إلى الوضع الافتراضي
+        function resetFormState() {
+            editingNewsId = null;
+            addNewsForm.reset();
+            currentBase64Images = [];
+            renderPreviewGrid();
+            submitBtn.textContent = "➕ نشر الخبر الآن";
+            cancelEditBtn.style.display = "none";
+        }
 
         function renderAdminList() {
             const adminNewsList = document.getElementById('adminNewsList');
@@ -659,8 +850,11 @@
                 const div = document.createElement('div');
                 div.className = 'manage-news-item';
                 div.innerHTML = `
-                    <span style="font-size:13px; color:#cbd5e1; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:70%;">${item.title}</span>
-                    <button class="delete-news-btn" onclick="deleteNews(${item.id})">حذف</button>
+                    <span style="font-size:13px; color:#cbd5e1; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:60%;">${item.title}</span>
+                    <div class="action-btns">
+                        <button class="edit-news-btn" onclick="editNews(${item.id})">تعديل</button>
+                        <button class="delete-news-btn" onclick="deleteNews(${item.id})">حذف</button>
+                    </div>
                 `;
                 adminNewsList.appendChild(div);
             });
@@ -669,13 +863,17 @@
         window.deleteNews = function(id) {
             if (confirm("هل أنت تأكد من رغبتك في حذف هذا الخبر؟")) {
                 newsList = newsList.filter(n => n.id !== id);
+                if (editingNewsId === id) resetFormState();
                 saveAndRender();
             }
         };
 
         window.addEventListener('click', (e) => {
             if (e.target === readerModal) readerModal.style.display = 'none';
-            if (e.target === adminModal) adminModal.style.display = 'none';
+            if (e.target === adminModal) {
+                adminModal.style.display = 'none';
+                resetFormState();
+            }
             if (e.target === passwordModal) passwordModal.style.display = 'none';
         });
 
