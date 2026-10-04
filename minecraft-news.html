@@ -177,13 +177,6 @@
             flex-grow: 1;
         }
 
-        .card-date {
-            font-size: 12px;
-            color: #64748b;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
         .card-title {
             font-size: 20px;
             font-weight: 800;
@@ -252,30 +245,69 @@
             align-items: center;
             justify-content: center;
             transition: 0.2s;
-            z-index: 10;
+            z-index: 20;
         }
         .close-modal:hover {
             background: #ef4444;
             border-color: #ef4444;
         }
 
-        /* المعرض المنبثق للصور */
-        .modal-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 15px;
-            margin-bottom: 22px;
-        }
-        .modal-gallery.single-mode {
-            grid-template-columns: 1fr;
-        }
-        .modal-gallery-item {
+        /* تصميم سلايدر الصور المنبثق مع الأسهم */
+        .image-slider-wrapper {
+            position: relative;
             width: 100%;
-            max-height: 420px;
-            object-fit: contain;
-            background: #05070c;
+            height: 380px;
+            background: #04060a;
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            overflow: hidden;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slider-main-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(13, 19, 34, 0.75);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            user-select: none;
+            z-index: 5;
+        }
+        .slider-btn:hover {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+        }
+        .slider-btn.prev { right: 15px; }
+        .slider-btn.next { left: 15px; }
+
+        .slider-counter-badge {
+            position: absolute;
+            bottom: 12px;
+            background: rgba(7, 10, 18, 0.85);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #94a3b8;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
         }
 
         .modal-body {
@@ -283,9 +315,65 @@
             line-height: 1.8;
             font-size: 16px;
             white-space: pre-line;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 18px;
         }
 
-        /* Admin Secret Form Inputs */
+        /* تصميم جديد وراقي لقائمة كلمة المرور */
+        .password-card {
+            background: linear-gradient(145deg, #0f172a, #0b1120);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 20px;
+            padding: 35px 25px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+        .lock-icon-circle {
+            width: 65px;
+            height: 65px;
+            background: rgba(37, 99, 235, 0.15);
+            border: 2px solid rgba(96, 165, 250, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px auto;
+            font-size: 28px;
+        }
+        .password-title {
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .password-sub {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+        .pwd-input {
+            width: 100%;
+            background: #070a12;
+            border: 1.5px solid rgba(59, 130, 246, 0.3);
+            border-radius: 10px;
+            padding: 12px;
+            color: #fff;
+            text-align: center;
+            font-size: 18px;
+            outline: none;
+            letter-spacing: 3px;
+            transition: all 0.3s ease;
+            margin-bottom: 18px;
+        }
+        .pwd-input:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 15px rgba(96, 165, 250, 0.2);
+        }
+
+        /* Admin Form Inputs */
         .admin-form-group {
             margin-bottom: 16px;
         }
@@ -314,7 +402,7 @@
             min-height: 130px;
         }
 
-        /* Multi Image Upload Box & Thumbnails */
+        /* Upload Box & Thumbnails */
         .image-upload-box {
             border: 2px dashed rgba(59, 130, 246, 0.4);
             border-radius: 10px;
@@ -404,10 +492,6 @@
             font-size: 14px;
             transition: 0.25s;
         }
-        .cancel-edit-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
 
         .manage-news-item {
             display: flex;
@@ -432,10 +516,7 @@
             font-size: 12px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.2s;
         }
-        .edit-news-btn:hover { background: #ca8a04; color: #fff; }
-
         .delete-news-btn {
             background: #ef4444;
             color: #fff;
@@ -445,9 +526,7 @@
             font-size: 12px;
             cursor: pointer;
             font-weight: bold;
-            transition: 0.2s;
         }
-        .delete-news-btn:hover { background: #dc2626; }
 
         .no-results {
             text-align: center;
@@ -472,11 +551,6 @@
             color: #60a5fa;
             font-weight: 800;
             text-decoration: underline;
-            transition: color 0.2s ease, text-shadow 0.2s ease;
-        }
-        .notice-link:hover {
-            color: #93c5fd;
-            text-shadow: 0 0 10px rgba(96, 165, 250, 0.6);
         }
     </style>
 </head>
@@ -485,7 +559,7 @@
     <!-- Header Navbar -->
     <header class="top-navbar">
         <div class="brand-logo" id="logoTrigger" title="انقر 3 مرات لفتح القائمة السرية">
-            <img src="images/logo.png" alt="Player Assistant Logo" class="brand-logo-img">
+            <img src="images/logo.png" alt="Player Assistant Logo" class="brand-logo-img" onerror="this.style.display='none'">
             <span>Player Assistant</span>
         </div>
 
@@ -508,37 +582,44 @@
         </div>
     </div>
 
-    <!-- Modal 1: Password Prompt Modal -->
+    <!-- Modal 1: Redesigned Password Modal -->
     <div class="modal-overlay" id="passwordModal">
-        <div class="modal-content" style="max-width: 420px; text-align: center;">
-            <button class="close-modal">✕</button>
-            <h2 style="color: #60a5fa; font-size: 20px; margin-bottom: 15px; font-weight: 800;">⚠️ أخرج أنت بقائمة المطور ⚠️</h2>
+        <div class="password-card">
+            <button class="close-modal" type="button">✕</button>
+            <div class="lock-icon-circle">🔐</div>
+            <h2 class="password-title">لوحة التحكم السرية</h2>
+            <p class="password-sub">أدخل كلمة المرور الخاصة بالمطور للمتابعة</p>
             <form id="passwordForm">
-                <div class="admin-form-group" style="margin-bottom: 20px;">
-                    <label style="margin-bottom: 10px; font-size: 14px;">أدخل كلمة المرور للدخول:</label>
-                    <input type="password" id="passwordInput" class="admin-input" style="text-align: center; font-size: 16px; padding: 12px;" placeholder="• • • • • •" required autocomplete="off">
-                </div>
-                <button type="submit" class="submit-news-btn" style="width:100%;">تأكيد الدخول</button>
+                <input type="password" id="passwordInput" class="pwd-input" placeholder="••••••" required autocomplete="off">
+                <button type="submit" class="submit-news-btn" style="width:100%;">دخول</button>
             </form>
         </div>
     </div>
 
-    <!-- Modal 2: Expanded Reader Modal -->
+    <!-- Modal 2: Reader Modal with Image Slider -->
     <div class="modal-overlay" id="readerModal">
         <div class="modal-content">
-            <button class="close-modal">✕</button>
-            <div id="modalGallery" class="modal-gallery"></div>
-            <h2 id="modalTitle" style="color:#fff; font-size:24px; margin-bottom:8px; font-weight: 800;"></h2>
-            <div id="modalDate" style="color:#64748b; font-size:13px; margin-bottom:18px; font-weight:600;"></div>
+            <button class="close-modal" type="button">✕</button>
+            
+            <!-- Slider Section -->
+            <div class="image-slider-wrapper">
+                <button class="slider-btn prev" id="sliderPrevBtn" type="button">❮</button>
+                <img id="sliderActiveImg" src="" alt="صورة الخبر" class="slider-main-img">
+                <button class="slider-btn next" id="sliderNextBtn" type="button">❯</button>
+                <div class="slider-counter-badge" id="sliderCounter">1 / 1</div>
+            </div>
+
+            <!-- News Title & Description Text Details -->
+            <h2 id="modalTitle" style="color:#fff; font-size:24px; margin-bottom:14px; font-weight: 800;"></h2>
             <div id="modalBody" class="modal-body"></div>
         </div>
     </div>
 
-    <!-- Modal 3: Secret Admin Panel -->
+    <!-- Modal 3: Secret Admin Panel (No Date Fields) -->
     <div class="modal-overlay" id="adminModal">
         <div class="modal-content" style="max-width: 580px;" id="adminModalContent">
-            <button class="close-modal">✕</button>
-            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;" id="formHeaderTitle">⚙️ القائمة الخاصة بالمطور</h2>
+            <button class="close-modal" type="button">✕</button>
+            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;" id="formHeaderTitle">⚙️️ القائمة الخاصة بالمطور</h2>
             
             <form id="addNewsForm">
                 <div class="admin-form-group">
@@ -547,12 +628,7 @@
                 </div>
 
                 <div class="admin-form-group">
-                    <label>التاريخ:</label>
-                    <input type="text" id="newsDateInput" class="admin-input" placeholder="مثال: 27/9/2026">
-                </div>
-
-                <div class="admin-form-group">
-                    <label>صور الخبر (يمكنك تحديد أكثر من صورة أو إلصاقها متعاقبة Ctrl+V):</label>
+                    <label>صور الخبر (حدد عدة صور أو استخدم Ctrl+V للصق):</label>
                     <div class="image-upload-box" onclick="document.getElementById('newsFileInput').click()">
                         <span style="font-size:24px;">📁</span>
                         <p id="uploadText">اضغط هنا لاختيار صورة أو أكثر، أو قم بـ <b>لصق الصور (Ctrl+V)</b></p>
@@ -582,23 +658,28 @@
     <script>
         const ADMIN_PASSWORD = "سعد نار";
         let currentBase64Images = [];
-        let editingNewsId = null; // متغيّر لمتابعة وضع التعديل
+        let editingNewsId = null;
+
+        // Slider variables
+        let currentSliderImages = [];
+        let currentSliderIndex = 0;
+
+        const DEFAULT_FALLBACK_IMG = "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop";
 
         let rawNews = JSON.parse(localStorage.getItem('pa_minecraft_news'));
         let newsList = rawNews || [
             {
                 id: Date.now(),
                 title: "عالم جديد باسم The Sift",
-                date: "27/9/2026",
                 images: ["https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop"],
-                content: `هذا العالم إضيف إلى Minecraft Dungeons II وسيضاف إلى ماين كرافت عام 2027.\n\nليس هناك معلومات كثيرة عنه، ويقال أنه للوصول إليه يجب فتح بوابة الواردن.`
+                content: `هذا العالم أضيف إلى Minecraft Dungeons II وسيضاف إلى ماين كرافت عام 2027.\n\nليس هناك معلومات كثيرة عنه، ويقال أنه للوصول إليه يجب فتح بوابة الواردن.`
             }
         ];
 
         function getNewsImages(item) {
             if (Array.isArray(item.images) && item.images.length > 0) return item.images;
             if (item.image) return [item.image];
-            return ['https://via.placeholder.com/800x450/0b0f19/60a5fa?text=Minecraft+News'];
+            return [DEFAULT_FALLBACK_IMG];
         }
 
         const newsFeed = document.getElementById('newsFeed');
@@ -634,14 +715,13 @@
                 card.innerHTML = `
                     <div class="card-img-wrap">
                         ${countBadge}
-                        <img src="${coverImg}" alt="${item.title}" class="card-img" onerror="this.src='https://via.placeholder.com/800x450/0b0f19/60a5fa?text=Minecraft+News'">
+                        <img src="${coverImg}" alt="${item.title}" class="card-img" onerror="this.onerror=null; this.src='${DEFAULT_FALLBACK_IMG}';">
                     </div>
                     <div class="card-content">
                         <div>
-                            <div class="card-date">📅 ${item.date || 'اليوم'}</div>
                             <h2 class="card-title">${item.title}</h2>
                         </div>
-                        <button class="read-btn" onclick="openReaderModal(${item.id})">اقرأ التفاصيل الكاملة</button>
+                        <button class="read-btn" type="button" onclick="openReaderModal(${item.id})">اقرأ التفاصيل الكاملة</button>
                     </div>
                 `;
                 newsFeed.appendChild(card);
@@ -700,29 +780,45 @@
         const adminModal = document.getElementById('adminModal');
         const passwordModal = document.getElementById('passwordModal');
 
+        /* Slider Controls Logic */
+        const sliderActiveImg = document.getElementById('sliderActiveImg');
+        const sliderCounter = document.getElementById('sliderCounter');
+        const sliderPrevBtn = document.getElementById('sliderPrevBtn');
+        const sliderNextBtn = document.getElementById('sliderNextBtn');
+
+        function updateSliderDisplay() {
+            if (currentSliderImages.length === 0) return;
+            sliderActiveImg.src = currentSliderImages[currentSliderIndex];
+            sliderCounter.textContent = `${currentSliderIndex + 1} / ${currentSliderImages.length}`;
+
+            if (currentSliderImages.length <= 1) {
+                sliderPrevBtn.style.display = 'none';
+                sliderNextBtn.style.display = 'none';
+            } else {
+                sliderPrevBtn.style.display = 'flex';
+                sliderNextBtn.style.display = 'flex';
+            }
+        }
+
+        sliderPrevBtn.addEventListener('click', () => {
+            currentSliderIndex = (currentSliderIndex - 1 + currentSliderImages.length) % currentSliderImages.length;
+            updateSliderDisplay();
+        });
+
+        sliderNextBtn.addEventListener('click', () => {
+            currentSliderIndex = (currentSliderIndex + 1) % currentSliderImages.length;
+            updateSliderDisplay();
+        });
+
         window.openReaderModal = function(id) {
             const item = newsList.find(n => n.id === id);
             if (!item) return;
 
-            const modalGallery = document.getElementById('modalGallery');
-            modalGallery.innerHTML = '';
-
-            const imgs = getNewsImages(item);
-            modalGallery.className = imgs.length === 1 ? 'modal-gallery single-mode' : 'modal-gallery';
-
-            imgs.forEach(src => {
-                const imgEl = document.createElement('img');
-                imgEl.src = src;
-                imgEl.className = 'modal-gallery-item';
-                imgEl.alt = item.title;
-                imgEl.onerror = function() {
-                    this.src = 'https://via.placeholder.com/800x450/0b0f19/60a5fa?text=Minecraft+News';
-                };
-                modalGallery.appendChild(imgEl);
-            });
+            currentSliderImages = getNewsImages(item);
+            currentSliderIndex = 0;
+            updateSliderDisplay();
 
             document.getElementById('modalTitle').textContent = item.title;
-            document.getElementById('modalDate').textContent = "📅 " + (item.date || 'اليوم');
             document.getElementById('modalBody').textContent = item.content;
 
             readerModal.style.display = 'flex';
@@ -743,7 +839,6 @@
 
         logoTrigger.addEventListener('click', () => {
             logoClickCount++;
-
             clearTimeout(logoClickTimer);
             logoClickTimer = setTimeout(() => { logoClickCount = 0; }, 1200);
 
@@ -771,7 +866,6 @@
             }
         });
 
-        // تقديم النموذج سواءً للإضافة أو للتعديل
         addNewsForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -781,30 +875,25 @@
             }
 
             const title = document.getElementById('newsTitleInput').value.trim();
-            const date = document.getElementById('newsDateInput').value.trim() || 'اليوم';
             const content = document.getElementById('newsContentInput').value.trim();
 
             if (editingNewsId !== null) {
-                // وضع التعديل
                 const newsIndex = newsList.findIndex(n => n.id === editingNewsId);
                 if (newsIndex !== -1) {
                     newsList[newsIndex].title = title;
-                    newsList[newsIndex].date = date;
                     newsList[newsIndex].images = [...currentBase64Images];
                     newsList[newsIndex].content = content;
-                    alert("تم حفظ التعديلات على الخبر بنجاح!");
+                    alert("تم حفظ التعديلات بنجاح!");
                 }
             } else {
-                // وضع الإضافة
                 const newArticle = {
                     id: Date.now(),
                     title: title,
-                    date: date,
                     images: [...currentBase64Images],
                     content: content
                 };
                 newsList.unshift(newArticle);
-                alert("تم نشر الخبر وجميع صوره بنجاح!");
+                alert("تم نشر الخبر بنجاح!");
             }
 
             saveAndRender();
@@ -812,14 +901,12 @@
             adminModal.style.display = 'none';
         });
 
-        // دالة تفعيل وضع التعديل للخبر
         window.editNews = function(id) {
             const item = newsList.find(n => n.id === id);
             if (!item) return;
 
             editingNewsId = id;
             document.getElementById('newsTitleInput').value = item.title;
-            document.getElementById('newsDateInput').value = item.date || '';
             document.getElementById('newsContentInput').value = item.content;
 
             currentBase64Images = [...getNewsImages(item)];
@@ -828,11 +915,9 @@
             submitBtn.textContent = "✏️ حفظ التعديلات";
             cancelEditBtn.style.display = "block";
 
-            // التمرير لأعلى النموذج للبدء في التعديل
             document.getElementById('adminModalContent').scrollTop = 0;
         };
 
-        // دالة إعادة النموذج إلى الوضع الافتراضي
         function resetFormState() {
             editingNewsId = null;
             addNewsForm.reset();
@@ -852,8 +937,8 @@
                 div.innerHTML = `
                     <span style="font-size:13px; color:#cbd5e1; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:60%;">${item.title}</span>
                     <div class="action-btns">
-                        <button class="edit-news-btn" onclick="editNews(${item.id})">تعديل</button>
-                        <button class="delete-news-btn" onclick="deleteNews(${item.id})">حذف</button>
+                        <button type="button" class="edit-news-btn" onclick="editNews(${item.id})">تعديل</button>
+                        <button type="button" class="delete-news-btn" onclick="deleteNews(${item.id})">حذف</button>
                     </div>
                 `;
                 adminNewsList.appendChild(div);
