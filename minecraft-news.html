@@ -94,7 +94,7 @@
             font-size: 14px;
         }
 
-        /* News Layout Grid */
+        /* News Layout Grid - متساوية الأحجام */
         .news-feed {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -107,16 +107,6 @@
             .brand-logo-img { height: 40px; }
         }
 
-        /* Featured First Card */
-        .news-card.featured {
-            grid-column: 1 / -1;
-            display: grid;
-            grid-template-columns: 1.1fr 1fr;
-        }
-        @media (max-width: 850px) {
-            .news-card.featured { grid-template-columns: 1fr; }
-        }
-
         /* News Card Styling */
         .news-card {
             background: #0f172a;
@@ -127,11 +117,12 @@
             flex-direction: column;
             transition: all 0.3s ease;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            cursor: pointer; /* تجعل بطاقة الخبر كاملة قابلة للضغط */
         }
         .news-card:hover {
             border-color: #60a5fa;
             transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.2);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25);
         }
 
         .card-img-wrap {
@@ -140,10 +131,6 @@
             background: #05070c;
             overflow: hidden;
             position: relative;
-        }
-        .news-card.featured .card-img-wrap {
-            height: 100%;
-            min-height: 240px;
         }
         .card-img {
             width: 100%;
@@ -184,7 +171,6 @@
             margin-bottom: 18px;
             line-height: 1.4;
         }
-        .news-card.featured .card-title { font-size: 24px; }
 
         .read-btn {
             align-self: flex-start;
@@ -252,7 +238,7 @@
             border-color: #ef4444;
         }
 
-        /* تصميم سلايدر الصور المنبثق مع الأسهم */
+        /* سلايدر الصور المنبثق */
         .image-slider-wrapper {
             position: relative;
             width: 100%;
@@ -317,9 +303,104 @@
             white-space: pre-line;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             padding-top: 18px;
+            margin-bottom: 25px;
         }
 
-        /* تصميم جديد وراقي لقائمة كلمة المرور */
+        /* قسم التعليقات الجديد */
+        .comments-section {
+            border-top: 1px solid rgba(59, 130, 246, 0.25);
+            padding-top: 22px;
+        }
+        .comments-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #60a5fa;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .comment-form {
+            background: rgba(7, 10, 18, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .comment-input, .comment-textarea {
+            width: 100%;
+            background: #070a12;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 13.5px;
+            outline: none;
+            margin-bottom: 10px;
+        }
+        .comment-input:focus, .comment-textarea:focus {
+            border-color: #60a5fa;
+        }
+        .comment-textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+        .submit-comment-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 9px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13.5px;
+            transition: 0.25s;
+        }
+        .submit-comment-btn:hover {
+            background: #3b82f6;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .comment-card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 12px 16px;
+        }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .comment-author {
+            font-weight: 700;
+            color: #60a5fa;
+            font-size: 14px;
+        }
+        .comment-date {
+            font-size: 11px;
+            color: #64748b;
+        }
+        .comment-text {
+            color: #cbd5e1;
+            font-size: 13.5px;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+        .no-comments {
+            color: #64748b;
+            font-size: 13.5px;
+            text-align: center;
+            padding: 15px;
+        }
+
+        /* لوحة التحكم السرية للمطور */
         .password-card {
             background: linear-gradient(145deg, #0f172a, #0b1120);
             border: 1px solid rgba(96, 165, 250, 0.3);
@@ -374,9 +455,7 @@
         }
 
         /* Admin Form Inputs */
-        .admin-form-group {
-            margin-bottom: 16px;
-        }
+        .admin-form-group { margin-bottom: 16px; }
         .admin-form-group label {
             display: block;
             font-size: 13px;
@@ -394,15 +473,9 @@
             font-size: 13.5px;
             outline: none;
         }
-        .admin-input:focus, .admin-textarea:focus {
-            border-color: #60a5fa;
-        }
-        .admin-textarea {
-            resize: vertical;
-            min-height: 130px;
-        }
+        .admin-input:focus, .admin-textarea:focus { border-color: #60a5fa; }
+        .admin-textarea { resize: vertical; min-height: 130px; }
 
-        /* Upload Box & Thumbnails */
         .image-upload-box {
             border: 2px dashed rgba(59, 130, 246, 0.4);
             border-radius: 10px;
@@ -416,11 +489,7 @@
             border-color: #60a5fa;
             background: rgba(59, 130, 246, 0.05);
         }
-        .image-upload-box p {
-            font-size: 13px;
-            color: #94a3b8;
-            margin-top: 5px;
-        }
+        .image-upload-box p { font-size: 13px; color: #94a3b8; margin-top: 5px; }
 
         .preview-grid {
             display: grid;
@@ -435,11 +504,7 @@
             overflow: hidden;
             border: 1px solid rgba(59, 130, 246, 0.4);
         }
-        .preview-thumb-wrap img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .preview-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; }
         .remove-thumb-btn {
             position: absolute;
             top: 2px;
@@ -457,11 +522,7 @@
             justify-content: center;
         }
 
-        .form-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
+        .form-actions { display: flex; gap: 10px; margin-top: 10px; }
 
         .submit-news-btn {
             background: linear-gradient(90deg, #2563eb, #1d4ed8);
@@ -503,10 +564,7 @@
             margin-top: 10px;
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .action-btns {
-            display: flex;
-            gap: 8px;
-        }
+        .action-btns { display: flex; gap: 8px; }
         .edit-news-btn {
             background: #eab308;
             color: #000;
@@ -535,7 +593,6 @@
             grid-column: 1 / -1;
         }
 
-        /* ملاحظة أسفل الصفحة */
         .bottom-notice {
             margin-top: 50px;
             padding: 18px 24px;
@@ -547,18 +604,14 @@
             font-size: 14.5px;
             line-height: 1.6;
         }
-        .notice-link {
-            color: #60a5fa;
-            font-weight: 800;
-            text-decoration: underline;
-        }
+        .notice-link { color: #60a5fa; font-weight: 800; text-decoration: underline; }
     </style>
 </head>
 <body>
 
     <!-- Header Navbar -->
     <header class="top-navbar">
-        <div class="brand-logo" id="logoTrigger" >
+        <div class="brand-logo" id="logoTrigger">
             <img src="images/logo.png" alt="Player Assistant Logo" class="brand-logo-img" onerror="this.style.display='none'">
             <span>Player Assistant</span>
         </div>
@@ -582,7 +635,7 @@
         </div>
     </div>
 
-    <!-- Modal 1: Redesigned Password Modal -->
+    <!-- Modal 1: Secret Password Modal -->
     <div class="modal-overlay" id="passwordModal">
         <div class="password-card">
             <button class="close-modal" type="button">✕</button>
@@ -596,7 +649,7 @@
         </div>
     </div>
 
-    <!-- Modal 2: Reader Modal with Image Slider -->
+    <!-- Modal 2: Reader Modal with Image Slider & Comments Section -->
     <div class="modal-overlay" id="readerModal">
         <div class="modal-content">
             <button class="close-modal" type="button">✕</button>
@@ -612,14 +665,31 @@
             <!-- News Title & Description Text Details -->
             <h2 id="modalTitle" style="color:#fff; font-size:24px; margin-bottom:14px; font-weight: 800;"></h2>
             <div id="modalBody" class="modal-body"></div>
+
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <div class="comments-title">
+                    💬 التعليقات (<span id="commentsCount">0</span>)
+                </div>
+
+                <!-- Form to Add Comment -->
+                <form id="commentForm" class="comment-form">
+                    <input type="text" id="commentAuthor" class="comment-input" placeholder="اسمك الكريم..." required autocomplete="off">
+                    <textarea id="commentText" class="comment-textarea" placeholder="اكتب تعليقك هنا..." required></textarea>
+                    <button type="submit" class="submit-comment-btn">إرسال التعليق 💬</button>
+                </form>
+
+                <!-- Comments Display List -->
+                <div id="commentsList" class="comments-list"></div>
+            </div>
         </div>
     </div>
 
-    <!-- Modal 3: Secret Admin Panel (No Date Fields) -->
+    <!-- Modal 3: Secret Admin Panel -->
     <div class="modal-overlay" id="adminModal">
         <div class="modal-content" style="max-width: 580px;" id="adminModalContent">
             <button class="close-modal" type="button">✕</button>
-            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;" id="formHeaderTitle">⚙️️ القائمة الخاصة بالمطور</h2>
+            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;" id="formHeaderTitle">⚙ القائمة الخاصة بالمطور</h2>
             
             <form id="addNewsForm">
                 <div class="admin-form-group">
@@ -659,6 +729,7 @@
         const ADMIN_PASSWORD = "سعد نار";
         let currentBase64Images = [];
         let editingNewsId = null;
+        let currentActiveNewsId = null;
 
         // Slider variables
         let currentSliderImages = [];
@@ -672,7 +743,8 @@
                 id: Date.now(),
                 title: "عالم جديد باسم The Sift",
                 images: ["https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop"],
-                content: `هذا العالم أضيف إلى Minecraft Dungeons II وسيضاف إلى ماين كرافت عام 2027.\n\nليس هناك معلومات كثيرة عنه، ويقال أنه للوصول إليه يجب فتح بوابة الواردن.`
+                content: `هذا العالم أضيف إلى Minecraft Dungeons II وسيضاف إلى ماين كرافت عام 2027.\n\nليس هناك معلومات كثيرة عنه، ويقال أنه للوصول إليه يجب فتح بوابة الواردن.`,
+                comments: []
             }
         ];
 
@@ -703,14 +775,15 @@
                 return;
             }
 
-            newsList.forEach((item, index) => {
-                const isFeatured = index === 0 ? 'featured' : '';
+            newsList.forEach((item) => {
                 const imgs = getNewsImages(item);
                 const coverImg = imgs[0];
                 const countBadge = imgs.length > 1 ? `<div class="image-badge">📷 ${imgs.length} صور</div>` : '';
+                const commentCount = item.comments ? item.comments.length : 0;
 
                 const card = document.createElement('article');
-                card.className = `news-card ${isFeatured}`;
+                card.className = 'news-card'; // أحجام متساوية لجميع الأخبار
+                card.onclick = () => openReaderModal(item.id); // فتح النافذة عند الضغط في أي مكان بالبطاقة
 
                 card.innerHTML = `
                     <div class="card-img-wrap">
@@ -721,7 +794,10 @@
                         <div>
                             <h2 class="card-title">${item.title}</h2>
                         </div>
-                        <button class="read-btn" type="button" onclick="openReaderModal(${item.id})">اقرأ التفاصيل الكاملة</button>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <button class="read-btn" type="button">اقرأ التفاصيل الكاملة</button>
+                            <span style="color:#60a5fa; font-size:13px; font-weight:bold;">💬 ${commentCount}</span>
+                        </div>
                     </div>
                 `;
                 newsFeed.appendChild(card);
@@ -800,12 +876,14 @@
             }
         }
 
-        sliderPrevBtn.addEventListener('click', () => {
+        sliderPrevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             currentSliderIndex = (currentSliderIndex - 1 + currentSliderImages.length) % currentSliderImages.length;
             updateSliderDisplay();
         });
 
-        sliderNextBtn.addEventListener('click', () => {
+        sliderNextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             currentSliderIndex = (currentSliderIndex + 1) % currentSliderImages.length;
             updateSliderDisplay();
         });
@@ -814,6 +892,7 @@
             const item = newsList.find(n => n.id === id);
             if (!item) return;
 
+            currentActiveNewsId = id;
             currentSliderImages = getNewsImages(item);
             currentSliderIndex = 0;
             updateSliderDisplay();
@@ -821,8 +900,68 @@
             document.getElementById('modalTitle').textContent = item.title;
             document.getElementById('modalBody').textContent = item.content;
 
+            renderComments(item);
+
             readerModal.style.display = 'flex';
         };
+
+        /* إدارة التعليقات */
+        function renderComments(item) {
+            const commentsList = document.getElementById('commentsList');
+            const commentsCount = document.getElementById('commentsCount');
+            const comments = item.comments || [];
+
+            commentsCount.textContent = comments.length;
+            commentsList.innerHTML = '';
+
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<div class="no-comments">لا توجد تعليقات بعد، كن أول من يعلق!</div>';
+                return;
+            }
+
+            comments.forEach(c => {
+                const div = document.createElement('div');
+                div.className = 'comment-card';
+                div.innerHTML = `
+                    <div class="comment-header">
+                        <span class="comment-author">${c.author}</span>
+                        <span class="comment-date">${c.date}</span>
+                    </div>
+                    <div class="comment-text">${c.text}</div>
+                `;
+                commentsList.appendChild(div);
+            });
+        }
+
+        document.getElementById('commentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const authorInput = document.getElementById('commentAuthor');
+            const textInput = document.getElementById('commentText');
+
+            const author = authorInput.value.trim();
+            const text = textInput.value.trim();
+
+            if (!author || !text || !currentActiveNewsId) return;
+
+            const item = newsList.find(n => n.id === currentActiveNewsId);
+            if (item) {
+                if (!item.comments) item.comments = [];
+                
+                const now = new Date();
+                const formattedDate = `${now.toLocaleDateString('ar-EG')} - ${now.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}`;
+
+                item.comments.unshift({
+                    author: author,
+                    text: text,
+                    date: formattedDate
+                });
+
+                saveAndRender();
+                renderComments(item);
+
+                textInput.value = '';
+            }
+        });
 
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -890,7 +1029,8 @@
                     id: Date.now(),
                     title: title,
                     images: [...currentBase64Images],
-                    content: content
+                    content: content,
+                    comments: []
                 };
                 newsList.unshift(newArticle);
                 alert("تم نشر الخبر بنجاح!");
