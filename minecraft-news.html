@@ -5,25 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أخبار وتحديثات ماينكرافت | Player Assistant</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* ==========================================================================
+           1. RESET & BASE STYLES
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #070a12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2563eb;
+        }
+
         body {
             background-color: #070a12;
             color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
-            padding-bottom: 50px;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        /* Full Width Header Navbar */
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, textarea {
+            font-family: inherit;
+        }
+
+        /* ==========================================================================
+           2. HEADER NAVBAR
+           ========================================================================== */
         .top-navbar {
             width: 100%;
-            background: #0d121f;
+            background: rgba(13, 18, 31, 0.95);
+            backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(59, 130, 246, 0.25);
-            padding: 22px 45px;
+            padding: 18px 45px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -38,14 +77,17 @@
             color: #ffffff;
             cursor: pointer;
             user-select: none;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+        .brand-logo:hover {
+            filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.4));
         }
         .brand-logo:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
         }
 
         .brand-logo-img {
-            height: 50px;
+            height: 48px;
             width: auto;
             object-fit: contain;
         }
@@ -54,123 +96,197 @@
             background: rgba(18, 28, 48, 0.9);
             border: 1px solid rgba(59, 130, 246, 0.5);
             color: #60a5fa;
-            text-decoration: none;
-            padding: 10px 28px;
+            padding: 10px 24px;
             border-radius: 10px;
-            font-size: 15.5px;
+            font-size: 15px;
             font-weight: 700;
-            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .top-home-btn:hover {
             background: #2563eb;
             color: #ffffff;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
         }
 
-        /* Container & Titles */
+        /* ==========================================================================
+           3. MAIN LAYOUT & CONTAINER
+           ========================================================================== */
         .main-container {
-            max-width: 1100px;
+            max-width: 1200px;
+            width: 100%;
             margin: 35px auto 0 auto;
-            padding: 0 20px;
+            padding: 0 24px;
+            flex: 1;
         }
 
         .page-header {
             text-align: center;
             margin-bottom: 35px;
+            position: relative;
         }
         .page-title {
-            font-size: 36px;
+            font-size: 38px;
             font-weight: 900;
             color: #ffffff;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
         }
         .page-title span {
-            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            background: linear-gradient(90deg, #60a5fa, #3b82f6, #93c5fd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .page-subtitle {
             color: #94a3b8;
-            font-size: 14px;
+            font-size: 15px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        /* News Layout Grid */
+        /* Search & Filter Toolbar */
+        .toolbar-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: #0d1322;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+        .search-input {
+            width: 100%;
+            background: #070a12;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 10px 40px 10px 15px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.2);
+        }
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 16px;
+            pointer-events: none;
+        }
+
+        .stats-counter {
+            font-size: 13.5px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+        .stats-counter span {
+            color: #60a5fa;
+            font-weight: 800;
+        }
+
+        /* ==========================================================================
+           4. NEWS FEED GRID & CARDS
+           ========================================================================== */
         .news-feed {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-        }
-        @media (max-width: 768px) {
-            .news-feed { grid-template-columns: 1fr; }
-            .top-navbar { padding: 16px 20px; }
-            .brand-logo { font-size: 20px; }
-            .brand-logo-img { height: 40px; }
+            gap: 28px;
         }
 
-        /* Featured First Card */
-        .news-card.featured {
-            grid-column: 1 / -1;
-            display: grid;
-            grid-template-columns: 1.1fr 1fr;
-        }
-        @media (max-width: 850px) {
-            .news-card.featured { grid-template-columns: 1fr; }
-        }
-
-        /* News Card Styling */
         .news-card {
             background: #0f172a;
             border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 14px;
+            border-radius: 16px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
         }
         .news-card:hover {
             border-color: #60a5fa;
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.2);
+            transform: translateY(-6px);
+            box-shadow: 0 16px 35px rgba(59, 130, 246, 0.25);
+        }
+
+        /* Featured First Card Styling */
+        .news-card.featured {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            background: linear-gradient(135deg, #0f172a 0%, #0d1322 100%);
+            border: 1px solid rgba(96, 165, 250, 0.4);
         }
 
         .card-img-wrap {
             width: 100%;
-            height: 230px;
+            height: 240px;
             background: #05070c;
             overflow: hidden;
             position: relative;
         }
         .news-card.featured .card-img-wrap {
             height: 100%;
-            min-height: 240px;
+            min-height: 280px;
         }
         .card-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.4s ease;
+            transition: transform 0.5s ease;
         }
         .news-card:hover .card-img {
-            transform: scale(1.04);
+            transform: scale(1.06);
         }
 
         .image-badge {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(13, 19, 34, 0.85);
+            top: 12px;
+            right: 12px;
+            background: rgba(13, 19, 34, 0.88);
             border: 1px solid rgba(59, 130, 246, 0.5);
             color: #60a5fa;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11.5px;
             font-weight: 700;
-            backdrop-filter: blur(4px);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .featured-tag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
         }
 
         .card-content {
-            padding: 22px;
+            padding: 26px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -178,90 +294,140 @@
         }
 
         .card-title {
-            font-size: 20px;
+            font-size: 21px;
             font-weight: 800;
             color: #ffffff;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             line-height: 1.4;
         }
-        .news-card.featured .card-title { font-size: 24px; }
+        .news-card.featured .card-title {
+            font-size: 26px;
+        }
+
+        .card-snippet {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-footer-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
 
         .read-btn {
-            align-self: flex-start;
             background: #2563eb;
             color: #ffffff;
             border: none;
             padding: 10px 22px;
             border-radius: 8px;
-            font-size: 13.5px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: 0.25s;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
         .read-btn:hover {
             background: #3b82f6;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            transform: translateX(-2px);
         }
 
-        /* Modal Overlays */
+        .card-date {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* ==========================================================================
+           5. MODALS OVERLAYS & CONTAINER STYLES
+           ========================================================================== */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(3, 7, 18, 0.88);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             padding: 20px;
+            animation: fadeIn 0.25s ease-out;
         }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .modal-content {
             background: #0d1322;
             border: 1px solid rgba(59, 130, 246, 0.4);
-            border-radius: 16px;
+            border-radius: 18px;
             max-width: 880px;
-            width: 92%;
+            width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            padding: 30px;
+            padding: 32px;
             position: relative;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9);
+            animation: slideUp 0.3s ease-out;
         }
-        
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
         .close-modal {
             position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(255, 255, 255, 0.15);
+            top: 18px;
+            left: 18px;
+            background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
             font-size: 18px;
-            font-weight: bold;
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: 0.2s;
-            z-index: 20;
+            transition: all 0.2s ease;
+            z-index: 30;
         }
         .close-modal:hover {
             background: #ef4444;
             border-color: #ef4444;
+            transform: rotate(90deg);
         }
 
-        /* تصميم سلايدر الصور المنبثق مع الأسهم */
+        /* ==========================================================================
+           6. IMAGE SLIDER IN READER MODAL
+           ========================================================================== */
         .image-slider-wrapper {
             position: relative;
             width: 100%;
-            height: 380px;
+            height: 400px;
             background: #04060a;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 1px solid rgba(59, 130, 246, 0.25);
             overflow: hidden;
-            margin-bottom: 22px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -270,170 +436,180 @@
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            transition: opacity 0.3s ease;
         }
         .slider-btn {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(13, 19, 34, 0.75);
+            background: rgba(13, 19, 34, 0.82);
             border: 1px solid rgba(59, 130, 246, 0.4);
             color: #60a5fa;
-            width: 42px;
-            height: 42px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             user-select: none;
-            z-index: 5;
+            z-index: 10;
+            backdrop-filter: blur(4px);
         }
         .slider-btn:hover {
             background: #2563eb;
             color: #ffffff;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+            transform: translateY(-50%) scale(1.1);
         }
-        .slider-btn.prev { right: 15px; }
-        .slider-btn.next { left: 15px; }
+        .slider-btn.prev { right: 16px; }
+        .slider-btn.next { left: 16px; }
 
         .slider-counter-badge {
             position: absolute;
-            bottom: 12px;
-            background: rgba(7, 10, 18, 0.85);
+            bottom: 14px;
+            background: rgba(7, 10, 18, 0.88);
             border: 1px solid rgba(59, 130, 246, 0.3);
             color: #94a3b8;
-            padding: 4px 14px;
+            padding: 5px 16px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 12.5px;
             font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .modal-body {
             color: #cbd5e1;
             line-height: 1.8;
-            font-size: 16px;
+            font-size: 16.5px;
             white-space: pre-line;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: 18px;
+            padding-top: 20px;
         }
 
-        /* تصميم جديد وراقي لقائمة كلمة المرور */
+        /* ==========================================================================
+           7. SECRET PASSWORD MODAL
+           ========================================================================== */
         .password-card {
             background: linear-gradient(145deg, #0f172a, #0b1120);
-            border: 1px solid rgba(96, 165, 250, 0.3);
-            border-radius: 20px;
-            padding: 35px 25px;
-            max-width: 400px;
-            width: 90%;
+            border: 1px solid rgba(96, 165, 250, 0.35);
+            border-radius: 22px;
+            padding: 40px 30px;
+            max-width: 420px;
+            width: 100%;
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.85);
             position: relative;
         }
         .lock-icon-circle {
-            width: 65px;
-            height: 65px;
+            width: 70px;
+            height: 70px;
             background: rgba(37, 99, 235, 0.15);
             border: 2px solid rgba(96, 165, 250, 0.4);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 18px auto;
-            font-size: 28px;
+            margin: 0 auto 20px auto;
+            font-size: 30px;
         }
         .password-title {
             color: #ffffff;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .password-sub {
             color: #64748b;
-            font-size: 13px;
-            margin-bottom: 22px;
+            font-size: 13.5px;
+            margin-bottom: 24px;
         }
         .pwd-input {
             width: 100%;
             background: #070a12;
             border: 1.5px solid rgba(59, 130, 246, 0.3);
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 12px;
+            padding: 14px;
             color: #fff;
             text-align: center;
-            font-size: 18px;
+            font-size: 20px;
             outline: none;
-            letter-spacing: 3px;
+            letter-spacing: 4px;
             transition: all 0.3s ease;
-            margin-bottom: 18px;
+            margin-bottom: 20px;
         }
         .pwd-input:focus {
             border-color: #60a5fa;
-            box-shadow: 0 0 15px rgba(96, 165, 250, 0.2);
+            box-shadow: 0 0 18px rgba(96, 165, 250, 0.25);
         }
 
-        /* Admin Form Inputs */
+        /* ==========================================================================
+           8. ADMIN PANEL MODAL FORM & MANAGEMENT LIST
+           ========================================================================== */
         .admin-form-group {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
         .admin-form-group label {
             display: block;
-            font-size: 13px;
+            font-size: 13.5px;
             color: #94a3b8;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-weight: 700;
         }
         .admin-input, .admin-textarea {
             width: 100%;
             background: #070a12;
             border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            padding: 11px 14px;
+            border-radius: 10px;
+            padding: 12px 16px;
             color: #fff;
-            font-size: 13.5px;
+            font-size: 14px;
             outline: none;
+            transition: all 0.25s ease;
         }
         .admin-input:focus, .admin-textarea:focus {
             border-color: #60a5fa;
+            box-shadow: 0 0 12px rgba(96, 165, 250, 0.15);
         }
         .admin-textarea {
             resize: vertical;
-            min-height: 130px;
+            min-height: 140px;
         }
 
-        /* Upload Box & Thumbnails */
         .image-upload-box {
             border: 2px dashed rgba(59, 130, 246, 0.4);
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 12px;
+            padding: 24px;
             text-align: center;
             background: #070a12;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
         }
         .image-upload-box:hover {
             border-color: #60a5fa;
             background: rgba(59, 130, 246, 0.05);
         }
         .image-upload-box p {
-            font-size: 13px;
+            font-size: 13.5px;
             color: #94a3b8;
-            margin-top: 5px;
+            margin-top: 6px;
         }
 
         .preview-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-            margin-top: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+            gap: 12px;
+            margin-top: 14px;
         }
         .preview-thumb-wrap {
             position: relative;
-            height: 75px;
-            border-radius: 6px;
+            height: 80px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid rgba(59, 130, 246, 0.4);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .preview-thumb-wrap img {
             width: 100%;
@@ -442,55 +618,64 @@
         }
         .remove-thumb-btn {
             position: absolute;
-            top: 2px;
-            right: 2px;
-            background: rgba(239, 68, 68, 0.85);
+            top: 4px;
+            right: 4px;
+            background: rgba(239, 68, 68, 0.9);
             color: white;
             border: none;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 11px;
+            width: 22px;
+            height: 22px;
+            font-size: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: 0.2s;
+        }
+        .remove-thumb-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1);
         }
 
         .form-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .submit-news-btn {
             background: linear-gradient(90deg, #2563eb, #1d4ed8);
             color: #fff;
             border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 13px;
+            border-radius: 10px;
+            font-weight: 800;
             cursor: pointer;
             flex: 1;
             font-size: 15px;
-            transition: 0.25s;
+            transition: all 0.25s ease;
         }
         .submit-news-btn:hover {
             background: #3b82f6;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 18px rgba(59, 130, 246, 0.4);
         }
 
         .cancel-edit-btn {
             background: rgba(255, 255, 255, 0.1);
             color: #cbd5e1;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-weight: bold;
+            padding: 13px 20px;
+            border-radius: 10px;
+            font-weight: 700;
             cursor: pointer;
             display: none;
             font-size: 14px;
             transition: 0.25s;
+        }
+        .cancel-edit-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
         }
 
         .manage-news-item {
@@ -498,11 +683,16 @@
             justify-content: space-between;
             align-items: center;
             background: #070a12;
-            padding: 10px 14px;
-            border-radius: 8px;
+            padding: 12px 16px;
+            border-radius: 10px;
             margin-top: 10px;
             border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: 0.2s;
         }
+        .manage-news-item:hover {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
         .action-btns {
             display: flex;
             gap: 8px;
@@ -511,46 +701,87 @@
             background: #eab308;
             color: #000;
             border: none;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 12.5px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 800;
+            transition: 0.2s;
+        }
+        .edit-news-btn:hover {
+            background: #facc15;
         }
         .delete-news-btn {
             background: #ef4444;
             color: #fff;
             border: none;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 6px;
-            font-size: 12px;
+            font-size: 12.5px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 800;
+            transition: 0.2s;
+        }
+        .delete-news-btn:hover {
+            background: #dc2626;
         }
 
         .no-results {
             text-align: center;
-            padding: 50px;
+            padding: 60px 20px;
             color: #64748b;
             grid-column: 1 / -1;
+            font-size: 16px;
+            background: #0d1322;
+            border-radius: 16px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
         }
 
-        /* ملاحظة أسفل الصفحة */
+        /* ==========================================================================
+           9. FOOTER & BOTTOM NOTICE
+           ========================================================================== */
         .bottom-notice {
-            margin-top: 50px;
-            padding: 18px 24px;
-            background: rgba(13, 19, 34, 0.8);
+            margin-top: 60px;
+            padding: 20px 28px;
+            background: rgba(13, 19, 34, 0.85);
             border: 1px dashed rgba(59, 130, 246, 0.35);
-            border-radius: 12px;
+            border-radius: 14px;
             text-align: center;
             color: #94a3b8;
-            font-size: 14.5px;
+            font-size: 15px;
             line-height: 1.6;
         }
         .notice-link {
             color: #60a5fa;
             font-weight: 800;
             text-decoration: underline;
+            transition: color 0.2s;
+        }
+        .notice-link:hover {
+            color: #93c5fd;
+        }
+
+        .site-footer {
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 30px 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13.5px;
+            background: #04060a;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 850px) {
+            .news-feed { grid-template-columns: 1fr; }
+            .news-card.featured { grid-template-columns: 1fr; }
+            .top-navbar { padding: 16px 20px; }
+            .brand-logo { font-size: 20px; }
+            .brand-logo-img { height: 40px; }
+            .page-title { font-size: 30px; }
+            .image-slider-wrapper { height: 280px; }
+            .toolbar-bar { flex-direction: column; align-items: stretch; }
+            .search-box { max-width: 100%; }
         }
     </style>
 </head>
@@ -558,7 +789,7 @@
 
     <!-- Header Navbar -->
     <header class="top-navbar">
-        <div class="brand-logo" id="logoTrigger" title="انقر 3 مرات لفتح القائمة السرية">
+        <div class="brand-logo" id="logoTrigger" title="انقر 3 مرات لفتح لوحة المطور">
             <img src="images/logo.png" alt="Player Assistant Logo" class="brand-logo-img" onerror="this.style.display='none'">
             <span>Player Assistant</span>
         </div>
@@ -566,11 +797,23 @@
         <a href="index.html" class="top-home-btn">الرئيسية ←</a>
     </header>
 
+    <!-- Main Container -->
     <div class="main-container">
         <!-- Page Header Title -->
         <div class="page-header">
             <h1 class="page-title">أخبار وتحديثات <span>ماينكرافت</span></h1>
-            <p class="page-subtitle">مركز تغطية آخر التطورات والأخبار الرسمية الخاصة باللعبة</p>
+            <p class="page-subtitle">مركز تغطية آخر التطورات والأخبار الرسمية والتسريبات الخاصة بلعبة Minecraft</p>
+        </div>
+
+        <!-- Search Toolbar -->
+        <div class="toolbar-bar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="ابحث في عناوين الأخبار والتفاصيل...">
+            </div>
+            <div class="stats-counter">
+                إجمالي الأخبار: <span id="newsCount">0</span>
+            </div>
         </div>
 
         <!-- News Feed Grid -->
@@ -578,14 +821,19 @@
 
         <!-- Bottom Notice Message -->
         <div class="bottom-notice">
-            📢 لو تريد أن يتم إضافة أخبار جديدة فاذهب إلى <a href="feedback.html" class="notice-link">قسم الملاحظات والدعم</a> واكتب الخبر الذي تريد إضافته.
+            📢 ترغب في إقتراح خبر أو إضافة تحديث جديد؟ تفضل بزيارة <a href="feedback.html" class="notice-link">قسم الملاحظات والدعم</a> واكتب تفاصيل الخبر مباشرة.
         </div>
     </div>
 
-    <!-- Modal 1: Redesigned Password Modal -->
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <p>جميع الحقوق محفوظة &copy; 2026 - Player Assistant</p>
+    </footer>
+
+    <!-- Modal 1: Password Entry Modal -->
     <div class="modal-overlay" id="passwordModal">
         <div class="password-card">
-            <button class="close-modal" type="button">✕</button>
+            <button class="close-modal" type="button" aria-label="إغلاق">✕</button>
             <div class="lock-icon-circle">🔐</div>
             <h2 class="password-title">لوحة التحكم السرية</h2>
             <p class="password-sub">أدخل كلمة المرور الخاصة بالمطور للمتابعة</p>
@@ -599,38 +847,38 @@
     <!-- Modal 2: Reader Modal with Image Slider -->
     <div class="modal-overlay" id="readerModal">
         <div class="modal-content">
-            <button class="close-modal" type="button">✕</button>
+            <button class="close-modal" type="button" aria-label="إغلاق">✕</button>
             
-            <!-- Slider Section -->
+            <!-- Interactive Image Slider -->
             <div class="image-slider-wrapper">
-                <button class="slider-btn prev" id="sliderPrevBtn" type="button">❮</button>
+                <button class="slider-btn prev" id="sliderPrevBtn" type="button" aria-label="الصورة السابقة">❮</button>
                 <img id="sliderActiveImg" src="" alt="صورة الخبر" class="slider-main-img">
-                <button class="slider-btn next" id="sliderNextBtn" type="button">❯</button>
+                <button class="slider-btn next" id="sliderNextBtn" type="button" aria-label="الصورة التالية">❯</button>
                 <div class="slider-counter-badge" id="sliderCounter">1 / 1</div>
             </div>
 
-            <!-- News Title & Description Text Details -->
-            <h2 id="modalTitle" style="color:#fff; font-size:24px; margin-bottom:14px; font-weight: 800;"></h2>
+            <!-- News Title & Full Description Text -->
+            <h2 id="modalTitle" style="color:#fff; font-size:25px; margin-bottom:14px; font-weight: 800;"></h2>
             <div id="modalBody" class="modal-body"></div>
         </div>
     </div>
 
-    <!-- Modal 3: Secret Admin Panel (No Date Fields) -->
+    <!-- Modal 3: Secret Admin Panel -->
     <div class="modal-overlay" id="adminModal">
-        <div class="modal-content" style="max-width: 580px;" id="adminModalContent">
-            <button class="close-modal" type="button">✕</button>
-            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;" id="formHeaderTitle">⚙️️ القائمة الخاصة بالمطور</h2>
+        <div class="modal-content" style="max-width: 620px;" id="adminModalContent">
+            <button class="close-modal" type="button" aria-label="إغلاق">✕</button>
+            <h2 style="color:#60a5fa; font-size:20px; margin-bottom:20px; text-align:center; font-weight:800;" id="formHeaderTitle">⚙ القائمة الخاصة بالمطور</h2>
             
             <form id="addNewsForm">
                 <div class="admin-form-group">
-                    <label>عنوان الخبر الرئيسي:</label>
+                    <label for="newsTitleInput">عنوان الخبر الرئيسي:</label>
                     <input type="text" id="newsTitleInput" class="admin-input" required placeholder="مثال: إضافة عالم جديد باسم The Sift...">
                 </div>
 
                 <div class="admin-form-group">
-                    <label>صور الخبر (حدد عدة صور أو استخدم Ctrl+V للصق):</label>
+                    <label>صور الخبر (حدد عدة صور أو استخدم Ctrl+V لصق مباشرة):</label>
                     <div class="image-upload-box" onclick="document.getElementById('newsFileInput').click()">
-                        <span style="font-size:24px;">📁</span>
+                        <span style="font-size:28px;">📁</span>
                         <p id="uploadText">اضغط هنا لاختيار صورة أو أكثر، أو قم بـ <b>لصق الصور (Ctrl+V)</b></p>
                         <input type="file" id="newsFileInput" accept="image/*" multiple style="display:none;">
                     </div>
@@ -638,7 +886,7 @@
                 </div>
 
                 <div class="admin-form-group">
-                    <label>تفاصيل ونقاط الخبر الكاملة:</label>
+                    <label for="newsContentInput">تفاصيل ونقاط الخبر الكاملة:</label>
                     <textarea id="newsContentInput" class="admin-textarea" required placeholder="اكتب الشرح والتفاصيل الكاملة هنا مباشرة..."></textarea>
                 </div>
 
@@ -648,86 +896,129 @@
                 </div>
             </form>
 
-            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin: 22px 0;">
+            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin: 25px 0;">
 
-            <h3 style="color:#fff; font-size:15px; margin-bottom:12px;">إدارة الأخبار المنشورة:</h3>
+            <h3 style="color:#fff; font-size:16px; margin-bottom:14px; font-weight:700;">إدارة الأخبار المنشورة حالياً:</h3>
             <div id="adminNewsList"></div>
         </div>
     </div>
 
+    <!-- JavaScript Logic -->
     <script>
+        // ==========================================================================
+        // 1. GLOBAL CONSTANTS & STATE VARIABLES
+        // ==========================================================================
         const ADMIN_PASSWORD = "سعد نار";
         let currentBase64Images = [];
         let editingNewsId = null;
 
-        // Slider variables
+        // Image Slider State
         let currentSliderImages = [];
         let currentSliderIndex = 0;
 
         const DEFAULT_FALLBACK_IMG = "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop";
 
+        // LocalStorage Initialization
         let rawNews = JSON.parse(localStorage.getItem('pa_minecraft_news'));
         let newsList = rawNews || [
             {
-                id: Date.now(),
+                id: 1718000000000,
                 title: "عالم جديد باسم The Sift",
                 images: ["https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop"],
                 content: `هذا العالم أضيف إلى Minecraft Dungeons II وسيضاف إلى ماين كرافت عام 2027.\n\nليس هناك معلومات كثيرة عنه، ويقال أنه للوصول إليه يجب فتح بوابة الواردن.`
             }
         ];
 
-        function getNewsImages(item) {
-            if (Array.isArray(item.images) && item.images.length > 0) return item.images;
-            if (item.image) return [item.image];
-            return [DEFAULT_FALLBACK_IMG];
-        }
-
+        // DOM Elements References
         const newsFeed = document.getElementById('newsFeed');
         const fileInput = document.getElementById('newsFileInput');
         const previewGrid = document.getElementById('previewGrid');
         const submitBtn = document.getElementById('submitBtn');
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const addNewsForm = document.getElementById('addNewsForm');
+        const searchInput = document.getElementById('searchInput');
+        const newsCountSpan = document.getElementById('newsCount');
 
+        const readerModal = document.getElementById('readerModal');
+        const adminModal = document.getElementById('adminModal');
+        const passwordModal = document.getElementById('passwordModal');
+
+        const sliderActiveImg = document.getElementById('sliderActiveImg');
+        const sliderCounter = document.getElementById('sliderCounter');
+        const sliderPrevBtn = document.getElementById('sliderPrevBtn');
+        const sliderNextBtn = document.getElementById('sliderNextBtn');
+
+        // Helper function to extract images array safely
+        function getNewsImages(item) {
+            if (Array.isArray(item.images) && item.images.length > 0) return item.images;
+            if (item.image) return [item.image];
+            return [DEFAULT_FALLBACK_IMG];
+        }
+
+        // Save & Sync Data
         function saveAndRender() {
             localStorage.setItem('pa_minecraft_news', JSON.stringify(newsList));
             renderNewsFeed();
             renderAdminList();
         }
 
+        // ==========================================================================
+        // 2. RENDER NEWS FEED
+        // ==========================================================================
         function renderNewsFeed() {
+            const query = searchInput ? searchInput.value.trim().toLowerCase() : '';
             newsFeed.innerHTML = '';
 
-            if (newsList.length === 0) {
-                newsFeed.innerHTML = '<div class="no-results">لا توجد أخبار مضافة حالياً.</div>';
+            const filteredNews = newsList.filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                item.content.toLowerCase().includes(query)
+            );
+
+            if (newsCountSpan) newsCountSpan.textContent = filteredNews.length;
+
+            if (filteredNews.length === 0) {
+                newsFeed.innerHTML = '<div class="no-results">لم يتم العثور على أي أخبار تتطابق مع البحث.</div>';
                 return;
             }
 
-            newsList.forEach((item, index) => {
-                const isFeatured = index === 0 ? 'featured' : '';
+            filteredNews.forEach((item, index) => {
+                const isFeatured = (index === 0 && query === '') ? 'featured' : '';
                 const imgs = getNewsImages(item);
                 const coverImg = imgs[0];
                 const countBadge = imgs.length > 1 ? `<div class="image-badge">📷 ${imgs.length} صور</div>` : '';
+                const featuredTag = isFeatured ? `<div class="featured-tag">🔥 خبر بارز</div>` : '';
 
                 const card = document.createElement('article');
                 card.className = `news-card ${isFeatured}`;
 
                 card.innerHTML = `
                     <div class="card-img-wrap">
+                        ${featuredTag}
                         ${countBadge}
                         <img src="${coverImg}" alt="${item.title}" class="card-img" onerror="this.onerror=null; this.src='${DEFAULT_FALLBACK_IMG}';">
                     </div>
                     <div class="card-content">
                         <div>
                             <h2 class="card-title">${item.title}</h2>
+                            <p class="card-snippet">${item.content}</p>
                         </div>
-                        <button class="read-btn" type="button" onclick="openReaderModal(${item.id})">اقرأ التفاصيل الكاملة</button>
+                        <div class="card-footer-meta">
+                            <button class="read-btn" type="button" onclick="openReaderModal(${item.id})">اقرأ التفاصيل الكاملة ←</button>
+                        </div>
                     </div>
                 `;
                 newsFeed.appendChild(card);
             });
         }
 
+        // Realtime Search
+        if (searchInput) {
+            searchInput.addEventListener('input', renderNewsFeed);
+        }
+
+        // ==========================================================================
+        // 3. IMAGE PREVIEW & PASTE HANDLERS
+        // ==========================================================================
         function renderPreviewGrid() {
             previewGrid.innerHTML = '';
             currentBase64Images.forEach((imgSrc, idx) => {
@@ -735,7 +1026,7 @@
                 wrap.className = 'preview-thumb-wrap';
                 wrap.innerHTML = `
                     <img src="${imgSrc}" alt="معاينة">
-                    <button type="button" class="remove-thumb-btn" onclick="removeImage(${idx})">✕</button>
+                    <button type="button" class="remove-thumb-btn" onclick="removeImage(${idx})" title="حذف الصورة">✕</button>
                 `;
                 previewGrid.appendChild(wrap);
             });
@@ -764,7 +1055,6 @@
         });
 
         document.addEventListener('paste', (e) => {
-            const adminModal = document.getElementById('adminModal');
             if (adminModal.style.display === 'flex') {
                 const items = (e.clipboardData || e.originalEvent.clipboardData).items;
                 for (let item of items) {
@@ -776,19 +1066,17 @@
             }
         });
 
-        const readerModal = document.getElementById('readerModal');
-        const adminModal = document.getElementById('adminModal');
-        const passwordModal = document.getElementById('passwordModal');
-
-        /* Slider Controls Logic */
-        const sliderActiveImg = document.getElementById('sliderActiveImg');
-        const sliderCounter = document.getElementById('sliderCounter');
-        const sliderPrevBtn = document.getElementById('sliderPrevBtn');
-        const sliderNextBtn = document.getElementById('sliderNextBtn');
-
+        // ==========================================================================
+        // 4. IMAGE SLIDER LOGIC
+        // ==========================================================================
         function updateSliderDisplay() {
             if (currentSliderImages.length === 0) return;
-            sliderActiveImg.src = currentSliderImages[currentSliderIndex];
+            sliderActiveImg.style.opacity = '0.3';
+            setTimeout(() => {
+                sliderActiveImg.src = currentSliderImages[currentSliderIndex];
+                sliderActiveImg.style.opacity = '1';
+            }, 100);
+
             sliderCounter.textContent = `${currentSliderIndex + 1} / ${currentSliderImages.length}`;
 
             if (currentSliderImages.length <= 1) {
@@ -824,6 +1112,7 @@
             readerModal.style.display = 'flex';
         };
 
+        // Modal Close Buttons
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', () => {
                 readerModal.style.display = 'none';
@@ -833,6 +1122,9 @@
             });
         });
 
+        // ==========================================================================
+        // 5. SECRET TRIPLE CLICK TRIGGER & PASSWORD SYSTEM
+        // ==========================================================================
         let logoClickCount = 0;
         let logoClickTimer = null;
         const logoTrigger = document.getElementById('logoTrigger');
@@ -866,6 +1158,9 @@
             }
         });
 
+        // ==========================================================================
+        // 6. ADMIN ADD & EDIT NEWS MANAGEMENT
+        // ==========================================================================
         addNewsForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -912,7 +1207,7 @@
             currentBase64Images = [...getNewsImages(item)];
             renderPreviewGrid();
 
-            submitBtn.textContent = "✏️ حفظ التعديلات";
+            submitBtn.textContent = "✏️️ حفظ التعديلات";
             cancelEditBtn.style.display = "block";
 
             document.getElementById('adminModalContent').scrollTop = 0;
@@ -935,7 +1230,7 @@
                 const div = document.createElement('div');
                 div.className = 'manage-news-item';
                 div.innerHTML = `
-                    <span style="font-size:13px; color:#cbd5e1; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:60%;">${item.title}</span>
+                    <span style="font-size:13.5px; color:#cbd5e1; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:65%;">${item.title}</span>
                     <div class="action-btns">
                         <button type="button" class="edit-news-btn" onclick="editNews(${item.id})">تعديل</button>
                         <button type="button" class="delete-news-btn" onclick="deleteNews(${item.id})">حذف</button>
@@ -953,6 +1248,7 @@
             }
         };
 
+        // Close Modal when clicking outside content area
         window.addEventListener('click', (e) => {
             if (e.target === readerModal) readerModal.style.display = 'none';
             if (e.target === adminModal) {
@@ -962,6 +1258,17 @@
             if (e.target === passwordModal) passwordModal.style.display = 'none';
         });
 
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                readerModal.style.display = 'none';
+                adminModal.style.display = 'none';
+                passwordModal.style.display = 'none';
+                resetFormState();
+            }
+        });
+
+        // Initialize Feed
         renderNewsFeed();
     </script>
 </body>
