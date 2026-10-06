@@ -94,40 +94,35 @@
             font-size: 14px;
         }
 
-        /* News Layout Grid - متساوية الأحجام */
+        /* News Layout Grid - مستطيل أفقي على العرض */
         .news-feed {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-        }
-        @media (max-width: 768px) {
-            .news-feed { grid-template-columns: 1fr; }
-            .top-navbar { padding: 16px 20px; }
-            .brand-logo { font-size: 20px; }
-            .brand-logo-img { height: 40px; }
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
         }
 
-        /* News Card Styling */
+        /* News Card Styling - شكل مستطيل أفقي */
         .news-card {
             background: #0f172a;
             border: 1px solid rgba(59, 130, 246, 0.2);
             border-radius: 14px;
             overflow: hidden;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             transition: all 0.3s ease;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-            cursor: pointer; /* تجعل بطاقة الخبر كاملة قابلة للضغط */
+            cursor: pointer;
+            min-height: 200px;
         }
         .news-card:hover {
             border-color: #60a5fa;
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25);
         }
 
         .card-img-wrap {
-            width: 100%;
-            height: 230px;
+            width: 300px;
+            min-width: 300px;
             background: #05070c;
             overflow: hidden;
             position: relative;
@@ -145,7 +140,7 @@
         .image-badge {
             position: absolute;
             top: 10px;
-            left: 10px;
+            right: 10px;
             background: rgba(13, 19, 34, 0.85);
             border: 1px solid rgba(59, 130, 246, 0.5);
             color: #60a5fa;
@@ -165,15 +160,23 @@
         }
 
         .card-title {
-            font-size: 20px;
+            font-size: 21px;
             font-weight: 800;
             color: #ffffff;
-            margin-bottom: 18px;
+            margin-bottom: 14px;
             line-height: 1.4;
         }
 
+        .card-actions-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
         .read-btn {
-            align-self: flex-start;
             background: #2563eb;
             color: #ffffff;
             border: none;
@@ -187,6 +190,35 @@
         .read-btn:hover {
             background: #3b82f6;
             box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        /* كبسة التعليقات على مستطيل الخبر */
+        .card-comments-btn {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .card-comments-btn:hover {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .news-card { flex-direction: column; }
+            .card-img-wrap { width: 100%; min-width: 100%; height: 200px; }
+            .top-navbar { padding: 16px 20px; }
+            .brand-logo { font-size: 20px; }
+            .brand-logo-img { height: 40px; }
         }
 
         /* Modal Overlays */
@@ -306,7 +338,7 @@
             margin-bottom: 25px;
         }
 
-        /* قسم التعليقات الجديد */
+        /* قسم التعليقات */
         .comments-section {
             border-top: 1px solid rgba(59, 130, 246, 0.25);
             padding-top: 22px;
@@ -371,6 +403,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 10px;
             padding: 12px 16px;
+            position: relative;
         }
         .comment-header {
             display: flex;
@@ -393,6 +426,29 @@
             line-height: 1.5;
             white-space: pre-line;
         }
+        
+        /* رد المطور */
+        .developer-reply-box {
+            background: rgba(37, 99, 235, 0.12);
+            border-right: 3px solid #3b82f6;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 8px;
+        }
+        .reply-header {
+            font-size: 12px;
+            font-weight: 800;
+            color: #60a5fa;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .reply-text {
+            font-size: 13px;
+            color: #e2e8f0;
+        }
+
         .no-comments {
             color: #64748b;
             font-size: 13.5px;
@@ -401,6 +457,31 @@
         }
 
         /* لوحة التحكم السرية للمطور */
+        .admin-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 12px;
+        }
+        .admin-manage-comments-btn {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #60a5fa;
+            padding: 7px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .admin-manage-comments-btn:hover {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
+        }
+
         .password-card {
             background: linear-gradient(145deg, #0f172a, #0b1120);
             border: 1px solid rgba(96, 165, 250, 0.3);
@@ -586,11 +667,54 @@
             font-weight: bold;
         }
 
+        /* تنسيقات نافذة إدارة التعليقات للمطور */
+        .admin-comment-box {
+            background: #070a12;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 14px;
+        }
+        .admin-comment-news-title {
+            font-size: 12px;
+            color: #3b82f6;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .admin-comment-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .admin-reply-input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .admin-reply-input {
+            flex: 1;
+            background: #0d1322;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #fff;
+            font-size: 13px;
+        }
+        .admin-reply-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         .no-results {
             text-align: center;
             padding: 50px;
             color: #64748b;
-            grid-column: 1 / -1;
         }
 
         .bottom-notice {
@@ -626,7 +750,7 @@
             <p class="page-subtitle">مركز تغطية آخر التطورات والأخبار الرسمية الخاصة باللعبة</p>
         </div>
 
-        <!-- News Feed Grid -->
+        <!-- News Feed Grid (مستطيلات على عرض الصفحة) -->
         <div class="news-feed" id="newsFeed"></div>
 
         <!-- Bottom Notice Message -->
@@ -667,14 +791,14 @@
             <div id="modalBody" class="modal-body"></div>
 
             <!-- Comments Section -->
-            <div class="comments-section">
+            <div class="comments-section" id="commentsSection">
                 <div class="comments-title">
                     💬 التعليقات (<span id="commentsCount">0</span>)
                 </div>
 
                 <!-- Form to Add Comment -->
                 <form id="commentForm" class="comment-form">
-                    <input type="text" id="commentAuthor" class="comment-input" placeholder="اسمك الكريم..." required autocomplete="off">
+                    <input type="text" id="commentAuthor" class="comment-input" placeholder="اسمك..." required autocomplete="off">
                     <textarea id="commentText" class="comment-textarea" placeholder="اكتب تعليقك هنا..." required></textarea>
                     <button type="submit" class="submit-comment-btn">إرسال التعليق 💬</button>
                 </form>
@@ -689,7 +813,12 @@
     <div class="modal-overlay" id="adminModal">
         <div class="modal-content" style="max-width: 580px;" id="adminModalContent">
             <button class="close-modal" type="button">✕</button>
-            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;" id="formHeaderTitle">⚙ القائمة الخاصة بالمطور</h2>
+            
+            <!-- الهيدر مع الزر المطلوب إضافته للمطور -->
+            <div class="admin-header-row">
+                <h2 style="color:#60a5fa; font-size:19px;" id="formHeaderTitle">⚙ القائمة الخاصة بالمطور</h2>
+                <button type="button" class="admin-manage-comments-btn" onclick="openAdminCommentsModal()">💬 إدارة التعليقات</button>
+            </div>
             
             <form id="addNewsForm">
                 <div class="admin-form-group">
@@ -725,11 +854,21 @@
         </div>
     </div>
 
+    <!-- Modal 4: Admin Comments Control Panel -->
+    <div class="modal-overlay" id="adminCommentsModal">
+        <div class="modal-content" style="max-width: 650px;">
+            <button class="close-modal" type="button">✕</button>
+            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;">💬 لوحة الردود وحذف التعليقات</h2>
+            <div id="adminAllCommentsList"></div>
+        </div>
+    </div>
+
     <script>
         const ADMIN_PASSWORD = "سعد نار";
         let currentBase64Images = [];
         let editingNewsId = null;
         let currentActiveNewsId = null;
+        let isAdminLoggedIn = false;
 
         // Slider variables
         let currentSliderImages = [];
@@ -765,8 +904,12 @@
             localStorage.setItem('pa_minecraft_news', JSON.stringify(newsList));
             renderNewsFeed();
             renderAdminList();
+            if (document.getElementById('adminCommentsModal').style.display === 'flex') {
+                renderAdminComments();
+            }
         }
 
+        /* عرض الأخبار كـ مستطيلات أفقية */
         function renderNewsFeed() {
             newsFeed.innerHTML = '';
 
@@ -782,8 +925,8 @@
                 const commentCount = item.comments ? item.comments.length : 0;
 
                 const card = document.createElement('article');
-                card.className = 'news-card'; // أحجام متساوية لجميع الأخبار
-                card.onclick = () => openReaderModal(item.id); // فتح النافذة عند الضغط في أي مكان بالبطاقة
+                card.className = 'news-card';
+                card.onclick = () => openReaderModal(item.id);
 
                 card.innerHTML = `
                     <div class="card-img-wrap">
@@ -794,9 +937,11 @@
                         <div>
                             <h2 class="card-title">${item.title}</h2>
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <button class="read-btn" type="button">اقرأ التفاصيل الكاملة</button>
-                            <span style="color:#60a5fa; font-size:13px; font-weight:bold;">💬 ${commentCount}</span>
+                        <div class="card-actions-bar">
+                            <button class="read-btn" type="button" onclick="event.stopPropagation(); openReaderModal(${item.id})">اقرأ التفاصيل الكاملة</button>
+                            <button class="card-comments-btn" type="button" onclick="event.stopPropagation(); openReaderModal(${item.id}, true)">
+                                💬 ${commentCount} تعليق
+                            </button>
                         </div>
                     </div>
                 `;
@@ -855,6 +1000,7 @@
         const readerModal = document.getElementById('readerModal');
         const adminModal = document.getElementById('adminModal');
         const passwordModal = document.getElementById('passwordModal');
+        const adminCommentsModal = document.getElementById('adminCommentsModal');
 
         /* Slider Controls Logic */
         const sliderActiveImg = document.getElementById('sliderActiveImg');
@@ -888,7 +1034,7 @@
             updateSliderDisplay();
         });
 
-        window.openReaderModal = function(id) {
+        window.openReaderModal = function(id, scrollToComments = false) {
             const item = newsList.find(n => n.id === id);
             if (!item) return;
 
@@ -903,9 +1049,15 @@
             renderComments(item);
 
             readerModal.style.display = 'flex';
+
+            if (scrollToComments) {
+                setTimeout(() => {
+                    document.getElementById('commentsSection').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
         };
 
-        /* إدارة التعليقات */
+        /* إدارة ورسم التعليقات مع أزرار الحذف والرد لو المطور متصل */
         function renderComments(item) {
             const commentsList = document.getElementById('commentsList');
             const commentsCount = document.getElementById('commentsCount');
@@ -919,15 +1071,37 @@
                 return;
             }
 
-            comments.forEach(c => {
+            comments.forEach((c, index) => {
                 const div = document.createElement('div');
                 div.className = 'comment-card';
+
+                let developerReplyHtml = '';
+                if (c.reply) {
+                    developerReplyHtml = `
+                        <div class="developer-reply-box">
+                            <div class="reply-header">👑 رد المطور</div>
+                            <div class="reply-text">${c.reply}</div>
+                        </div>
+                    `;
+                }
+
+                let adminActionsHtml = '';
+                if (isAdminLoggedIn) {
+                    adminActionsHtml = `
+                        <div style="margin-top:8px; display:flex; gap:6px;">
+                            <button type="button" class="delete-news-btn" onclick="deleteComment(${item.id}, ${index})">حذف التعليق</button>
+                        </div>
+                    `;
+                }
+
                 div.innerHTML = `
                     <div class="comment-header">
                         <span class="comment-author">${c.author}</span>
                         <span class="comment-date">${c.date}</span>
                     </div>
                     <div class="comment-text">${c.text}</div>
+                    ${developerReplyHtml}
+                    ${adminActionsHtml}
                 `;
                 commentsList.appendChild(div);
             });
@@ -963,11 +1137,88 @@
             }
         });
 
+        /* نافذة التحكم بالتعليقات الخاصة بالمطور */
+        window.openAdminCommentsModal = function() {
+            renderAdminComments();
+            adminCommentsModal.style.display = 'flex';
+        };
+
+        function renderAdminComments() {
+            const listContainer = document.getElementById('adminAllCommentsList');
+            listContainer.innerHTML = '';
+
+            let totalComments = 0;
+
+            newsList.forEach((news) => {
+                if (news.comments && news.comments.length > 0) {
+                    news.comments.forEach((c, idx) => {
+                        totalComments++;
+                        const card = document.createElement('div');
+                        card.className = 'admin-comment-box';
+
+                        const replyVal = c.reply ? c.reply : '';
+
+                        card.innerHTML = `
+                            <div class="admin-comment-news-title">📍 الخبر: ${news.title}</div>
+                            <div class="admin-comment-info">
+                                <span style="color:#60a5fa; font-weight:bold; font-size:13.5px;">👤 ${c.author}</span>
+                                <span style="color:#64748b; font-size:11px;">${c.date}</span>
+                            </div>
+                            <div style="color:#cbd5e1; font-size:13.5px; margin-bottom:10px;">${c.text}</div>
+                            
+                            ${c.reply ? `<div class="developer-reply-box"><div class="reply-header">👑 الرد الحالي:</div><div class="reply-text">${c.reply}</div></div>` : ''}
+
+                            <div class="admin-reply-input-group">
+                                <input type="text" id="replyInput_${news.id}_${idx}" class="admin-reply-input" placeholder="اكتب رد المطور هنا..." value="${replyVal}">
+                                <button type="button" class="admin-reply-btn" onclick="saveAdminReply(${news.id}, ${idx})">إرسال الرد</button>
+                                <button type="button" class="delete-news-btn" onclick="deleteComment(${news.id}, ${idx})">حذف</button>
+                            </div>
+                        `;
+                        listContainer.appendChild(card);
+                    });
+                }
+            });
+
+            if (totalComments === 0) {
+                listContainer.innerHTML = '<div class="no-comments">لا توجد تعليقات في أي من الأخبار حالياً.</div>';
+            }
+        }
+
+        window.saveAdminReply = function(newsId, commentIdx) {
+            const input = document.getElementById(`replyInput_${newsId}_${commentIdx}`);
+            if (!input) return;
+            const replyText = input.value.trim();
+
+            const news = newsList.find(n => n.id === newsId);
+            if (news && news.comments && news.comments[commentIdx]) {
+                news.comments[commentIdx].reply = replyText;
+                saveAndRender();
+                if (currentActiveNewsId === newsId) {
+                    renderComments(news);
+                }
+                alert("تم حفظ رد المطور بنجاح!");
+            }
+        };
+
+        window.deleteComment = function(newsId, commentIdx) {
+            if (confirm("هل أنت تأكد من رغبتك في حذف هذا التعليق؟")) {
+                const news = newsList.find(n => n.id === newsId);
+                if (news && news.comments) {
+                    news.comments.splice(commentIdx, 1);
+                    saveAndRender();
+                    if (currentActiveNewsId === newsId) {
+                        renderComments(news);
+                    }
+                }
+            }
+        };
+
         document.querySelectorAll('.close-modal').forEach(btn => {
             btn.addEventListener('click', () => {
                 readerModal.style.display = 'none';
                 adminModal.style.display = 'none';
                 passwordModal.style.display = 'none';
+                adminCommentsModal.style.display = 'none';
                 resetFormState();
             });
         });
@@ -996,6 +1247,7 @@
             const enteredPwd = document.getElementById('passwordInput').value.trim();
 
             if (enteredPwd === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true;
                 passwordModal.style.display = 'none';
                 renderAdminList();
                 adminModal.style.display = 'flex';
@@ -1100,6 +1352,7 @@
                 resetFormState();
             }
             if (e.target === passwordModal) passwordModal.style.display = 'none';
+            if (e.target === adminCommentsModal) adminCommentsModal.style.display = 'none';
         });
 
         renderNewsFeed();
