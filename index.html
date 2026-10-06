@@ -37,10 +37,151 @@
             pointer-events: none;
         }
 
-        /* الهيدر والعنوان الرئيسي */
+        /* شريط الحساب العلوي */
+        .user-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            background: rgba(8, 13, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .user-info-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.1rem;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+            overflow: hidden;
+            border: 2px solid #00f2fe;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-text {
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* رتب الحسابات */
+        .role-badge {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .role-owner {
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+        }
+
+        .role-developer {
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+        }
+
+        .role-player {
+            background: rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-admin-panel {
+            background: linear-gradient(135deg, #f59e0b, #dc2626);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-admin-panel:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .btn-profile-settings {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+        }
+
+        .btn-profile-settings:hover {
+            background: rgba(59, 130, 246, 0.35);
+            color: #fff;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border-color: #ef4444;
+        }
+
+        /* الهيدر والعنوان */
         .hero {
             text-align: center;
-            margin: 40px 20px 20px;
+            margin: 30px 20px 20px;
         }
 
         .hero-title-box {
@@ -141,14 +282,6 @@
             transition: opacity 0.3s ease;
         }
 
-        /* تنسيق صورة الدروع HD عالية الدقة */
-        .hd-armor-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.7));
-        }
-
         .card h2 {
             font-size: 1.6rem;
             font-weight: 800;
@@ -229,32 +362,7 @@
             font-size: 0.95rem;
         }
 
-        .palestine-flag {
-            transition: transform 0.2s ease;
-            display: inline-block;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-        }
-
-        .palestine-flag:hover {
-            transform: scale(1.2);
-        }
-
-        .palestine-flag:active {
-            transform: scale(1.4);
-        }
-
-        @media (max-width: 768px) {
-            footer {
-                grid-template-columns: 1fr;
-                justify-items: center;
-                text-align: center;
-            }
-            .footer-right, .footer-left {
-                justify-self: center;
-            }
-        }
-
-        /* النوافذ المنبثقة (المودال) */
+        /* النوافذ المنبثقة */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -274,8 +382,8 @@
             box-shadow: 0 0 30px rgba(0, 242, 254, 0.35);
             border-radius: 24px;
             width: 100%;
-            max-width: 600px;
-            max-height: 85vh;
+            max-width: 650px;
+            max-height: 88vh;
             display: flex;
             flex-direction: column;
             position: relative;
@@ -337,6 +445,73 @@
             flex-grow: 1;
         }
 
+        /* اختيار الملفات وعرض المعاينة */
+        .file-upload-box {
+            background: rgba(6, 9, 17, 0.9);
+            border: 2px dashed rgba(0, 242, 254, 0.4);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .file-upload-box:hover {
+            border-color: #00f2fe;
+        }
+
+        .file-upload-box input[type="file"] {
+            display: none;
+        }
+
+        .avatar-preview-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .avatar-preview-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #00f2fe;
+            object-fit: cover;
+            background: #060911;
+        }
+
+        /* جدول إدارة الرتب */
+        .roles-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .roles-table th, .roles-table td {
+            padding: 12px;
+            text-align: right;
+            border-bottom: 1px solid rgba(0, 242, 254, 0.15);
+        }
+
+        .roles-table th {
+            color: #00f2fe;
+            font-weight: 800;
+            background: rgba(6, 9, 17, 0.8);
+        }
+
+        .role-select {
+            background: #060911;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* رسائل الدعم والتذاكر */
         .msg-item {
             background: #040812;
             border: 1px solid rgba(0, 242, 254, 0.15);
@@ -483,6 +658,11 @@
             transition: all 0.3s ease;
         }
 
+        .form-input:focus {
+            border-color: #00f2fe;
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
+        }
+
         .submit-btn {
             width: 100%;
             padding: 14px;
@@ -500,9 +680,60 @@
             justify-content: center;
             gap: 10px;
         }
+
+        .auth-tab, .panel-tab {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab.active, .panel-tab.active {
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .error-text {
+            color: #ff4d4d;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+            display: none;
+        }
     </style>
 </head>
 <body>
+
+    <!-- شريط الحساب العلوي -->
+    <header class="user-top-bar">
+        <div class="user-info-box">
+            <div id="user-avatar" class="user-avatar">👤</div>
+            <div class="user-details">
+                <div class="user-name-text">
+                    <span id="user-display-name">جاري التحميل...</span>
+                    <span id="role-badge" class="role-badge role-player">🎮 لاعب</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="user-actions">
+            <!-- زر قائمة المطور / لوحة الإدارة (يتغير حسب رتبة الحساب) -->
+            <button id="admin-panel-btn" class="btn-small btn-admin-panel" style="display: none;" onclick="openAdminModal()">👑 لوحة الإدارة</button>
+            
+            <!-- زر إعدادات الحساب -->
+            <button class="btn-small btn-profile-settings" onclick="openProfileModal()">⚙️ إعدادات الحساب</button>
+            
+            <button class="btn-small btn-logout" onclick="logoutUser()">تغيير الحساب 🔄</button>
+        </div>
+    </header>
 
     <section class="hero">
         <div class="hero-title-box">
@@ -512,7 +743,7 @@
         <p>مساعدك الأول لكل ما يخص عالم ماين كرافت</p>
     </section>
 
-    <!-- المحتوى الرئيسي (6 كروت) -->
+    <!-- الشبكة الرئيسية -->
     <main class="grid-container">
         <!-- 1. مساعد الكوماندات -->
         <div class="card">
@@ -560,7 +791,7 @@
                 <img src="images/support.png" class="mc-item-icon" alt="الاقتراحات والدعم">
             </div>
             <h2>الملاحظات والدعم</h2>
-            <p>شاركنا أفكارك واقتراحاتك لتطوير الموقع أو أبلغ عن أي مشكلة تطلب حلها، واطلع على الردود والإجابات المباشرة المقدمة من المطور أسامة متابعةً لجميع اللاعبين.</p>
+            <p>شاركنا أفكارك واقتراحاتك لتطوير الموقع أو أبلغ عن أي مشكلة تطلب حلها، واطلع على الردود والإجابات المباشرة المقدمة من فريق التطوير متابعةً لجميع اللاعبين.</p>
             <a href="feedback.html" class="btn">الملاحظات والدعم</a>
         </div>
 
@@ -578,7 +809,7 @@
     <!-- التذييل -->
     <footer>
         <div class="footer-right">
-            <img id="palestine-flag" class="palestine-flag" src="https://flagcdn.com/w40/ps.png" alt="علم فلسطين" title="فلسطين حرة" width="30" height="20" style="border-radius: 3px; cursor: pointer; vertical-align: middle; object-fit: cover;">
+            <img class="palestine-flag" src="https://flagcdn.com/w40/ps.png" alt="علم فلسطين" title="فلسطين حرة" width="30" height="20" style="border-radius: 3px; vertical-align: middle; object-fit: cover;">
             <span class="made-in-text">Developed in Palestine</span>
         </div>
 
@@ -595,150 +826,485 @@
         <span id="toast-text">تمت العملية بنجاح!</span>
     </div>
 
-    <!-- نافذة طلب كلمة المرور للمطور -->
-    <div id="password-modal" class="modal-overlay">
+    <!-- 1. نافذة تسجيل الدخول / إنشاء حساب -->
+    <div id="auth-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 440px;">
-            <button class="close-btn" onclick="closePasswordModal()">✖</button>
             <div class="modal-header">
-                <h3>🔑 المكان السري</h3>
-                <p class="modal-subtitle">هذه المنطقة مخصصة للمطور أسامة</p>
+                <h3>🎮 مرحباً بك في Player Assistant</h3>
+                <p class="modal-subtitle">اختر تسجيل الدخول أو إنشاء حساب جديد</p>
             </div>
-            <div class="modal-body" style="padding-top: 10px;">
+            
+            <div style="display: flex; gap: 10px; margin: 5px 22px 15px; background: rgba(6, 9, 17, 0.9); padding: 4px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2);">
+                <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+                <button id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')">إنشاء حساب</button>
+            </div>
+
+            <div class="modal-body" style="padding-top: 5px;">
                 <div class="form-group">
-                    <label for="dev-pass-input">أدخل كلمة المرور للدخول:</label>
-                    <input type="password" id="dev-pass-input" class="form-input" placeholder="كلمة المرور..." style="text-align: center; font-size: 1.1rem; letter-spacing: 2px;">
+                    <label for="auth-username">اسم المستخدم / اللاعب:</label>
+                    <input type="text" id="auth-username" class="form-input" placeholder="أدخل اسمك هنا..." autocomplete="off">
                 </div>
-                <p id="pass-error-msg" style="color: #ff4d4d; font-size: 0.95rem; font-weight: 700; text-align: center; margin-bottom: 14px; display: none;">❌ كلمة المرور غير صحيحة!</p>
-                <button class="submit-btn" onclick="checkDevPassword()">
-                    <span>دخول للوحة السرية</span>
-                    <span style="font-size: 1.1rem;">🔓</span>
+                <div class="form-group">
+                    <label for="auth-password">كلمة السر:</label>
+                    <input type="password" id="auth-password" class="form-input" placeholder="كلمة السر..." autocomplete="off">
+                </div>
+                
+                <p id="auth-error-msg" class="error-text"></p>
+
+                <button id="auth-submit-btn" class="submit-btn" onclick="handleAuthSubmit()">
+                    <span>تسجيل الدخول</span>
+                    <span style="font-size: 1.1rem;">🚀</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- لوحة اقتراحات المطور -->
-    <div id="secret-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeSecretModal()">✖</button>
+    <!-- 2. نافذة تعديل إعدادات الحساب (اختيار الملفات + كلمة السر القديمة والجديدة) -->
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 480px;">
+            <button class="close-btn" onclick="closeProfileModal()">✖</button>
             <div class="modal-header">
-                <h3>🔥 لوحة اقتراحات المطور أسامة 🔥</h3>
-                <p class="modal-subtitle">رسائل واقتراحات المتابعين الحية مع إمكانية الرد</p>
+                <h3>⚙️ إعدادات الحساب</h3>
+                <p class="modal-subtitle">تعديل الصورة الشخصية وكلمة السر</p>
             </div>
             <div class="modal-body">
-                <div id="messages-container"></div>
-                <button class="clear-btn" onclick="clearAllMessages()">مسح جميع الرسائل</button>
+                <!-- اختيار الصورة من جهاز المستخدم (الملفات) -->
+                <div class="form-group">
+                    <label>اختيار صورة شخصية من الملفات:</label>
+                    <div class="file-upload-box" onclick="document.getElementById('profile-avatar-file').click()">
+                        <span style="font-size: 1.8rem; display: block; margin-bottom: 5px;">📁</span>
+                        <span style="color: #00f2fe; font-weight: 700; font-size: 0.95rem;">اضغط هنا لاختيار صورة من جهازك</span>
+                        <input type="file" id="profile-avatar-file" accept="image/*" onchange="handleFileSelect(event)">
+                    </div>
+                    
+                    <div id="avatar-preview-box" class="avatar-preview-container" style="display: none;">
+                        <img id="avatar-preview-img" class="avatar-preview-img" src="" alt="معاينة">
+                        <span style="color: #cbd5e1; font-size: 0.85rem; font-weight: 700;">الصورة المختارة حالياً</span>
+                    </div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid rgba(0, 242, 254, 0.2); margin: 20px 0;">
+
+                <!-- تغيير كلمة السر بشرط إدخال كلمة السر القديمة -->
+                <div class="form-group">
+                    <label for="profile-old-password">كلمة السر القديمة:</label>
+                    <input type="password" id="profile-old-password" class="form-input" placeholder="أدخل كلمة السر القديمة">
+                </div>
+
+                <div class="form-group">
+                    <label for="profile-new-password">كلمة السر الجديدة:</label>
+                    <input type="password" id="profile-new-password" class="form-input" placeholder="أدخل كلمة السر الجديدة">
+                </div>
+
+                <p id="profile-error-msg" class="error-text"></p>
+
+                <button class="submit-btn" onclick="saveProfileSettings()">
+                    <span>حفظ التعديلات</span>
+                    <span>💾</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. نافذة لوحة التحكم والإدارة / قائمة المطور -->
+    <div id="admin-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAdminModal()">✖</button>
+            <div class="modal-header">
+                <h3 id="panel-modal-title">👑 لوحة التحكم والإدارة</h3>
+                <p class="modal-subtitle">إدارة الرتب، التذاكر، والاقتراحات</p>
+            </div>
+
+            <!-- تبويبات لوحة الإدارة -->
+            <div style="display: flex; gap: 10px; margin: 0 22px 10px; background: rgba(6, 9, 17, 0.9); padding: 4px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2);">
+                <button id="tab-roles" class="panel-tab active" onclick="switchPanelTab('roles')">👑 إعدادات الملك (الرتب)</button>
+                <button id="tab-tickets" class="panel-tab" onclick="switchPanelTab('tickets')">💬 التذاكر والدعم</button>
+            </div>
+
+            <div class="modal-body">
+                <!-- قسم 1: إدارة الرتب (خاص بالمالك) -->
+                <div id="panel-roles-section">
+                    <p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 10px; font-weight: 600;">بصفتك المالك، يمكنك منح وتعديل رتب كافة الحسابات المسجلة بالموقع:</p>
+                    <div style="overflow-x: auto;">
+                        <table class="roles-table">
+                            <thead>
+                                <tr>
+                                    <th>اسم المستخدم</th>
+                                    <th>الرتبة الحالية</th>
+                                    <th>تغيير الرتبة</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roles-table-body">
+                                <!-- يتم إنشاؤه ديناميكياً -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- قسم 2: إدارة التذاكر (للمالك والمطور) -->
+                <div id="panel-tickets-section" style="display: none;">
+                    <div id="messages-container"></div>
+                    <button class="clear-btn" onclick="clearAllMessages()">مسح جميع الرسائل</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        function showToast(message, icon = "✅") {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-text').innerText = message;
-            document.getElementById('toast-icon').innerText = icon;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
+        const DEV_PASS = 'سعد نار';
+        let currentAuthMode = 'login';
+        let tempSelectedAvatarData = null;
 
-        // --- تبديل مسارات صور الكوماند بلوك الثلاثة ---
-        const commandImgElement = document.getElementById('command-img');
-        
-        const commandImages = [
-            "images/command_block.png",       // العادي
-            "images/command_repeating.png",   // البنفسجي
-            "images/command_chain.png"        // الأخضر
-        ];
+        // تعريف الرتب
+        const ROLES = {
+            owner: { name: '👑 مالك', class: 'role-owner' },
+            developer: { name: '💻 مطور', class: 'role-developer' },
+            player: { name: '🎮 لاعب', class: 'role-player' }
+        };
 
-        let commandIndex = 0;
+        window.addEventListener('DOMContentLoaded', () => {
+            initDefaultAccounts();
+            checkUserSession();
+        });
 
-        if (commandImgElement) {
-            commandImgElement.style.transition = "opacity 0.3s ease-in-out";
+        function initDefaultAccounts() {
+            let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
             
-            setInterval(() => {
-                commandImgElement.style.opacity = '0';
-                
-                setTimeout(() => {
-                    commandIndex = (commandIndex + 1) % commandImages.length;
-                    commandImgElement.src = commandImages[commandIndex];
-                    commandImgElement.style.opacity = '1';
-                }, 300);
-            }, 2500);
-        }
-
-        // --- فتح النافذة السرية عند الضغط على العلم 3 مرات ---
-        let flagClicks = 0;
-        let flagClickTimer = null;
-        const palestineFlag = document.getElementById('palestine-flag');
-
-        palestineFlag.addEventListener('click', function() {
-            flagClicks++;
-            clearTimeout(flagClickTimer);
-
-            if (flagClicks === 3) {
-                flagClicks = 0;
-                openPasswordModal();
-            } else {
-                flagClickTimer = setTimeout(() => { flagClicks = 0; }, 1500);
+            // تعيين أسامة دائماً كمالك
+            if (!accountsDB['أسامة'] && !accountsDB['osama']) {
+                accountsDB['أسامة'] = {
+                    password: DEV_PASS,
+                    role: 'owner',
+                    avatar: '',
+                    createdAt: new Date().toISOString()
+                };
+            } else if (accountsDB['أسامة']) {
+                accountsDB['أسامة'].role = 'owner';
             }
-        });
 
-        function openPasswordModal() {
-            const passInput = document.getElementById('dev-pass-input');
-            const errorMsg = document.getElementById('pass-error-msg');
-            passInput.value = '';
-            errorMsg.style.display = 'none';
-            document.getElementById('password-modal').style.display = 'flex';
-            setTimeout(() => passInput.focus(), 100);
+            localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
         }
 
-        function closePasswordModal() {
-            document.getElementById('password-modal').style.display = 'none';
-        }
+        function checkUserSession() {
+            const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
 
-        function checkDevPassword() {
-            const passInput = document.getElementById('dev-pass-input');
-            const errorMsg = document.getElementById('pass-error-msg');
-
-            if (passInput.value === 'سعد نار') {
-                closePasswordModal();
-                openSecretModal();
+            if (!savedUser) {
+                document.getElementById('auth-modal').style.display = 'flex';
             } else {
+                let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
+                if (accountsDB[savedUser.username]) {
+                    const acc = accountsDB[savedUser.username];
+                    savedUser.role = acc.role || 'player';
+                    savedUser.avatar = acc.avatar || '';
+                    localStorage.setItem('pa_user', JSON.stringify(savedUser));
+                }
+                updateUserUI(savedUser);
+            }
+        }
+
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            document.getElementById('tab-login').classList.toggle('active', mode === 'login');
+            document.getElementById('tab-signup').classList.toggle('active', mode === 'signup');
+            
+            const submitBtnText = document.getElementById('auth-submit-btn').querySelector('span');
+            submitBtnText.innerText = (mode === 'login') ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
+            
+            document.getElementById('auth-error-msg').style.display = 'none';
+        }
+
+        function handleAuthSubmit() {
+            const usernameInput = document.getElementById('auth-username').value.trim();
+            const passwordInput = document.getElementById('auth-password').value.trim();
+            const errorMsg = document.getElementById('auth-error-msg');
+
+            if (!usernameInput || !passwordInput) {
+                errorMsg.innerText = '❌ يرجى إدخال اسم المستخدم وكلمة السر!';
                 errorMsg.style.display = 'block';
-                passInput.value = '';
-                passInput.focus();
+                return;
+            }
+
+            let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
+
+            if (currentAuthMode === 'signup') {
+                if (accountsDB[usernameInput]) {
+                    errorMsg.innerText = '❌ اسم المستخدم موجود بالفعل! اختر اسماً آخر أو سجل الدخول.';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                let assignedRole = 'player';
+                if (usernameInput.toLowerCase() === 'أسامة' || usernameInput.toLowerCase() === 'osama' || passwordInput === DEV_PASS) {
+                    assignedRole = 'owner';
+                }
+
+                accountsDB[usernameInput] = {
+                    password: passwordInput,
+                    role: assignedRole,
+                    avatar: '',
+                    createdAt: new Date().toISOString()
+                };
+                localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
+
+                const userObj = { username: usernameInput, role: assignedRole, avatar: '' };
+                localStorage.setItem('pa_user', JSON.stringify(userObj));
+
+                document.getElementById('auth-modal').style.display = 'none';
+                updateUserUI(userObj);
+                showToast(`تم إنشاء الحساب بنجاح! أهلاً بك يا ${usernameInput}`, '🎉');
+
+            } else {
+                const account = accountsDB[usernameInput];
+
+                if (!account && passwordInput === DEV_PASS) {
+                    const ownerObj = { username: usernameInput, role: 'owner', avatar: '' };
+                    accountsDB[usernameInput] = { password: passwordInput, role: 'owner', avatar: '' };
+                    localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
+                    localStorage.setItem('pa_user', JSON.stringify(ownerObj));
+                    document.getElementById('auth-modal').style.display = 'none';
+                    updateUserUI(ownerObj);
+                    showToast(`أهلاً بك يا مالك الموقع ${usernameInput}! 👑`, '🔓');
+                    return;
+                }
+
+                if (!account) {
+                    errorMsg.innerText = '❌ هذا الحساب غير موجود! اضغط على "إنشاء حساب" للتسجيل.';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                if (account.password !== passwordInput) {
+                    errorMsg.innerText = '❌ كلمة السر غير صحيحة!';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                if (usernameInput.toLowerCase() === 'أسامة' || usernameInput.toLowerCase() === 'osama') {
+                    account.role = 'owner';
+                }
+
+                const userObj = { username: usernameInput, role: account.role || 'player', avatar: account.avatar || '' };
+                localStorage.setItem('pa_user', JSON.stringify(userObj));
+
+                document.getElementById('auth-modal').style.display = 'none';
+                updateUserUI(userObj);
+                showToast(`مرحباً بعودتك يا ${usernameInput}! 🔥`, '👋');
             }
         }
 
-        document.getElementById('dev-pass-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkDevPassword();
+        function updateUserUI(user) {
+            document.getElementById('user-display-name').innerText = user.username;
+            
+            // تحديث الصورة الشخصية
+            const avatarBox = document.getElementById('user-avatar');
+            if (user.avatar) {
+                avatarBox.innerHTML = `<img src="${user.avatar}" alt="Avatar">`;
+            } else {
+                avatarBox.innerHTML = user.username.charAt(0).toUpperCase();
             }
-        });
 
-        document.getElementById('password-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closePasswordModal();
+            // تحديث شارة الرتبة
+            const roleBadge = document.getElementById('role-badge');
+            const userRole = ROLES[user.role] || ROLES.player;
+            roleBadge.innerText = userRole.name;
+            roleBadge.className = `role-badge ${userRole.class}`;
+
+            // تغيير اسم وكتابة الكبسة حسب الرتبة (قائمة المطور أو لوحة الإدارة)
+            const adminPanelBtn = document.getElementById('admin-panel-btn');
+            if (user.role === 'owner') {
+                adminPanelBtn.innerText = '👑 لوحة الإدارة';
+                adminPanelBtn.style.display = 'flex';
+            } else if (user.role === 'developer') {
+                adminPanelBtn.innerText = '💻 قائمة المطور';
+                adminPanelBtn.style.display = 'flex';
+            } else {
+                adminPanelBtn.style.display = 'none';
             }
-        });
-
-        function openSecretModal() {
-            renderMessages();
-            document.getElementById('secret-modal').style.display = 'flex';
         }
 
-        function closeSecretModal() {
-            document.getElementById('secret-modal').style.display = 'none';
+        function logoutUser() {
+            if (confirm('هل ترغب بتغيير الحساب الحالي أو تسجيل الخروج؟')) {
+                localStorage.removeItem('pa_user');
+                location.reload();
+            }
         }
 
-        document.getElementById('secret-modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeSecretModal();
-            }
-        });
+        // --- إعدادات الحساب (رفع من الملفات + كلمة السر القديمة) ---
+        function openProfileModal() {
+            document.getElementById('profile-old-password').value = '';
+            document.getElementById('profile-new-password').value = '';
+            document.getElementById('profile-error-msg').style.display = 'none';
+            document.getElementById('profile-avatar-file').value = '';
+            
+            const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+            const previewBox = document.getElementById('avatar-preview-box');
+            const previewImg = document.getElementById('avatar-preview-img');
 
+            if (user.avatar) {
+                previewImg.src = user.avatar;
+                previewBox.style.display = 'flex';
+                tempSelectedAvatarData = user.avatar;
+            } else {
+                previewBox.style.display = 'none';
+                tempSelectedAvatarData = null;
+            }
+
+            document.getElementById('profile-modal').style.display = 'flex';
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').style.display = 'none';
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempSelectedAvatarData = e.target.result;
+                    document.getElementById('avatar-preview-img').src = tempSelectedAvatarData;
+                    document.getElementById('avatar-preview-box').style.display = 'flex';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveProfileSettings() {
+            const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            if (!user) return;
+
+            let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
+            const currentAcc = accountsDB[user.username];
+            if (!currentAcc) return;
+
+            const oldPassInput = document.getElementById('profile-old-password').value.trim();
+            const newPassInput = document.getElementById('profile-new-password').value.trim();
+            const profileError = document.getElementById('profile-error-msg');
+
+            profileError.style.display = 'none';
+
+            // التحقق عند رغبة المستخدم بتغيير كلمة السر
+            let updatedPassword = null;
+            if (oldPassInput || newPassInput) {
+                if (!oldPassInput) {
+                    profileError.innerText = '❌ يجب كتابة كلمة السر القديمة أولاً!';
+                    profileError.style.display = 'block';
+                    return;
+                }
+                if (oldPassInput !== currentAcc.password) {
+                    profileError.innerText = '❌ كلمة السر القديمة التي أدخلتها غير صحيحة!';
+                    profileError.style.display = 'block';
+                    return;
+                }
+                if (!newPassInput) {
+                    profileError.innerText = '❌ يرجى أدخال كلمة السر الجديدة!';
+                    profileError.style.display = 'block';
+                    return;
+                }
+                updatedPassword = newPassInput;
+            }
+
+            // حفظ التعديلات
+            if (tempSelectedAvatarData) {
+                currentAcc.avatar = tempSelectedAvatarData;
+                user.avatar = tempSelectedAvatarData;
+            }
+
+            if (updatedPassword) {
+                currentAcc.password = updatedPassword;
+            }
+
+            accountsDB[user.username] = currentAcc;
+            localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
+            localStorage.setItem('pa_user', JSON.stringify(user));
+
+            updateUserUI(user);
+            closeProfileModal();
+            showToast('تم حفظ التعديلات بنجاح! 💾', '✅');
+        }
+
+        // --- لوحة التحكم وقائمة المطور ---
+        function openAdminModal() {
+            const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+            const rolesTab = document.getElementById('tab-roles');
+            const modalTitle = document.getElementById('panel-modal-title');
+
+            if (user.role === 'owner') {
+                modalTitle.innerText = '👑 لوحة التحكم والإدارة';
+                rolesTab.style.display = 'block';
+                switchPanelTab('roles');
+            } else {
+                modalTitle.innerText = '💻 قائمة المطور';
+                rolesTab.style.display = 'none';
+                switchPanelTab('tickets');
+            }
+
+            document.getElementById('admin-modal').style.display = 'flex';
+        }
+
+        function closeAdminModal() {
+            document.getElementById('admin-modal').style.display = 'none';
+        }
+
+        function switchPanelTab(tab) {
+            document.getElementById('tab-roles').classList.toggle('active', tab === 'roles');
+            document.getElementById('tab-tickets').classList.toggle('active', tab === 'tickets');
+
+            document.getElementById('panel-roles-section').style.display = (tab === 'roles') ? 'block' : 'none';
+            document.getElementById('panel-tickets-section').style.display = (tab === 'tickets') ? 'block' : 'none';
+
+            if (tab === 'roles') renderRolesTable();
+            if (tab === 'tickets') renderMessages();
+        }
+
+        function renderRolesTable() {
+            const tbody = document.getElementById('roles-table-body');
+            const accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
+
+            tbody.innerHTML = Object.keys(accountsDB).map(uname => {
+                const acc = accountsDB[uname];
+                const currentRole = acc.role || 'player';
+                const isUsama = (uname.toLowerCase() === 'أسامة' || uname.toLowerCase() === 'osama');
+
+                return `
+                    <tr>
+                        <td style="font-weight: 800; color: #fff;">${escapeHtml(uname)}</td>
+                        <td>
+                            <span class="role-badge ${ROLES[currentRole]?.class || 'role-player'}">
+                                ${ROLES[currentRole]?.name || '🎮 لاعب'}
+                            </span>
+                        </td>
+                        <td>
+                            <select class="role-select" onchange="changeUserRole('${escapeHtml(uname)}', this.value)" ${isUsama ? 'disabled title="لا يمكن تغيير رتبة مالك الموقع الأساسي"' : ''}>
+                                <option value="owner" ${currentRole === 'owner' ? 'selected' : ''}>👑 مالك</option>
+                                <option value="developer" ${currentRole === 'developer' ? 'selected' : ''}>💻 مطور</option>
+                                <option value="player" ${currentRole === 'player' ? 'selected' : ''}>🎮 لاعب</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function changeUserRole(targetUser, newRole) {
+            let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
+            if (accountsDB[targetUser]) {
+                accountsDB[targetUser].role = newRole;
+                localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
+                
+                showToast(`تم تغيير رتبة ${targetUser} إلى ${ROLES[newRole].name}`, '👑');
+                renderRolesTable();
+
+                const currentUser = JSON.parse(localStorage.getItem('pa_user') || '{}');
+                if (currentUser.username === targetUser) {
+                    currentUser.role = newRole;
+                    localStorage.setItem('pa_user', JSON.stringify(currentUser));
+                    updateUserUI(currentUser);
+                }
+            }
+        }
+
+        // --- إدارة الرسائل والدعم ---
         function renderMessages() {
             const container = document.getElementById('messages-container');
             const suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
@@ -757,12 +1323,12 @@
                     
                     ${item.reply ? `
                         <div class="existing-reply">
-                            💬 ردك الحالي: ${escapeHtml(item.reply)}
+                            💬 الرد الحالي: ${escapeHtml(item.reply)}
                         </div>
                     ` : ''}
 
                     <div class="admin-reply-box">
-                        <textarea id="reply-text-${index}" placeholder="اكتب ردك المباشر للمستخدم هنا...">${item.reply || ''}</textarea>
+                        <textarea id="reply-text-${index}" placeholder="اكتب رد المطور للمستخدم هنا...">${item.reply || ''}</textarea>
                         <button class="admin-reply-btn" onclick="saveAdminReply(${index})">
                             ${item.reply ? 'تحديث الرد 🔄' : 'إرسال الرد للمستخدم 💬'}
                         </button>
@@ -781,7 +1347,7 @@
             if (suggestions[index]) {
                 suggestions[index].reply = replyText;
                 localStorage.setItem('player_assistant_feedback', JSON.stringify(suggestions));
-                showToast('تم حفظ الرد ونشره بنجاح!', '💬');
+                showToast('تم حفظ الرد بنجاح!', '💬');
                 renderMessages();
             }
         }
@@ -792,6 +1358,37 @@
                 showToast('تم مسح جميع الرسائل بنجاح.', '🗑️');
                 renderMessages();
             }
+        }
+
+        function showToast(message, icon = "✅") {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = message;
+            document.getElementById('toast-icon').innerText = icon;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // --- حركات وصور الكوماند بلوك ---
+        const commandImgElement = document.getElementById('command-img');
+        const commandImages = [
+            "images/command_block.png",
+            "images/command_repeating.png",
+            "images/command_chain.png"
+        ];
+        let commandIndex = 0;
+
+        if (commandImgElement) {
+            commandImgElement.style.transition = "opacity 0.3s ease-in-out";
+            setInterval(() => {
+                commandImgElement.style.opacity = '0';
+                setTimeout(() => {
+                    commandIndex = (commandIndex + 1) % commandImages.length;
+                    commandImgElement.src = commandImages[commandIndex];
+                    commandImgElement.style.opacity = '1';
+                }, 300);
+            }, 2500);
         }
 
         function escapeHtml(text) {

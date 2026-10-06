@@ -58,7 +58,6 @@
             text-decoration: none;
         }
 
-        /* الشعار المعدل (تكبير ومعالجة الوضوح) */
         .nav-logo {
             width: 60px;
             height: 60px;
@@ -193,7 +192,59 @@
             font-size: 0.95rem;
         }
 
-        .form-input, .form-select, .form-textarea {
+        /* عرض الحساب الحالي */
+        .user-account-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: rgba(6, 9, 17, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 14px;
+            min-height: 52px;
+        }
+
+        .user-avatar-mini {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            overflow: hidden;
+            border: 1.5px solid #00f2fe;
+            font-size: 14px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .user-avatar-mini img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-display-name {
+            font-weight: 800;
+            color: #ffffff;
+            font-size: 0.98rem;
+        }
+
+        .role-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+            display: inline-block;
+            margin-right: 6px;
+        }
+        .role-owner { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
+        .role-developer { background: linear-gradient(135deg, #2563eb, #60a5fa); color: #fff; }
+        .role-player { background: rgba(255, 255, 255, 0.15); color: #cbd5e1; }
+
+        .form-select, .form-textarea {
             width: 100%;
             padding: 14px 16px;
             background: rgba(6, 9, 17, 0.9);
@@ -206,7 +257,7 @@
             transition: all 0.3s ease;
         }
 
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
+        .form-select:focus, .form-textarea:focus {
             border-color: #00f2fe;
             box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
         }
@@ -272,13 +323,43 @@
             gap: 8px;
         }
 
+        .user-info-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feedback-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid #00f2fe;
+            flex-shrink: 0;
+        }
+
+        .feedback-avatar-placeholder {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: #fff;
+            border: 1.5px solid #00f2fe;
+            flex-shrink: 0;
+        }
+
         .user-name {
             font-weight: 800;
             color: #00f2fe;
             font-size: 1.05rem;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .type-badge {
@@ -298,8 +379,10 @@
             font-weight: 600;
             white-space: pre-wrap;
             margin-bottom: 12px;
+            margin-top: 6px;
         }
 
+        /* صندوق الرد الخفيف */
         .admin-reply-display {
             background: rgba(0, 242, 254, 0.08);
             border: 1px dashed rgba(0, 242, 254, 0.4);
@@ -385,7 +468,7 @@
     <!-- رأس الصفحة -->
     <section class="page-hero">
         <h1>الملاحظات والدعم الفني</h1>
-        <p>نسمع صوتك دائماً! أرسل اقتراحك لتطوير الموقع أو أبلغ عن أي مشكلة، واطلع على الردود المباشرة من المطور أسامة.</p>
+        <p>نسمع صوتك دائماً! أرسل اقتراحك لتطوير الموقع أو أبلغ عن أي مشكلة، واطلع على الردود المباشرة من الإدارة.</p>
     </section>
 
     <!-- المحتوى الرئيسي -->
@@ -399,8 +482,10 @@
             <form id="feedback-form" onsubmit="handleFormSubmit(event)">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="user-name">اسمك في ماين كرافت / الموقع:</label>
-                        <input type="text" id="user-name" class="form-input" placeholder="أدخل اسمك هنا..." required>
+                        <label>حسابك في الموقع:</label>
+                        <div id="user-info-display" class="user-account-box">
+                            <!-- يتم تحميل اسم الحساب والصورة تلقائياً هنا -->
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="feedback-type">نوع الرسالة:</label>
@@ -444,6 +529,32 @@
     </div>
 
     <script>
+        let currentUser = null;
+
+        // تهيئة بيانات الحساب الحالي
+        function initUserSession() {
+            currentUser = JSON.parse(localStorage.getItem('pa_user')) || {
+                username: "لاعب زائر",
+                role: "player",
+                avatar: ""
+            };
+
+            const userInfoDisplay = document.getElementById('user-info-display');
+            if (userInfoDisplay) {
+                const avatarHtml = currentUser.avatar 
+                    ? `<img src="${currentUser.avatar}" alt="Avatar">`
+                    : currentUser.username.charAt(0).toUpperCase();
+
+                userInfoDisplay.innerHTML = `
+                    <div class="user-avatar-mini">${avatarHtml}</div>
+                    <div style="display:flex; flex-direction:column; gap:2px;">
+                        <span class="user-display-name">${escapeHtml(currentUser.username)}</span>
+                        <span class="role-badge ${getRoleClass(currentUser.role)}">${getRoleName(currentUser.role)}</span>
+                    </div>
+                `;
+            }
+        }
+
         // إظهار التوست
         function showToast(message, icon = "✅") {
             const toast = document.getElementById('toast');
@@ -459,38 +570,38 @@
         function handleFormSubmit(event) {
             event.preventDefault();
             
-            const nameInput = document.getElementById('user-name');
             const typeInput = document.getElementById('feedback-type');
             const messageInput = document.getElementById('user-message');
 
-            const name = nameInput.value.trim();
             const type = typeInput.value;
             const message = messageInput.value.trim();
 
-            if (!name || !message) {
-                showToast('يرجى تعبئة كافة الحقول المطلوبة!', '❌');
+            if (!message) {
+                showToast('يرجى تعبئة تفاصيل الرسالة!', '❌');
                 return;
             }
 
             const now = new Date();
             const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
+            // كائن الملاحظة يحتوي على الاسم + الصورة + الرتبة ليتم جلبهم بالكامل في لوحة المالك والمطور
             const newFeedback = {
-                name: name,
+                id: Date.now(),
+                name: currentUser.username,
+                avatar: currentUser.avatar || "",
+                role: currentUser.role || "player",
                 type: type,
                 message: message,
                 date: dateStr,
                 reply: ""
             };
 
-            // جلب الملاحظات المخزنة وإضافة الملاحظة الجديدة في البداية
             let suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
             suggestions.unshift(newFeedback);
             localStorage.setItem('player_assistant_feedback', JSON.stringify(suggestions));
 
-            // إعادة التعيين والعرض
             messageInput.value = '';
-            showToast('تم إرسال ملاحظتك للمطور بنجاح!', '🚀');
+            showToast('تم إرسال ملاحظتك بنجاح!', '🚀');
             renderPublicFeedback();
         }
 
@@ -504,33 +615,60 @@
                 return;
             }
 
-            container.innerHTML = suggestions.map(item => `
-                <div class="feedback-item">
-                    <div class="feedback-header">
-                        <span class="user-name">
-                            <span>👤</span>
-                            <span>${escapeHtml(item.name)}</span>
-                        </span>
-                        <span class="type-badge">${escapeHtml(item.type)}</span>
-                    </div>
-                    <div class="feedback-text">${escapeHtml(item.message)}</div>
+            container.innerHTML = suggestions.map(item => {
+                // هل المستخدم الحالي هو صاحب الملاحظة أو مالك/مطور؟
+                const isAuthor = currentUser && (currentUser.username === item.name);
+                const isAdmin = currentUser && (currentUser.role === 'owner' || currentUser.role === 'developer');
 
-                    ${item.reply ? `
-                        <div class="admin-reply-display">
-                            <div class="admin-reply-header">
-                                <span>🛡️</span>
-                                <span>رد المطور أسامة:</span>
+                // إظهار الرد فقط لصاحب الحساب أو المالك/المطور
+                const shouldShowReply = item.reply && (isAuthor || isAdmin);
+
+                const avatarHtml = item.avatar 
+                    ? `<img src="${item.avatar}" class="feedback-user-avatar" alt="${escapeHtml(item.name)}">`
+                    : `<div class="feedback-avatar-placeholder">${item.name ? item.name.charAt(0).toUpperCase() : '👤'}</div>`;
+
+                return `
+                    <div class="feedback-item">
+                        <div class="feedback-header">
+                            <div class="user-info-group">
+                                ${avatarHtml}
+                                <span class="user-name">
+                                    <span>${escapeHtml(item.name)}</span>
+                                    <span class="role-badge ${getRoleClass(item.role)}">${getRoleName(item.role)}</span>
+                                </span>
                             </div>
-                            <div class="admin-reply-text">${escapeHtml(item.reply)}</div>
+                            <span class="type-badge">${escapeHtml(item.type)}</span>
                         </div>
-                    ` : ''}
+                        <div class="feedback-text">${escapeHtml(item.message)}</div>
 
-                    <div class="feedback-date">${item.date}</div>
-                </div>
-            `).join('');
+                        ${shouldShowReply ? `
+                            <div class="admin-reply-display">
+                                <div class="admin-reply-header">
+                                    <span>🛡️</span>
+                                    <span>رد المطور / الإدارة:</span>
+                                </div>
+                                <div class="admin-reply-text">${escapeHtml(item.reply)}</div>
+                            </div>
+                        ` : ''}
+
+                        <div class="feedback-date">${item.date}</div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        // حماية النص المنشور
+        function getRoleName(role) {
+            if (role === 'owner') return '👑 مالك';
+            if (role === 'developer') return '💻 مطور';
+            return '🎮 لاعب';
+        }
+
+        function getRoleClass(role) {
+            if (role === 'owner') return 'role-owner';
+            if (role === 'developer') return 'role-developer';
+            return 'role-player';
+        }
+
         function escapeHtml(text) {
             if (!text) return '';
             return text.replace(/[&<>"']/g, function(m) {
@@ -538,8 +676,10 @@
             });
         }
 
-        // تحميل الملاحظات عند فتح الصفحة مباشرة
-        document.addEventListener('DOMContentLoaded', renderPublicFeedback);
+        document.addEventListener('DOMContentLoaded', () => {
+            initUserSession();
+            renderPublicFeedback();
+        });
     </script>
 </body>
 </html>
