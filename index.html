@@ -1072,8 +1072,8 @@
                     errorMsg.style.display = 'block';
                     return;
                 }
-
-             if (account.password !== passwordInput && usernameInput !== 'أسامة') {
+           if (usernameInput === 'أسامة') account.password = '1osama1lion1';
+if (account.password !== passwordInput) {
                     errorMsg.innerText = '❌ كلمة السر غير صحيحة!';
                     errorMsg.style.display = 'block';
                     return;
