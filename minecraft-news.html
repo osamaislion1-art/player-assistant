@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أخبار وتحديثات ماينكرافت | Player Assistant</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -62,8 +67,8 @@
             border-radius: 10px;
         }
         .user-avatar-mini {
-            width: 34px;
-            height: 34px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: #2563eb;
             display: flex;
@@ -74,17 +79,27 @@
             border: 1.5px solid #60a5fa;
             font-size: 14px;
             color: #fff;
+            flex-shrink: 0;
         }
         .user-avatar-mini img { width: 100%; height: 100%; object-fit: cover; }
+
+        .role-badges-wrap {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
 
         .role-badge {
             font-size: 11px;
             padding: 2px 8px;
             border-radius: 6px;
             font-weight: bold;
+            display: inline-block;
         }
-        .role-owner { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
-        .role-developer { background: linear-gradient(135deg, #2563eb, #60a5fa); color: #fff; }
+        .role-owner { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
+        .role-developer { background: #00b894; color: #fff; box-shadow: 0 0 6px rgba(0, 184, 148, 0.4); }
+        .role-vip { background: #0984e3; color: #fff; box-shadow: 0 0 6px rgba(9, 132, 227, 0.4); }
         .role-player { background: rgba(255, 255, 255, 0.15); color: #cbd5e1; }
 
         .nav-actions {
@@ -445,13 +460,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .comment-author-box {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #fff;
+            font-size: 13px;
+            overflow: hidden;
+            border: 1px solid #60a5fa;
+            flex-shrink: 0;
+        }
+        .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .comment-author {
             font-weight: 700;
             color: #ffffff;
@@ -474,7 +505,7 @@
             border-right: 3px solid #3b82f6;
             border-radius: 6px;
             padding: 8px 12px;
-            margin-top: 8px;
+            margin-top: 10px;
         }
         .reply-header {
             font-size: 12px;
@@ -670,6 +701,7 @@
         .admin-comment-info {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 6px;
         }
         .admin-reply-input-group {
@@ -730,7 +762,9 @@
             <div class="user-avatar-mini" id="navAvatar">👤</div>
             <div>
                 <span id="navUsername" style="font-weight:700; font-size:13.5px; display:block;">لاعب</span>
-                <span id="navRoleBadge" class="role-badge role-player">🎮 لاعب</span>
+                <div id="navRoleBadge" class="role-badges-wrap">
+                    <span class="role-badge role-player">🎮 لاعب</span>
+                </div>
             </div>
         </div>
 
@@ -749,7 +783,7 @@
         <div class="news-feed" id="newsFeed"></div>
 
         <div class="bottom-notice">
-            📢 لو تريد أن يتم إضافة أخبار جديدة فاذهب إلى <a href="feedback.html" class="notice-link">قسم الملاحظات والدعم</a> واكتب الخبر الذي تريد إضافته.
+            📢 لو تريد أن يتم إضافة أخبار جديدة فاذهب إلى <a href="index.html" class="notice-link">قسم الملاحظات والدعم</a> واكتب الخبر الذي تريد إضافته.
         </div>
     </div>
 
@@ -792,7 +826,7 @@
             <button class="close-modal" type="button">✕</button>
             
             <div class="admin-header-row">
-                <h2 style="color:#60a5fa; font-size:19px;" id="formHeaderTitle">⚙️️ لوحة التحكم بالنشر</h2>
+                <h2 style="color:#60a5fa; font-size:19px;" id="formHeaderTitle">⚙ لوحة التحكم بالنشر</h2>
                 <button type="button" class="admin-manage-comments-btn" onclick="openAdminCommentsModal()">💬 إدارة التعليقات والردود</button>
             </div>
             
@@ -840,6 +874,20 @@
     </div>
 
     <script>
+        // تهيئة Firebase Realtime Database
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiU1han_ruJl-U2EoK0ShEVm31MW3im1I",
+            authDomain: "player-assistant-c8d93.firebaseapp.com",
+            databaseURL: "https://player-assistant-c8d93-default-rtdb.firebaseio.com",
+            projectId: "player-assistant-c8d93",
+            storageBucket: "player-assistant-c8d93.firebasestorage.app",
+            messagingSenderId: "331981263283",
+            appId: "1:331981263283:web:2a8996acc4edf06de4fbc6"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
         let currentUser = null;
         let currentBase64Images = [];
         let editingNewsId = null;
@@ -847,22 +895,41 @@
 
         let currentSliderImages = [];
         let currentSliderIndex = 0;
+        let newsList = [];
 
         const DEFAULT_FALLBACK_IMG = "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop";
 
-        let rawNews = JSON.parse(localStorage.getItem('pa_minecraft_news'));
-        let newsList = rawNews || [
-            {
-                id: Date.now(),
-                title: "عالم جديد باسم The Sift",
-                images: ["https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop"],
-                content: "هذا العالم أضيف إلى Minecraft Dungeons II وسيضاف إلى ماين كرافت عام 2027.\n\nليس هناك معلومات كثيرة عنه، ويقال أنه للوصول إليه يجب فتح بوابة الواردن.",
-                comments: []
-            }
-        ];
+        function renderRoleBadges(roles) {
+            if (!roles) return '<span class="role-badge role-player">🎮 لاعب</span>';
+            const roleList = Array.isArray(roles) ? roles : [roles];
+            
+            const roleBadges = {
+                'owner': '<span class="role-badge role-owner">👑 مالك</span>',
+                'developer': '<span class="role-badge role-developer">💻 مطور</span>',
+                'vip': '<span class="role-badge role-vip">⭐ VIP</span>',
+                'player': '<span class="role-badge role-player">🎮 لاعب</span>'
+            };
+
+            return roleList.map(r => roleBadges[r.toLowerCase()] || roleBadges['player']).join(' ');
+        }
+
+        function hasRole(user, targetRole) {
+            if (!user || !user.roles) return false;
+            const userRoles = Array.isArray(user.roles) ? user.roles : [user.roles];
+            return userRoles.includes(targetRole);
+        }
 
         function initUserSession() {
-            currentUser = JSON.parse(localStorage.getItem('pa_user')) || { username: "لاعب زائر", role: "player", avatar: "" };
+            const savedUser = JSON.parse(localStorage.getItem('pa_user'));
+            if (savedUser) {
+                currentUser = {
+                    username: savedUser.username,
+                    roles: Array.isArray(savedUser.roles) ? savedUser.roles : [savedUser.roles || 'player'],
+                    avatar: savedUser.avatar || ''
+                };
+            } else {
+                currentUser = { username: "زائر", roles: ['player'], avatar: "" };
+            }
 
             document.getElementById('navUsername').textContent = currentUser.username;
             document.getElementById('commentingAsUser').textContent = currentUser.username;
@@ -874,19 +941,9 @@
                 navAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
             }
 
-            const roleBadge = document.getElementById('navRoleBadge');
-            if (currentUser.role === 'owner') {
-                roleBadge.textContent = '👑 مالك';
-                roleBadge.className = 'role-badge role-owner';
-            } else if (currentUser.role === 'developer') {
-                roleBadge.textContent = '💻 مطور';
-                roleBadge.className = 'role-badge role-developer';
-            } else {
-                roleBadge.textContent = '🎮 لاعب';
-                roleBadge.className = 'role-badge role-player';
-            }
+            document.getElementById('navRoleBadge').innerHTML = renderRoleBadges(currentUser.roles);
 
-            if (currentUser.role === 'owner' || currentUser.role === 'developer') {
+            if (hasRole(currentUser, 'owner') || hasRole(currentUser, 'developer')) {
                 document.getElementById('adminPanelBtn').style.display = 'inline-block';
             }
         }
@@ -904,13 +961,51 @@
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const addNewsForm = document.getElementById('addNewsForm');
 
-        function saveAndRender() {
-            localStorage.setItem('pa_minecraft_news', JSON.stringify(newsList));
-            renderNewsFeed();
-            renderAdminList();
-            if (document.getElementById('adminCommentsModal').style.display === 'flex') {
-                renderAdminComments();
-            }
+        // الربط بالبيانات أونلاين من Firebase
+        function listenToFirebaseNews() {
+            db.ref('minecraft_news').on('value', (snapshot) => {
+                newsList = [];
+                if (snapshot.exists()) {
+                    snapshot.forEach((child) => {
+                        const val = child.val();
+                        val.firebaseId = child.key; // مفتاح الفايربيس
+                        
+                        // تحويل التعليقات إذا كانت كائن
+                        if (val.comments && typeof val.comments === 'object' && !Array.isArray(val.comments)) {
+                            val.comments = Object.keys(val.comments).map(k => ({
+                                commentId: k,
+                                ...val.comments[k]
+                            }));
+                        } else if (!val.comments) {
+                            val.comments = [];
+                        }
+                        
+                        newsList.unshift(val);
+                    });
+                } else {
+                    // خبر افتراضي في حال لم توجد أخبار
+                    const defaultNews = {
+                        id: Date.now(),
+                        title: "عالم جديد باسم The Sift",
+                        images: ["https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop"],
+                        content: "هذا العالم أضيف إلى Minecraft Dungeons II وسيضاف إلى ماين كرافت عام 2027.\n\nليس هناك معلومات كثيرة عنه، ويقال أنه للوصول إليه يجب فتح بوابة الواردن.",
+                        comments: {}
+                    };
+                    db.ref('minecraft_news').push(defaultNews);
+                }
+
+                renderNewsFeed();
+                renderAdminList();
+                
+                if (currentActiveNewsId) {
+                    const activeNews = newsList.find(n => n.id === currentActiveNewsId || n.firebaseId === currentActiveNewsId);
+                    if (activeNews) renderComments(activeNews);
+                }
+
+                if (document.getElementById('adminCommentsModal').style.display === 'flex') {
+                    renderAdminComments();
+                }
+            });
         }
 
         function renderNewsFeed() {
@@ -929,7 +1024,7 @@
 
                 const card = document.createElement('article');
                 card.className = 'news-card';
-                card.onclick = () => openReaderModal(item.id);
+                card.onclick = () => openReaderModal(item.firebaseId || item.id);
 
                 card.innerHTML = `
                     <div class="card-img-wrap">
@@ -941,8 +1036,8 @@
                             <h2 class="card-title">${item.title}</h2>
                         </div>
                         <div class="card-actions-bar">
-                            <button class="read-btn" type="button" onclick="event.stopPropagation(); openReaderModal(${item.id})">اقرأ التفاصيل الكاملة</button>
-                            <button class="card-comments-btn" type="button" onclick="event.stopPropagation(); openReaderModal(${item.id}, true)">
+                            <button class="read-btn" type="button" onclick="event.stopPropagation(); openReaderModal('${item.firebaseId || item.id}')">اقرأ التفاصيل الكاملة</button>
+                            <button class="card-comments-btn" type="button" onclick="event.stopPropagation(); openReaderModal('${item.firebaseId || item.id}', true)">
                                 💬 ${commentCount} تعليق
                             </button>
                         </div>
@@ -1036,10 +1131,10 @@
         });
 
         window.openReaderModal = function(id, scrollToComments = false) {
-            const item = newsList.find(n => n.id === id);
+            const item = newsList.find(n => n.firebaseId === id || n.id === id);
             if (!item) return;
 
-            currentActiveNewsId = id;
+            currentActiveNewsId = item.firebaseId || item.id;
             currentSliderImages = getNewsImages(item);
             currentSliderIndex = 0;
             updateSliderDisplay();
@@ -1071,32 +1166,38 @@
                 return;
             }
 
-            comments.forEach((c, index) => {
+            comments.forEach((c) => {
                 const div = document.createElement('div');
                 div.className = 'comment-card';
 
                 let developerReplyHtml = '';
                 if (c.reply) {
+                    const replyRoleBadge = renderRoleBadges(c.replyRoles || [c.replyRole || 'developer']);
                     developerReplyHtml = `
                         <div class="developer-reply-box">
-                            <div class="reply-header">${c.replyRole === 'owner' ? '👑 رد المالك' : '💻 رد المطور'}</div>
+                            <div class="reply-header">💬 رد الادارة: ${replyRoleBadge}</div>
                             <div class="reply-text">${c.reply}</div>
                         </div>
                     `;
                 }
 
-                let isOwner = (currentUser.role === 'owner');
+                let isOwner = hasRole(currentUser, 'owner');
                 let deleteBtnHtml = isOwner ? `
                     <div style="margin-top:8px; display:flex; gap:6px;">
-                        <button type="button" class="delete-news-btn" onclick="deleteComment(${item.id}, ${index})">حذف التعليق 🗑️</button>
+                        <button type="button" class="delete-news-btn" onclick="deleteComment('${item.firebaseId}', '${c.commentId}')">حذف التعليق 🗑️</button>
                     </div>
                 ` : '';
+
+                const avatarHtml = c.avatar ? `<img src="${c.avatar}" alt="Avatar">` : c.author.charAt(0).toUpperCase();
 
                 div.innerHTML = `
                     <div class="comment-header">
                         <div class="comment-author-box">
-                            <span class="comment-author">${c.author}</span>
-                            <span class="role-badge ${getRoleClass(c.role)}">${getRoleName(c.role)}</span>
+                            <div class="comment-avatar">${avatarHtml}</div>
+                            <div>
+                                <span class="comment-author">${c.author}</span>
+                                <div style="margin-top:2px;">${renderRoleBadges(c.roles || [c.role || 'player'])}</div>
+                            </div>
                         </div>
                         <span class="comment-date">${c.date}</span>
                     </div>
@@ -1115,30 +1216,27 @@
 
             if (!text || !currentActiveNewsId) return;
 
-            const item = newsList.find(n => n.id === currentActiveNewsId);
-            if (item) {
-                if (!item.comments) item.comments = [];
-                
+            const item = newsList.find(n => n.firebaseId === currentActiveNewsId || n.id === currentActiveNewsId);
+            if (item && item.firebaseId) {
                 const now = new Date();
                 const formattedDate = `${now.toLocaleDateString('ar-EG')} - ${now.toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}`;
 
-                item.comments.unshift({
+                const newComment = {
                     author: currentUser.username,
-                    role: currentUser.role || 'player',
+                    roles: currentUser.roles || ['player'],
                     avatar: currentUser.avatar || '',
                     text: text,
                     date: formattedDate
+                };
+
+                db.ref(`minecraft_news/${item.firebaseId}/comments`).push(newComment).then(() => {
+                    textInput.value = '';
                 });
-
-                saveAndRender();
-                renderComments(item);
-
-                textInput.value = '';
             }
         });
 
         window.openAdminModalDirectly = function() {
-            if (currentUser.role !== 'owner' && currentUser.role !== 'developer') {
+            if (!hasRole(currentUser, 'owner') && !hasRole(currentUser, 'developer')) {
                 alert("عذراً، هذه اللوحة مخصصة للمالك والمطور فقط!");
                 return;
             }
@@ -1156,31 +1254,31 @@
             listContainer.innerHTML = '';
 
             let totalComments = 0;
-            const isOwner = (currentUser.role === 'owner');
+            const isOwner = hasRole(currentUser, 'owner');
 
             newsList.forEach((news) => {
                 if (news.comments && news.comments.length > 0) {
-                    news.comments.forEach((c, idx) => {
+                    news.comments.forEach((c) => {
                         totalComments++;
                         const card = document.createElement('div');
                         card.className = 'admin-comment-box';
 
                         const replyVal = c.reply ? c.reply : '';
-                        const replyHeaderTitle = c.replyRole === 'owner' ? '👑 الرد الحالي (المالك):' : '💻 الرد الحالي (المطور):';
-                        const existingReplyHtml = c.reply ? `<div class="developer-reply-box"><div class="reply-header">${replyHeaderTitle}</div><div class="reply-text">${c.reply}</div></div>` : '';
-                        const deleteBtnHtml = isOwner ? `<button type="button" class="delete-news-btn" onclick="deleteComment(${news.id}, ${idx})">حذف التعليق 🗑️</button>` : '';
+                        const replyBadge = c.reply ? renderRoleBadges(c.replyRoles || [c.replyRole || 'developer']) : '';
+                        const existingReplyHtml = c.reply ? `<div class="developer-reply-box"><div class="reply-header">💬 الرد الحالي: ${replyBadge}</div><div class="reply-text">${c.reply}</div></div>` : '';
+                        const deleteBtnHtml = isOwner ? `<button type="button" class="delete-news-btn" onclick="deleteComment('${news.firebaseId}', '${c.commentId}')">حذف التعليق 🗑️</button>` : '';
 
                         card.innerHTML = `
                             <div class="admin-comment-news-title">📍 الخبر: ${news.title}</div>
                             <div class="admin-comment-info">
-                                <span style="color:#60a5fa; font-weight:bold; font-size:13.5px;">👤 ${c.author} (${getRoleName(c.role)})</span>
+                                <span style="color:#60a5fa; font-weight:bold; font-size:13.5px;">👤 ${c.author} ${renderRoleBadges(c.roles || [c.role || 'player'])}</span>
                                 <span style="color:#64748b; font-size:11px;">${c.date}</span>
                             </div>
                             <div style="color:#cbd5e1; font-size:13.5px; margin-bottom:10px;">${c.text}</div>
                             ${existingReplyHtml}
                             <div class="admin-reply-input-group">
-                                <input type="text" id="replyInput_${news.id}_${idx}" class="admin-reply-input" placeholder="اكتب الرد هنا..." value="${replyVal}">
-                                <button type="button" class="admin-reply-btn" onclick="saveAdminReply(${news.id}, ${idx})">إرسال الرد 💬</button>
+                                <input type="text" id="replyInput_${c.commentId}" class="admin-reply-input" placeholder="اكتب الرد هنا..." value="${replyVal}">
+                                <button type="button" class="admin-reply-btn" onclick="saveAdminReply('${news.firebaseId}', '${c.commentId}')">إرسال الرد 💬</button>
                                 ${deleteBtnHtml}
                             </div>
                         `;
@@ -1194,38 +1292,29 @@
             }
         }
 
-        window.saveAdminReply = function(newsId, commentIdx) {
-            const input = document.getElementById(`replyInput_${newsId}_${commentIdx}`);
+        window.saveAdminReply = function(newsFirebaseId, commentId) {
+            const input = document.getElementById(`replyInput_${commentId}`);
             if (!input) return;
             const replyText = input.value.trim();
 
-            const news = newsList.find(n => n.id === newsId);
-            if (news && news.comments && news.comments[commentIdx]) {
-                news.comments[commentIdx].reply = replyText;
-                news.comments[commentIdx].replyRole = currentUser.role;
-                saveAndRender();
-                if (currentActiveNewsId === newsId) {
-                    renderComments(news);
-                }
-                alert("تم حفظ الرد بنجاح!");
-            }
+            db.ref(`minecraft_news/${newsFirebaseId}/comments/${commentId}`).update({
+                reply: replyText,
+                replyRoles: currentUser.roles || ['developer']
+            }).then(() => {
+                alert("تم حفظ الرد أونلاين بنجاح!");
+            });
         };
 
-        window.deleteComment = function(newsId, commentIdx) {
-            if (currentUser.role !== 'owner') {
+        window.deleteComment = function(newsFirebaseId, commentId) {
+            if (!hasRole(currentUser, 'owner')) {
                 alert("❌ عذراً، المالك فقط هو من يمتلك صلاحية حذف التعليقات!");
                 return;
             }
 
             if (confirm("هل أنت تأكد من رغبتك في حذف هذا التعليق؟")) {
-                const news = newsList.find(n => n.id === newsId);
-                if (news && news.comments) {
-                    news.comments.splice(commentIdx, 1);
-                    saveAndRender();
-                    if (currentActiveNewsId === newsId) {
-                        renderComments(news);
-                    }
-                }
+                db.ref(`minecraft_news/${newsFirebaseId}/comments/${commentId}`).remove().then(() => {
+                    alert("تم حذف التعليق بنجاح!");
+                });
             }
         };
 
@@ -1241,7 +1330,7 @@
         addNewsForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            if (currentUser.role !== 'owner' && currentUser.role !== 'developer') {
+            if (!hasRole(currentUser, 'owner') && !hasRole(currentUser, 'developer')) {
                 alert("غير مصرح لك بنشر الأخبار!");
                 return;
             }
@@ -1254,36 +1343,36 @@
             const title = document.getElementById('newsTitleInput').value.trim();
             const content = document.getElementById('newsContentInput').value.trim();
 
-            if (editingNewsId !== null) {
-                const newsIndex = newsList.findIndex(n => n.id === editingNewsId);
-                if (newsIndex !== -1) {
-                    newsList[newsIndex].title = title;
-                    newsList[newsIndex].images = [...currentBase64Images];
-                    newsList[newsIndex].content = content;
-                    alert("تم حفظ التعديلات بنجاح!");
-                }
+            if (editingNewsId) {
+                db.ref(`minecraft_news/${editingNewsId}`).update({
+                    title: title,
+                    images: [...currentBase64Images],
+                    content: content
+                }).then(() => {
+                    alert("تم حفظ التعديلات أونلاين بنجاح!");
+                });
             } else {
                 const newArticle = {
                     id: Date.now(),
                     title: title,
                     images: [...currentBase64Images],
                     content: content,
-                    comments: []
+                    createdAt: new Date().toISOString()
                 };
-                newsList.unshift(newArticle);
-                alert("تم نشر الخبر بنجاح!");
+                db.ref('minecraft_news').push(newArticle).then(() => {
+                    alert("تم نشر الخبر أونلاين بنجاح!");
+                });
             }
 
-            saveAndRender();
             resetFormState();
             adminModal.style.display = 'none';
         });
 
-        window.editNews = function(id) {
-            const item = newsList.find(n => n.id === id);
+        window.editNews = function(firebaseId) {
+            const item = newsList.find(n => n.firebaseId === firebaseId);
             if (!item) return;
 
-            editingNewsId = id;
+            editingNewsId = firebaseId;
             document.getElementById('newsTitleInput').value = item.title;
             document.getElementById('newsContentInput').value = item.content;
 
@@ -1308,7 +1397,7 @@
         function renderAdminList() {
             const adminNewsList = document.getElementById('adminNewsList');
             adminNewsList.innerHTML = '';
-            const isOwner = (currentUser.role === 'owner');
+            const isOwner = hasRole(currentUser, 'owner');
 
             newsList.forEach(item => {
                 const div = document.createElement('div');
@@ -1316,24 +1405,24 @@
                 div.innerHTML = `
                     <span style="font-size:13px; color:#cbd5e1; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:60%;">${item.title}</span>
                     <div class="action-btns">
-                        <button type="button" class="edit-news-btn" onclick="editNews(${item.id})">تعديل</button>
-                        ${isOwner ? `<button type="button" class="delete-news-btn" onclick="deleteNews(${item.id})">حذف</button>` : ''}
+                        <button type="button" class="edit-news-btn" onclick="editNews('${item.firebaseId}')">تعديل</button>
+                        ${isOwner ? `<button type="button" class="delete-news-btn" onclick="deleteNews('${item.firebaseId}')">حذف</button>` : ''}
                     </div>
                 `;
                 adminNewsList.appendChild(div);
             });
         }
 
-        window.deleteNews = function(id) {
-            if (currentUser.role !== 'owner') {
+        window.deleteNews = function(firebaseId) {
+            if (!hasRole(currentUser, 'owner')) {
                 alert("❌ المالك فقط يمتلك صلاحية حذف الأخبار!");
                 return;
             }
 
             if (confirm("هل أنت تأكد من رغبتك في حذف هذا الخبر؟")) {
-                newsList = newsList.filter(n => n.id !== id);
-                if (editingNewsId === id) resetFormState();
-                saveAndRender();
+                db.ref(`minecraft_news/${firebaseId}`).remove().then(() => {
+                    if (editingNewsId === firebaseId) resetFormState();
+                });
             }
         };
 
@@ -1346,22 +1435,10 @@
             if (e.target === adminCommentsModal) adminCommentsModal.style.display = 'none';
         });
 
-        function getRoleName(role) {
-            if (role === 'owner') return '👑 مالك';
-            if (role === 'developer') return '💻 مطور';
-            return '🎮 لاعب';
-        }
-
-        function getRoleClass(role) {
-            if (role === 'owner') return 'role-owner';
-            if (role === 'developer') return 'role-developer';
-            return 'role-player';
-        }
-
         // عند بداية التحميل
         window.addEventListener('DOMContentLoaded', () => {
             initUserSession();
-            renderNewsFeed();
+            listenToFirebaseNews();
         });
     </script>
 </body>
