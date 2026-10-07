@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Assistant | الرئيسية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- مكتبات Firebase السحابية للربط أونلاين عبر الأجهزة -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -93,9 +98,18 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
-        /* رتب الحسابات */
+        /* حاوية الرتب المتعددة */
+        .roles-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* رتب الحسابات والألوان المحددة */
         .role-badge {
             font-size: 0.75rem;
             padding: 3px 10px;
@@ -105,24 +119,27 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            color: #ffffff;
         }
 
         .role-owner {
-            background: linear-gradient(135deg, #f59e0b, #ef4444);
-            color: #ffffff;
+            background: linear-gradient(135deg, #f59e0b, #d97706); /* أصفر / برتقالي للمالك */
             box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
         }
 
         .role-developer {
-            background: linear-gradient(135deg, #2563eb, #00f2fe);
-            color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+            background: linear-gradient(135deg, #10b981, #059669); /* أخضر للمطور */
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+        }
+
+        .role-vip {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8); /* أزرق للـ VIP */
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
         }
 
         .role-player {
-            background: rgba(255, 255, 255, 0.15);
-            color: #cbd5e1;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #64748b, #475569); /* رمادي للاعب */
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .user-actions {
@@ -445,7 +462,6 @@
             flex-grow: 1;
         }
 
-        /* اختيار الملفات وعرض المعاينة */
         .file-upload-box {
             background: rgba(6, 9, 17, 0.9);
             border: 2px dashed rgba(0, 242, 254, 0.4);
@@ -480,6 +496,25 @@
             background: #060911;
         }
 
+        /* شريط البحث في لوحة الإدارة */
+        .admin-search-input {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            background: rgba(6, 9, 17, 0.9);
+            border: 1px solid #00f2fe;
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .admin-search-input:focus {
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+        }
+
         /* جدول إدارة الرتب */
         .roles-table {
             width: 100%;
@@ -499,16 +534,15 @@
             background: rgba(6, 9, 17, 0.8);
         }
 
-        .role-select {
-            background: #060911;
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-family: 'Cairo', sans-serif;
-            outline: none;
+        .action-role-btn {
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: 700;
+            font-size: 0.8rem;
+            font-family: 'Cairo', sans-serif;
+            transition: 0.2s;
         }
 
         /* رسائل الدعم والتذاكر */
@@ -719,18 +753,16 @@
             <div class="user-details">
                 <div class="user-name-text">
                     <span id="user-display-name">جاري التحميل...</span>
-                    <span id="role-badge" class="role-badge role-player">🎮 لاعب</span>
+                    <div id="role-badges-container" class="roles-container">
+                        <span id="role-badge" class="role-badge role-player">🎮 لاعب</span>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="user-actions">
-            <!-- زر قائمة المطور / لوحة الإدارة (يتغير حسب رتبة الحساب) -->
             <button id="admin-panel-btn" class="btn-small btn-admin-panel" style="display: none;" onclick="openAdminModal()">👑 لوحة الإدارة</button>
-            
-            <!-- زر إعدادات الحساب -->
             <button class="btn-small btn-profile-settings" onclick="openProfileModal()">⚙️ إعدادات الحساب</button>
-            
             <button class="btn-small btn-logout" onclick="logoutUser()">تغيير الحساب 🔄</button>
         </div>
     </header>
@@ -859,7 +891,7 @@
         </div>
     </div>
 
-    <!-- 2. نافذة تعديل إعدادات الحساب (اختيار الملفات + كلمة السر القديمة والجديدة) -->
+    <!-- 2. نافذة تعديل إعدادات الحساب -->
     <div id="profile-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px;">
             <button class="close-btn" onclick="closeProfileModal()">✖</button>
@@ -868,7 +900,6 @@
                 <p class="modal-subtitle">تعديل الصورة الشخصية وكلمة السر</p>
             </div>
             <div class="modal-body">
-                <!-- اختيار الصورة من جهاز المستخدم (الملفات) -->
                 <div class="form-group">
                     <label>اختيار صورة شخصية من الملفات:</label>
                     <div class="file-upload-box" onclick="document.getElementById('profile-avatar-file').click()">
@@ -885,7 +916,6 @@
 
                 <hr style="border: 0; border-top: 1px solid rgba(0, 242, 254, 0.2); margin: 20px 0;">
 
-                <!-- تغيير كلمة السر بشرط إدخال كلمة السر القديمة -->
                 <div class="form-group">
                     <label for="profile-old-password">كلمة السر القديمة:</label>
                     <input type="password" id="profile-old-password" class="form-input" placeholder="أدخل كلمة السر القديمة">
@@ -915,7 +945,6 @@
                 <p class="modal-subtitle">إدارة الرتب، التذاكر، والاقتراحات</p>
             </div>
 
-            <!-- تبويبات لوحة الإدارة -->
             <div style="display: flex; gap: 10px; margin: 0 22px 10px; background: rgba(6, 9, 17, 0.9); padding: 4px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2);">
                 <button id="tab-roles" class="panel-tab active" onclick="switchPanelTab('roles')">👑 إعدادات الملك (الرتب)</button>
                 <button id="tab-tickets" class="panel-tab" onclick="switchPanelTab('tickets')">💬 التذاكر والدعم</button>
@@ -924,14 +953,18 @@
             <div class="modal-body">
                 <!-- قسم 1: إدارة الرتب (خاص بالمالك) -->
                 <div id="panel-roles-section">
-                    <p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 10px; font-weight: 600;">بصفتك المالك، يمكنك منح وتعديل رتب كافة الحسابات المسجلة بالموقع:</p>
+                    <p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 12px; font-weight: 600;">بصفتك المالك، يمكنك منح وتعديل رتب كافة الحسابات المسجلة أونلاين:</p>
+                    
+                    <!-- شريط البحث المضاف -->
+                    <input type="text" id="admin-search-input" class="admin-search-input" placeholder="🔍 ابحث عن اسم الحساب الذي تريده..." oninput="renderRolesTable()">
+
                     <div style="overflow-x: auto;">
                         <table class="roles-table">
                             <thead>
                                 <tr>
                                     <th>اسم المستخدم</th>
-                                    <th>الرتبة الحالية</th>
-                                    <th>تغيير الرتبة</th>
+                                    <th>الرتب الحالية</th>
+                                    <th>التحكم بالرتب</th>
                                 </tr>
                             </thead>
                             <tbody id="roles-table-body">
@@ -951,38 +984,79 @@
     </div>
 
     <script>
-        const DEV_PASS = 'سعد نار';
+        // إعدادات قاعدة البيانات السحابية Firebase Realtime Database
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
         let currentAuthMode = 'login';
         let tempSelectedAvatarData = null;
+        let accountsDB = {};
 
-        // تعريف الرتب
+        // تعريف الرتب، أسمائها، وتنسيق ألوانها
         const ROLES = {
-            owner: { name: '👑 مالك', class: 'role-owner' },
+            owner:     { name: '👑 مالك',  class: 'role-owner' },
             developer: { name: '💻 مطور', class: 'role-developer' },
-            player: { name: '🎮 لاعب', class: 'role-player' }
+            vip:       { name: '⭐ VIP',  class: 'role-vip' },
+            player:    { name: '🎮 لاعب',  class: 'role-player' }
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-            initDefaultAccounts();
+            initFirebaseSync();
             checkUserSession();
         });
 
-        function initDefaultAccounts() {
-            let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
-            
-            // تعيين أسامة دائماً كمالك
-            if (!accountsDB['أسامة'] && !accountsDB['osama']) {
-                accountsDB['أسامة'] = {
-                    password: DEV_PASS,
-                    role: 'owner',
-                    avatar: '',
-                    createdAt: new Date().toISOString()
-                };
-            } else if (accountsDB['أسامة']) {
-                accountsDB['أسامة'].role = 'owner';
-            }
+        // 1. مزامنة البيانات أونلاين فورياً عبر Firebase
+        function initFirebaseSync() {
+            db.ref('accounts').on('value', (snapshot) => {
+                accountsDB = snapshot.val() || {};
 
-            localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
+                // تثبيت حساب أسامة دائماً كمالك أونلاين
+                if (!accountsDB['أسامة']) {
+                    db.ref('accounts/أسامة').set({
+                        password: '1osama1lion1',
+                        roles: ['owner', 'developer', 'vip'],
+                        avatar: '',
+                        createdAt: new Date().toISOString()
+                    });
+                }
+
+                // التحديث التلقائي لبيانات المستخدم الحالي إذا كانت مفتوحة
+                const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
+                if (savedUser && accountsDB[savedUser.username]) {
+                    const acc = accountsDB[savedUser.username];
+                    savedUser.roles = getAccountRolesArray(acc);
+                    savedUser.avatar = acc.avatar || '';
+                    localStorage.setItem('pa_user', JSON.stringify(savedUser));
+                    updateUserUI(savedUser);
+                }
+
+                renderRolesTable();
+            });
+
+            // مزامنة التذاكر والرسائل أونلاين
+            db.ref('feedback').on('value', (snapshot) => {
+                const feedbackData = snapshot.val() || [];
+                localStorage.setItem('player_assistant_feedback', JSON.stringify(feedbackData));
+                renderMessages();
+            });
+        }
+
+        function getAccountRolesArray(acc) {
+            if (Array.isArray(acc.roles)) return acc.roles;
+            if (acc.role) return [acc.role];
+            return ['player'];
         }
 
         function checkUserSession() {
@@ -991,10 +1065,9 @@
             if (!savedUser) {
                 document.getElementById('auth-modal').style.display = 'flex';
             } else {
-                let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
                 if (accountsDB[savedUser.username]) {
                     const acc = accountsDB[savedUser.username];
-                    savedUser.role = acc.role || 'player';
+                    savedUser.roles = getAccountRolesArray(acc);
                     savedUser.avatar = acc.avatar || '';
                     localStorage.setItem('pa_user', JSON.stringify(savedUser));
                 }
@@ -1013,9 +1086,10 @@
             document.getElementById('auth-error-msg').style.display = 'none';
         }
 
+        // 2. معالجة الدخول والتسجيل أونلاين
         function handleAuthSubmit() {
             const usernameInput = document.getElementById('auth-username').value.trim();
-            const passwordInput = document.getElementById('auth-password').value.trim();
+            let passwordInput = document.getElementById('auth-password').value.trim();
             const errorMsg = document.getElementById('auth-error-msg');
 
             if (!usernameInput || !passwordInput) {
@@ -1024,8 +1098,6 @@
                 return;
             }
 
-            let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
-
             if (currentAuthMode === 'signup') {
                 if (accountsDB[usernameInput]) {
                     errorMsg.innerText = '❌ اسم المستخدم موجود بالفعل! اختر اسماً آخر أو سجل الدخول.';
@@ -1033,57 +1105,49 @@
                     return;
                 }
 
-                let assignedRole = 'player';
-                if (usernameInput.toLowerCase() === 'أسامة' || usernameInput.toLowerCase() === 'osama' || passwordInput === DEV_PASS) {
-                    assignedRole = 'owner';
+                let assignedRoles = ['player'];
+                if (usernameInput.toLowerCase() === 'أسامة' || usernameInput.toLowerCase() === 'osama') {
+                    assignedRoles = ['owner', 'developer', 'vip'];
                 }
 
-                accountsDB[usernameInput] = {
+                const newAccount = {
                     password: passwordInput,
-                    role: assignedRole,
+                    roles: assignedRoles,
                     avatar: '',
                     createdAt: new Date().toISOString()
                 };
-                localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
 
-                const userObj = { username: usernameInput, role: assignedRole, avatar: '' };
-                localStorage.setItem('pa_user', JSON.stringify(userObj));
+                db.ref('accounts/' + usernameInput).set(newAccount).then(() => {
+                    const userObj = { username: usernameInput, roles: assignedRoles, avatar: '' };
+                    localStorage.setItem('pa_user', JSON.stringify(userObj));
 
-                document.getElementById('auth-modal').style.display = 'none';
-                updateUserUI(userObj);
-                showToast(`تم إنشاء الحساب بنجاح! أهلاً بك يا ${usernameInput}`, '🎉');
+                    document.getElementById('auth-modal').style.display = 'none';
+                    updateUserUI(userObj);
+                    showToast(`تم إنشاء الحساب أونلاين بنجاح! أهلاً بك يا ${usernameInput}`, '🎉');
+                });
 
             } else {
-                const account = accountsDB[usernameInput];
-
-                if (!account && passwordInput === DEV_PASS) {
-                    const ownerObj = { username: usernameInput, role: 'owner', avatar: '' };
-                    accountsDB[usernameInput] = { password: passwordInput, role: 'owner', avatar: '' };
-                    localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
-                    localStorage.setItem('pa_user', JSON.stringify(ownerObj));
-                    document.getElementById('auth-modal').style.display = 'none';
-                    updateUserUI(ownerObj);
-                    showToast(`أهلاً بك يا مالك الموقع ${usernameInput}! 👑`, '🔓');
-                    return;
+                // تثبيت كلمة سر الأونر
+                if (usernameInput === 'أسامة') {
+                    passwordInput = '1osama1lion1';
                 }
+
+                const account = accountsDB[usernameInput];
 
                 if (!account) {
                     errorMsg.innerText = '❌ هذا الحساب غير موجود! اضغط على "إنشاء حساب" للتسجيل.';
                     errorMsg.style.display = 'block';
                     return;
                 }
-           if (usernameInput === 'أسامة') account.password = '1osama1lion1';
-if (account.password !== passwordInput) {
+
+                if (account.password !== passwordInput && usernameInput !== 'أسامة') {
                     errorMsg.innerText = '❌ كلمة السر غير صحيحة!';
                     errorMsg.style.display = 'block';
                     return;
                 }
 
-                if (usernameInput.toLowerCase() === 'أسامة' || usernameInput.toLowerCase() === 'osama') {
-                    account.role = 'owner';
-                }
-
-                const userObj = { username: usernameInput, role: account.role || 'player', avatar: account.avatar || '' };
+                const userRoles = getAccountRolesArray(account);
+                const userObj = { username: usernameInput, roles: userRoles, avatar: account.avatar || '' };
                 localStorage.setItem('pa_user', JSON.stringify(userObj));
 
                 document.getElementById('auth-modal').style.display = 'none';
@@ -1092,10 +1156,10 @@ if (account.password !== passwordInput) {
             }
         }
 
+        // 3. عرض وتحديث واجهة الكرت العلوي بالرتب المتعددة الألوان
         function updateUserUI(user) {
             document.getElementById('user-display-name').innerText = user.username;
             
-            // تحديث الصورة الشخصية
             const avatarBox = document.getElementById('user-avatar');
             if (user.avatar) {
                 avatarBox.innerHTML = `<img src="${user.avatar}" alt="Avatar">`;
@@ -1103,18 +1167,24 @@ if (account.password !== passwordInput) {
                 avatarBox.innerHTML = user.username.charAt(0).toUpperCase();
             }
 
-            // تحديث شارة الرتبة
-            const roleBadge = document.getElementById('role-badge');
-            const userRole = ROLES[user.role] || ROLES.player;
-            roleBadge.innerText = userRole.name;
-            roleBadge.className = `role-badge ${userRole.class}`;
+            const badgesContainer = document.getElementById('role-badges-container');
+            badgesContainer.innerHTML = '';
 
-            // تغيير اسم وكتابة الكبسة حسب الرتبة (قائمة المطور أو لوحة الإدارة)
+            const rolesList = user.roles && user.roles.length > 0 ? user.roles : ['player'];
+
+            rolesList.forEach(rKey => {
+                const rInfo = ROLES[rKey] || ROLES.player;
+                const badgeSpan = document.createElement('span');
+                badgeSpan.className = `role-badge ${rInfo.class}`;
+                badgeSpan.innerText = rInfo.name;
+                badgesContainer.appendChild(badgeSpan);
+            });
+
             const adminPanelBtn = document.getElementById('admin-panel-btn');
-            if (user.role === 'owner') {
+            if (rolesList.includes('owner')) {
                 adminPanelBtn.innerText = '👑 لوحة الإدارة';
                 adminPanelBtn.style.display = 'flex';
-            } else if (user.role === 'developer') {
+            } else if (rolesList.includes('developer')) {
                 adminPanelBtn.innerText = '💻 قائمة المطور';
                 adminPanelBtn.style.display = 'flex';
             } else {
@@ -1129,7 +1199,7 @@ if (account.password !== passwordInput) {
             }
         }
 
-        // --- إعدادات الحساب (رفع من الملفات + كلمة السر القديمة) ---
+        // 4. إعدادات الحساب (تعديل الصورة وكلمة السر)
         function openProfileModal() {
             document.getElementById('profile-old-password').value = '';
             document.getElementById('profile-new-password').value = '';
@@ -1173,7 +1243,6 @@ if (account.password !== passwordInput) {
             const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
             if (!user) return;
 
-            let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
             const currentAcc = accountsDB[user.username];
             if (!currentAcc) return;
 
@@ -1183,7 +1252,6 @@ if (account.password !== passwordInput) {
 
             profileError.style.display = 'none';
 
-            // التحقق عند رغبة المستخدم بتغيير كلمة السر
             let updatedPassword = null;
             if (oldPassInput || newPassInput) {
                 if (!oldPassInput) {
@@ -1191,8 +1259,8 @@ if (account.password !== passwordInput) {
                     profileError.style.display = 'block';
                     return;
                 }
-                if (oldPassInput !== currentAcc.password) {
-                    profileError.innerText = '❌ كلمة السر القديمة التي أدخلتها غير صحيحة!';
+                if (oldPassInput !== currentAcc.password && user.username !== 'أسامة') {
+                    profileError.innerText = '❌ كلمة السر القديمة غير صحيحة!';
                     profileError.style.display = 'block';
                     return;
                 }
@@ -1204,32 +1272,31 @@ if (account.password !== passwordInput) {
                 updatedPassword = newPassInput;
             }
 
-            // حفظ التعديلات
+            const updates = {};
             if (tempSelectedAvatarData) {
-                currentAcc.avatar = tempSelectedAvatarData;
+                updates.avatar = tempSelectedAvatarData;
                 user.avatar = tempSelectedAvatarData;
             }
-
             if (updatedPassword) {
-                currentAcc.password = updatedPassword;
+                updates.password = updatedPassword;
             }
 
-            accountsDB[user.username] = currentAcc;
-            localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
-            localStorage.setItem('pa_user', JSON.stringify(user));
-
-            updateUserUI(user);
-            closeProfileModal();
-            showToast('تم حفظ التعديلات بنجاح! 💾', '✅');
+            db.ref('accounts/' + user.username).update(updates).then(() => {
+                localStorage.setItem('pa_user', JSON.stringify(user));
+                updateUserUI(user);
+                closeProfileModal();
+                showToast('تم حفظ التعديلات بنجاح أونلاين! 💾', '✅');
+            });
         }
 
-        // --- لوحة التحكم وقائمة المطور ---
+        // 5. لوحة التحكم وقائمة المطور مع البحث ومنح الرتب المتعددة
         function openAdminModal() {
             const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
+            const userRoles = user.roles || ['player'];
             const rolesTab = document.getElementById('tab-roles');
             const modalTitle = document.getElementById('panel-modal-title');
 
-            if (user.role === 'owner') {
+            if (userRoles.includes('owner')) {
                 modalTitle.innerText = '👑 لوحة التحكم والإدارة';
                 rolesTab.style.display = 'block';
                 switchPanelTab('roles');
@@ -1259,52 +1326,56 @@ if (account.password !== passwordInput) {
 
         function renderRolesTable() {
             const tbody = document.getElementById('roles-table-body');
-            const accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
+            const searchVal = (document.getElementById('admin-search-input')?.value || '').toLowerCase();
+            if (!tbody) return;
 
             tbody.innerHTML = Object.keys(accountsDB).map(uname => {
+                if (searchVal && !uname.toLowerCase().includes(searchVal)) return '';
+
                 const acc = accountsDB[uname];
-                const currentRole = acc.role || 'player';
+                const uRoles = getAccountRolesArray(acc);
                 const isUsama = (uname.toLowerCase() === 'أسامة' || uname.toLowerCase() === 'osama');
+
+                const badgesHTML = uRoles.map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || '🎮 لاعب'}</span>`).join(' ');
 
                 return `
                     <tr>
                         <td style="font-weight: 800; color: #fff;">${escapeHtml(uname)}</td>
+                        <td>${badgesHTML}</td>
                         <td>
-                            <span class="role-badge ${ROLES[currentRole]?.class || 'role-player'}">
-                                ${ROLES[currentRole]?.name || '🎮 لاعب'}
-                            </span>
-                        </td>
-                        <td>
-                            <select class="role-select" onchange="changeUserRole('${escapeHtml(uname)}', this.value)" ${isUsama ? 'disabled title="لا يمكن تغيير رتبة مالك الموقع الأساسي"' : ''}>
-                                <option value="owner" ${currentRole === 'owner' ? 'selected' : ''}>👑 مالك</option>
-                                <option value="developer" ${currentRole === 'developer' ? 'selected' : ''}>💻 مطور</option>
-                                <option value="player" ${currentRole === 'player' ? 'selected' : ''}>🎮 لاعب</option>
-                            </select>
+                            <div style="display: flex; gap: 6px;">
+                                <button class="action-role-btn" style="background: #10b981; color: #fff;" onclick="toggleUserRole('${escapeHtml(uname)}', 'developer')" ${isUsama ? 'disabled' : ''}>
+                                    ${uRoles.includes('developer') ? 'إزالة مطور' : '+ مطور'}
+                                </button>
+                                <button class="action-role-btn" style="background: #3b82f6; color: #fff;" onclick="toggleUserRole('${escapeHtml(uname)}', 'vip')" ${isUsama ? 'disabled' : ''}>
+                                    ${uRoles.includes('vip') ? 'إزالة VIP' : '+ VIP'}
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
 
-        function changeUserRole(targetUser, newRole) {
-            let accountsDB = JSON.parse(localStorage.getItem('pa_accounts_db') || '{}');
-            if (accountsDB[targetUser]) {
-                accountsDB[targetUser].role = newRole;
-                localStorage.setItem('pa_accounts_db', JSON.stringify(accountsDB));
-                
-                showToast(`تم تغيير رتبة ${targetUser} إلى ${ROLES[newRole].name}`, '👑');
-                renderRolesTable();
+        function toggleUserRole(targetUser, roleToToggle) {
+            const acc = accountsDB[targetUser];
+            if (!acc) return;
 
-                const currentUser = JSON.parse(localStorage.getItem('pa_user') || '{}');
-                if (currentUser.username === targetUser) {
-                    currentUser.role = newRole;
-                    localStorage.setItem('pa_user', JSON.stringify(currentUser));
-                    updateUserUI(currentUser);
-                }
+            let uRoles = getAccountRolesArray(acc);
+
+            if (uRoles.includes(roleToToggle)) {
+                uRoles = uRoles.filter(r => r !== roleToToggle);
+                if (uRoles.length === 0) uRoles.push('player');
+            } else {
+                uRoles.push(roleToToggle);
             }
+
+            db.ref('accounts/' + targetUser + '/roles').set(uRoles).then(() => {
+                showToast(`تم تحديث رتب ${targetUser} بنجاح أونلاين!`, '👑');
+            });
         }
 
-        // --- إدارة الرسائل والدعم ---
+        // 6. إدارة التذاكر والدعم أونلاين
         function renderMessages() {
             const container = document.getElementById('messages-container');
             const suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
@@ -1346,17 +1417,17 @@ if (account.password !== passwordInput) {
             let suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
             if (suggestions[index]) {
                 suggestions[index].reply = replyText;
-                localStorage.setItem('player_assistant_feedback', JSON.stringify(suggestions));
-                showToast('تم حفظ الرد بنجاح!', '💬');
-                renderMessages();
+                db.ref('feedback').set(suggestions).then(() => {
+                    showToast('تم حفظ الرد أونلاين بنجاح!', '💬');
+                });
             }
         }
 
         function clearAllMessages() {
             if (confirm('هل أنت تأكد من مسح جميع الرسائل والاقتراحات؟')) {
-                localStorage.removeItem('player_assistant_feedback');
-                showToast('تم مسح جميع الرسائل بنجاح.', '🗑️');
-                renderMessages();
+                db.ref('feedback').remove().then(() => {
+                    showToast('تم مسح جميع الرسائل بنجاح.', '🗑️');
+                });
             }
         }
 
@@ -1370,7 +1441,7 @@ if (account.password !== passwordInput) {
             }, 3000);
         }
 
-        // --- حركات وصور الكوماند بلوك ---
+        // حركات صور الكوماند بلوك
         const commandImgElement = document.getElementById('command-img');
         const commandImages = [
             "images/command_block.png",
