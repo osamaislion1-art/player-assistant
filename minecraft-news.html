@@ -504,20 +504,21 @@
             background: rgba(37, 99, 235, 0.12);
             border-right: 3px solid #3b82f6;
             border-radius: 6px;
-            padding: 8px 12px;
+            padding: 10px 14px;
             margin-top: 10px;
         }
         .reply-header {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 800;
             color: #60a5fa;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
         .reply-text {
-            font-size: 13px;
+            font-size: 13.5px;
             color: #e2e8f0;
         }
 
@@ -968,9 +969,8 @@
                 if (snapshot.exists()) {
                     snapshot.forEach((child) => {
                         const val = child.val();
-                        val.firebaseId = child.key; // مفتاح الفايربيس
+                        val.firebaseId = child.key; 
                         
-                        // تحويل التعليقات إذا كانت كائن
                         if (val.comments && typeof val.comments === 'object' && !Array.isArray(val.comments)) {
                             val.comments = Object.keys(val.comments).map(k => ({
                                 commentId: k,
@@ -983,7 +983,6 @@
                         newsList.unshift(val);
                     });
                 } else {
-                    // خبر افتراضي في حال لم توجد أخبار
                     const defaultNews = {
                         id: Date.now(),
                         title: "عالم جديد باسم The Sift",
@@ -1172,10 +1171,16 @@
 
                 let developerReplyHtml = '';
                 if (c.reply) {
+                    // تم تعديل الرد هنا ليعرض اسم المطور الحقيقي ورتبه بدلاً من "رد الإدارة" الثابت
+                    const replyAuthorName = c.replyAuthor || currentUser.username || "Osama Abu Hamra";
                     const replyRoleBadge = renderRoleBadges(c.replyRoles || [c.replyRole || 'developer']);
                     developerReplyHtml = `
                         <div class="developer-reply-box">
-                            <div class="reply-header">💬 رد الادارة: ${replyRoleBadge}</div>
+                            <div class="reply-header">
+                                <span>💬</span>
+                                <span style="color: #60a5fa;">${replyAuthorName}</span>
+                                ${replyRoleBadge}
+                            </div>
                             <div class="reply-text">${c.reply}</div>
                         </div>
                     `;
@@ -1264,8 +1269,20 @@
                         card.className = 'admin-comment-box';
 
                         const replyVal = c.reply ? c.reply : '';
+                        const replyAuthorName = c.replyAuthor || currentUser.username || "Osama Abu Hamra";
                         const replyBadge = c.reply ? renderRoleBadges(c.replyRoles || [c.replyRole || 'developer']) : '';
-                        const existingReplyHtml = c.reply ? `<div class="developer-reply-box"><div class="reply-header">💬 الرد الحالي: ${replyBadge}</div><div class="reply-text">${c.reply}</div></div>` : '';
+                        
+                        const existingReplyHtml = c.reply ? `
+                            <div class="developer-reply-box">
+                                <div class="reply-header">
+                                    <span>💬 الرد الحالي:</span>
+                                    <span style="color:#60a5fa;">${replyAuthorName}</span>
+                                    ${replyBadge}
+                                </div>
+                                <div class="reply-text">${c.reply}</div>
+                            </div>
+                        ` : '';
+                        
                         const deleteBtnHtml = isOwner ? `<button type="button" class="delete-news-btn" onclick="deleteComment('${news.firebaseId}', '${c.commentId}')">حذف التعليق 🗑️</button>` : '';
 
                         card.innerHTML = `
@@ -1299,6 +1316,7 @@
 
             db.ref(`minecraft_news/${newsFirebaseId}/comments/${commentId}`).update({
                 reply: replyText,
+                replyAuthor: currentUser.username,
                 replyRoles: currentUser.roles || ['developer']
             }).then(() => {
                 alert("تم حفظ الرد أونلاين بنجاح!");
