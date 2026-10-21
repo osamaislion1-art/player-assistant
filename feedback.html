@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Player Assistant | الملاحظات والدعم</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- مكتبات Firebase السحابية للربط أونلاين عبر الأجهزة -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -232,17 +237,30 @@
             font-size: 0.98rem;
         }
 
+        .roles-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+        }
+
+        /* تصميم الرتب الموحد والمحدث */
         .role-badge {
-            font-size: 11px;
+            font-size: 0.72rem;
             padding: 2px 8px;
             border-radius: 6px;
-            font-weight: bold;
-            display: inline-block;
-            margin-right: 6px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            color: #ffffff;
         }
-        .role-owner { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
-        .role-developer { background: linear-gradient(135deg, #2563eb, #60a5fa); color: #fff; }
-        .role-player { background: rgba(255, 255, 255, 0.15); color: #cbd5e1; }
+        .role-owner { background: linear-gradient(135deg, #1d4ed8, #00f2fe); box-shadow: 0 0 8px rgba(0, 242, 254, 0.4); }
+        .role-cub { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; }
+        .role-youtuber { background: linear-gradient(135deg, #dc2626, #ef4444); box-shadow: 0 0 8px rgba(239, 68, 68, 0.5); }
+        .role-developer { background: linear-gradient(135deg, #10b981, #059669); }
+        .role-vip { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; }
+        .role-player { background: linear-gradient(135deg, #64748b, #475569); }
 
         .form-select, .form-textarea {
             width: 100%;
@@ -330,8 +348,8 @@
         }
 
         .feedback-user-avatar {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             object-fit: cover;
             border: 1.5px solid #00f2fe;
@@ -339,8 +357,8 @@
         }
 
         .feedback-avatar-placeholder {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             background: #2563eb;
             display: flex;
@@ -358,8 +376,8 @@
             color: #00f2fe;
             font-size: 1.05rem;
             display: flex;
-            align-items: center;
-            gap: 6px;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .type-badge {
@@ -517,7 +535,7 @@
                 <span>الرسائل والردود الحية</span>
             </h2>
             <div id="feedback-container" class="feedback-list">
-                <!-- يتم تحميل الملاحظات والردود هنا بواسطة JS -->
+                <!-- يتم تحميل الملاحظات والردود هنا بواسطة JS سحابياً -->
             </div>
         </div>
     </main>
@@ -529,33 +547,101 @@
     </div>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiU1han_ruJl-U2EoK0ShEVm31MW3im1I",
+            authDomain: "player-assistant-c8d93.firebaseapp.com",
+            databaseURL: "https://player-assistant-c8d93-default-rtdb.firebaseio.com",
+            projectId: "player-assistant-c8d93",
+            storageBucket: "player-assistant-c8d93.firebasestorage.app",
+            messagingSenderId: "331981263283",
+            appId: "1:331981263283:web:2a8996acc4edf06de4fbc6"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
         let currentUser = null;
+        let accountsDB = {};
+        let feedbackList = [];
 
-        // تهيئة بيانات الحساب الحالي
-        function initUserSession() {
-            currentUser = JSON.parse(localStorage.getItem('pa_user')) || {
-                username: "لاعب زائر",
-                role: "player",
-                avatar: ""
-            };
+        // خريطة الرتب الشاملة والمحدثة
+        const ROLES_MAP = {
+            owner:     { name: '🦁 أسد',      class: 'role-owner' },
+            cub:       { name: '🦁 شبل',     class: 'role-cub' },
+            youtuber:  { name: '🔴 يوتيوبر',  class: 'role-youtuber' },
+            developer: { name: '💻 مطور',   class: 'role-developer' },
+            vip:       { name: '⭐ VIP',    class: 'role-vip' },
+            player:    { name: '🎮 لاعب',    class: 'role-player' }
+        };
 
+        window.addEventListener('DOMContentLoaded', () => {
+            initFirebaseSync();
+        });
+
+        function initFirebaseSync() {
+            // جلب الحسابات والرتب بدقة سحابية
+            db.ref('accounts').on('value', (snapshot) => {
+                accountsDB = snapshot.val() || {};
+                checkUserSession();
+            });
+
+            // جلب التذاكر والملاحظات أونلاين لحل قلتش عدم وصول الرسائل نهائياً
+            db.ref('feedback').on('value', (snapshot) => {
+                feedbackList = [];
+                const data = snapshot.val();
+                if (data) {
+                    if (Array.isArray(data)) {
+                        feedbackList = data;
+                    } else {
+                        feedbackList = Object.keys(data).map(k => ({ firebaseKey: k, ...data[k] }));
+                    }
+                    // ترتيب الرسائل من الأحدث للأقدم
+                    feedbackList.reverse();
+                }
+                renderPublicFeedback();
+            });
+        }
+
+        function checkUserSession() {
+            const savedUser = JSON.parse(localStorage.getItem('pa_user')) || { username: "زائر", roles: ['player'], avatar: "" };
+            
+            // تحديث بيانات المستخدم أونلاين لو كان مسجلاً
+            if (accountsDB[savedUser.username]) {
+                const acc = accountsDB[savedUser.username];
+                savedUser.roles = Array.isArray(acc.roles) ? acc.roles : [acc.role || 'player'];
+                savedUser.avatar = acc.avatar || '';
+                localStorage.setItem('pa_user', JSON.stringify(savedUser));
+            }
+
+            currentUser = savedUser;
+            updateUserHeaderUI();
+        }
+
+        function updateUserHeaderUI() {
             const userInfoDisplay = document.getElementById('user-info-display');
             if (userInfoDisplay) {
                 const avatarHtml = currentUser.avatar 
                     ? `<img src="${currentUser.avatar}" alt="Avatar">`
                     : currentUser.username.charAt(0).toUpperCase();
 
+                const rolesArr = Array.isArray(currentUser.roles) ? currentUser.roles : [currentUser.roles || 'player'];
+                const badgesHtml = rolesArr.map(r => {
+                    const rInfo = ROLES_MAP[r] || ROLES_MAP.player;
+                    return `<span class="role-badge ${rInfo.class}">${rInfo.name}</span>`;
+                }).join(' ');
+
                 userInfoDisplay.innerHTML = `
                     <div class="user-avatar-mini">${avatarHtml}</div>
                     <div style="display:flex; flex-direction:column; gap:2px;">
                         <span class="user-display-name">${escapeHtml(currentUser.username)}</span>
-                        <span class="role-badge ${getRoleClass(currentUser.role)}">${getRoleName(currentUser.role)}</span>
+                        <div class="roles-container">${badgesHtml}</div>
                     </div>
                 `;
             }
         }
 
-        // إظهار التوست
         function showToast(message, icon = "✅") {
             const toast = document.getElementById('toast');
             document.getElementById('toast-text').innerText = message;
@@ -566,7 +652,7 @@
             }, 3000);
         }
 
-        // حفظ وإرسال النموذج
+        // إرسال الملاحظة سحابياً عبر Firebase لمنع ضياع الرسائل
         function handleFormSubmit(event) {
             event.preventDefault();
             
@@ -584,58 +670,67 @@
             const now = new Date();
             const dateStr = now.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
-            // كائن الملاحظة يحتوي على الاسم + الصورة + الرتبة ليتم جلبهم بالكامل في لوحة المالك والمطور
+            const rolesArr = Array.isArray(currentUser.roles) ? currentUser.roles : [currentUser.roles || 'player'];
+
             const newFeedback = {
                 id: Date.now(),
                 name: currentUser.username,
                 avatar: currentUser.avatar || "",
-                role: currentUser.role || "player",
+                roles: rolesArr,
                 type: type,
                 message: message,
                 date: dateStr,
                 reply: ""
             };
 
-            let suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
-            suggestions.unshift(newFeedback);
-            localStorage.setItem('player_assistant_feedback', JSON.stringify(suggestions));
-
-            messageInput.value = '';
-            showToast('تم إرسال ملاحظتك بنجاح!', '🚀');
-            renderPublicFeedback();
+            // رفع الرسالة مباشرة إلى Firebase Database
+            db.ref('feedback').push(newFeedback).then(() => {
+                messageInput.value = '';
+                showToast('تم إرسال ملاحظتك بنجاح أونلاين!', '🚀');
+            }).catch((error) => {
+                showToast('❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى!', '⚠️');
+            });
         }
 
-        // عرض الملاحظات والردود بالصفحة
+        // عرض الملاحظات والردود الحية لجميع اللاعبين
         function renderPublicFeedback() {
             const container = document.getElementById('feedback-container');
-            const suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
 
-            if (suggestions.length === 0) {
+            if (!feedbackList || feedbackList.length === 0) {
                 container.innerHTML = '<div class="empty-state">لا توجد أية ملاحظات أو اقتراحات حالياً. كن أول من يشاركنا رأيه! 🌟</div>';
                 return;
             }
 
-            container.innerHTML = suggestions.map(item => {
-                // هل المستخدم الحالي هو صاحب الملاحظة أو مالك/مطور؟
-                const isAuthor = currentUser && (currentUser.username === item.name);
-                const isAdmin = currentUser && (currentUser.role === 'owner' || currentUser.role === 'developer');
+            container.innerHTML = feedbackList.map(item => {
+                // جلب أحدث رتب وصورة صاحب الملاحظة من الداتابيز الحية لو توفرت
+                const liveAcc = accountsDB[item.name] || {};
+                const liveAvatar = liveAcc.avatar || item.avatar || "";
+                const liveRoles = liveAcc.roles || item.roles || (item.role ? [item.role] : ['player']);
 
-                // إظهار الرد فقط لصاحب الحساب أو المالك/المطور
+                const isAuthor = currentUser && (currentUser.username === item.name);
+                const currentUserRoles = currentUser && currentUser.roles ? currentUser.roles : [];
+                const isAdmin = currentUserRoles.includes('owner') || currentUserRoles.includes('developer');
+
                 const shouldShowReply = item.reply && (isAuthor || isAdmin);
 
-                const avatarHtml = item.avatar 
-                    ? `<img src="${item.avatar}" class="feedback-user-avatar" alt="${escapeHtml(item.name)}">`
+                const avatarHtml = liveAvatar 
+                    ? `<img src="${liveAvatar}" class="feedback-user-avatar" alt="${escapeHtml(item.name)}">`
                     : `<div class="feedback-avatar-placeholder">${item.name ? item.name.charAt(0).toUpperCase() : '👤'}</div>`;
+
+                const badgesHtml = liveRoles.map(r => {
+                    const rInfo = ROLES_MAP[r] || ROLES_MAP.player;
+                    return `<span class="role-badge ${rInfo.class}">${rInfo.name}</span>`;
+                }).join(' ');
 
                 return `
                     <div class="feedback-item">
                         <div class="feedback-header">
                             <div class="user-info-group">
                                 ${avatarHtml}
-                                <span class="user-name">
+                                <div class="user-name">
                                     <span>${escapeHtml(item.name)}</span>
-                                    <span class="role-badge ${getRoleClass(item.role)}">${getRoleName(item.role)}</span>
-                                </span>
+                                    <div class="roles-container">${badgesHtml}</div>
+                                </div>
                             </div>
                             <span class="type-badge">${escapeHtml(item.type)}</span>
                         </div>
@@ -657,29 +752,12 @@
             }).join('');
         }
 
-        function getRoleName(role) {
-            if (role === 'owner') return '👑 مالك';
-            if (role === 'developer') return '💻 مطور';
-            return '🎮 لاعب';
-        }
-
-        function getRoleClass(role) {
-            if (role === 'owner') return 'role-owner';
-            if (role === 'developer') return 'role-developer';
-            return 'role-player';
-        }
-
         function escapeHtml(text) {
             if (!text) return '';
             return text.replace(/[&<>"']/g, function(m) {
                 return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
             });
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            initUserSession();
-            renderPublicFeedback();
-        });
     </script>
 </body>
 </html>

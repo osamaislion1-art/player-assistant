@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أخبار وتحديثات ماينكرافت | Player Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         body {
-            background-color: #070a12;
+            background-color: #060911;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.18) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 40%);
             color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             padding-bottom: 50px;
         }
@@ -22,9 +25,10 @@
         /* Navbar */
         .top-navbar {
             width: 100%;
-            background: #0d121f;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.25);
-            padding: 16px 35px;
+            background: rgba(8, 13, 25, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+            padding: 14px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -39,715 +43,334 @@
         .brand-logo {
             display: flex;
             align-items: center;
-            gap: 14px;
-            font-size: 22px;
-            font-weight: 800;
-            color: #ffffff;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 900;
+            color: #00f2fe;
             cursor: pointer;
             user-select: none;
-            transition: transform 0.2s ease;
-        }
-        .brand-logo:active {
-            transform: scale(0.96);
         }
 
-        .brand-logo-img {
-            height: 45px;
-            width: auto;
-            object-fit: contain;
-        }
+        .brand-logo-img { height: 42px; width: auto; object-fit: contain; }
 
         .user-nav-box {
             display: flex;
             align-items: center;
             gap: 10px;
             background: rgba(15, 23, 42, 0.85);
-            border: 1px solid rgba(59, 130, 246, 0.35);
+            border: 1px solid rgba(0, 242, 254, 0.3);
             padding: 6px 14px;
-            border-radius: 10px;
+            border-radius: 12px;
         }
         .user-avatar-mini {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: #2563eb;
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
+            font-weight: 900;
             overflow: hidden;
-            border: 1.5px solid #60a5fa;
+            border: 2px solid #00f2fe;
             font-size: 14px;
             color: #fff;
             flex-shrink: 0;
         }
         .user-avatar-mini img { width: 100%; height: 100%; object-fit: cover; }
 
-        .role-badges-wrap {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            flex-wrap: wrap;
-        }
+        .role-badges-wrap { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
 
         .role-badge {
             font-size: 11px;
             padding: 2px 8px;
             border-radius: 6px;
-            font-weight: bold;
+            font-weight: 900;
             display: inline-block;
+            color: #fff;
         }
-        .role-owner { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; box-shadow: 0 0 6px rgba(245, 158, 11, 0.4); }
-        .role-developer { background: #00b894; color: #fff; box-shadow: 0 0 6px rgba(0, 184, 148, 0.4); }
-        .role-vip { background: #0984e3; color: #fff; box-shadow: 0 0 6px rgba(9, 132, 227, 0.4); }
-        .role-player { background: rgba(255, 255, 255, 0.15); color: #cbd5e1; }
+        .role-owner { background: linear-gradient(135deg, #1d4ed8, #00f2fe); box-shadow: 0 0 8px rgba(0, 242, 254, 0.4); }
+        .role-cub { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; }
+        .role-youtuber { background: linear-gradient(135deg, #dc2626, #ef4444); box-shadow: 0 0 8px rgba(239, 68, 68, 0.5); }
+        .role-developer { background: linear-gradient(135deg, #10b981, #059669); }
+        .role-vip { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; }
+        .role-player { background: rgba(255, 255, 255, 0.12); color: #cbd5e1; }
 
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .nav-actions { display: flex; align-items: center; gap: 10px; }
 
         .top-home-btn {
-            background: rgba(18, 28, 48, 0.9);
-            border: 1px solid rgba(59, 130, 246, 0.5);
-            color: #60a5fa;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            color: #00f2fe;
             text-decoration: none;
-            padding: 8px 22px;
+            padding: 8px 18px;
             border-radius: 10px;
-            font-size: 14.5px;
-            font-weight: 700;
+            font-size: 14px;
+            font-weight: 800;
             transition: all 0.3s ease;
         }
-        .top-home-btn:hover {
-            background: #2563eb;
-            color: #ffffff;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
-        }
+        .top-home-btn:hover { background: #2563eb; color: #ffffff; }
 
-        .main-container {
-            max-width: 1100px;
-            margin: 35px auto 0 auto;
-            padding: 0 20px;
-        }
+        .main-container { max-width: 1100px; margin: 35px auto 0 auto; padding: 0 20px; }
 
-        .page-header {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-        .page-title {
-            font-size: 36px;
-            font-weight: 900;
-            color: #ffffff;
-            margin-bottom: 8px;
-        }
+        .page-header { text-align: center; margin-bottom: 35px; }
+        .page-title { font-size: 34px; font-weight: 900; color: #ffffff; margin-bottom: 8px; }
         .page-title span {
-            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            background: linear-gradient(135deg, #ffffff 30%, #3b82f6 70%, #00f2fe 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .page-subtitle {
-            color: #94a3b8;
-            font-size: 14px;
-        }
+        .page-subtitle { color: #94a3b8; font-size: 14px; font-weight: 600; }
 
-        .news-feed {
-            display: flex;
-            flex-direction: column;
-            gap: 22px;
-        }
+        .news-feed { display: flex; flex-direction: column; gap: 22px; }
 
         .news-card {
-            background: #0f172a;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(6, 9, 17, 0.85) 100%);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 18px;
             overflow: hidden;
             display: flex;
             flex-direction: row;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             cursor: pointer;
             min-height: 200px;
         }
-        .news-card:hover {
-            border-color: #60a5fa;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.25);
-        }
+        .news-card:hover { border-color: #00f2fe; transform: translateY(-4px); }
 
-        .card-img-wrap {
-            width: 300px;
-            min-width: 300px;
-            background: #05070c;
-            overflow: hidden;
-            position: relative;
-        }
-        .card-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-        .news-card:hover .card-img {
-            transform: scale(1.04);
-        }
+        .card-img-wrap { width: 300px; min-width: 300px; background: #05070c; overflow: hidden; position: relative; }
+        .card-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .news-card:hover .card-img { transform: scale(1.05); }
 
         .image-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(13, 19, 34, 0.85);
-            border: 1px solid rgba(59, 130, 246, 0.5);
-            color: #60a5fa;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            backdrop-filter: blur(4px);
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(8, 13, 25, 0.85);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            color: #00f2fe; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: 800;
         }
 
-        .card-content {
-            padding: 22px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            flex-grow: 1;
-        }
+        .card-content { padding: 22px; display: flex; flex-direction: column; justify-content: space-between; flex-grow: 1; }
+        .card-title { font-size: 20px; font-weight: 800; color: #ffffff; margin-bottom: 14px; line-height: 1.4; }
 
-        .card-title {
-            font-size: 21px;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 14px;
-            line-height: 1.4;
-        }
-
-        .card-actions-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
+        .card-actions-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 15px; flex-wrap: wrap; }
 
         .read-btn {
-            background: #2563eb;
-            color: #ffffff;
-            border: none;
-            padding: 10px 22px;
-            border-radius: 8px;
-            font-size: 13.5px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.25s;
+            background: linear-gradient(135deg, #2563eb 0%, #00f2fe 100%);
+            color: #ffffff; border: none; padding: 10px 22px; border-radius: 10px; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: 0.25s;
         }
-        .read-btn:hover {
-            background: #3b82f6;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
-        }
+        .read-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
 
         .card-comments-btn {
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            color: #60a5fa;
-            padding: 9px 18px;
-            border-radius: 8px;
-            font-size: 13.5px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(0, 242, 254, 0.4); color: #00f2fe;
+            padding: 9px 18px; border-radius: 10px; font-size: 13.5px; font-weight: 800; cursor: pointer; transition: all 0.25s ease;
+            display: flex; align-items: center; gap: 6px;
         }
-        .card-comments-btn:hover {
-            background: #2563eb;
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
-        }
+        .card-comments-btn:hover { background: #2563eb; color: #ffffff; }
 
         @media (max-width: 768px) {
             .news-card { flex-direction: column; }
             .card-img-wrap { width: 100%; min-width: 100%; height: 200px; }
             .top-navbar { padding: 12px 20px; }
-            .brand-logo { font-size: 18px; }
-            .brand-logo-img { height: 35px; }
         }
 
         /* Modals */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(3, 7, 18, 0.88);
-            backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(4, 7, 13, 0.88); backdrop-filter: blur(10px); display: none;
+            justify-content: center; align-items: center; z-index: 1000; padding: 20px;
         }
         .modal-content {
-            background: #0d1322;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            border-radius: 16px;
-            max-width: 880px;
-            width: 92%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 30px;
-            position: relative;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            background: #080d19; border: 2px solid #00f2fe; border-radius: 20px;
+            max-width: 880px; width: 92%; max-height: 90vh; overflow-y: auto; padding: 30px;
+            position: relative; box-shadow: 0 0 30px rgba(0, 242, 254, 0.35);
         }
         
         .close-modal {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            font-size: 18px;
-            font-weight: bold;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-            z-index: 20;
+            position: absolute; top: 15px; left: 15px; background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4); color: #ff4d4d; font-size: 18px; font-weight: bold;
+            width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; z-index: 20;
         }
-        .close-modal:hover {
-            background: #ef4444;
-            border-color: #ef4444;
-        }
+        .close-modal:hover { background: #ef4444; color: #ffffff; }
 
         /* Slider */
         .image-slider-wrapper {
-            position: relative;
-            width: 100%;
-            height: 380px;
-            background: #04060a;
-            border-radius: 12px;
-            border: 1px solid rgba(59, 130, 246, 0.25);
-            overflow: hidden;
-            margin-bottom: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative; width: 100%; height: 380px; background: #04060a; border-radius: 14px;
+            border: 1px solid rgba(0, 242, 254, 0.3); overflow: hidden; margin-bottom: 22px; display: flex; align-items: center; justify-content: center;
         }
-        .slider-main-img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
+        .slider-main-img { max-width: 100%; max-height: 100%; object-fit: contain; }
         .slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(13, 19, 34, 0.75);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            color: #60a5fa;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            font-size: 20px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            user-select: none;
-            z-index: 5;
+            position: absolute; top: 50%; transform: translateY(-50%); background: rgba(8, 13, 25, 0.85);
+            border: 1px solid rgba(0, 242, 254, 0.4); color: #00f2fe; width: 42px; height: 42px; border-radius: 50%;
+            font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; user-select: none; z-index: 5;
         }
-        .slider-btn:hover {
-            background: #2563eb;
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.6);
-        }
-        .slider-btn.prev { right: 15px; }
-        .slider-btn.next { left: 15px; }
+        .slider-btn:hover { background: #2563eb; color: #ffffff; }
+        .slider-btn.prev { right: 15px; } .slider-btn.next { left: 15px; }
 
         .slider-counter-badge {
-            position: absolute;
-            bottom: 12px;
-            background: rgba(7, 10, 18, 0.85);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            color: #94a3b8;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
+            position: absolute; bottom: 12px; background: rgba(8, 13, 25, 0.85);
+            border: 1px solid rgba(0, 242, 254, 0.3); color: #cbd5e1; padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 800;
         }
 
-        .modal-body {
-            color: #cbd5e1;
-            line-height: 1.8;
-            font-size: 16px;
-            white-space: pre-line;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: 18px;
-            margin-bottom: 25px;
-        }
+        .modal-body { color: #cbd5e1; line-height: 1.8; font-size: 16px; white-space: pre-line; border-top: 1px solid rgba(0, 242, 254, 0.15); padding-top: 18px; margin-bottom: 25px; }
 
         /* Comments */
-        .comments-section {
-            border-top: 1px solid rgba(59, 130, 246, 0.25);
-            padding-top: 22px;
-        }
-        .comments-title {
-            font-size: 18px;
-            font-weight: 800;
-            color: #60a5fa;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .comment-form {
-            background: rgba(7, 10, 18, 0.6);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
+        .comments-section { border-top: 1px solid rgba(0, 242, 254, 0.2); padding-top: 22px; }
+        .comments-title { font-size: 18px; font-weight: 800; color: #00f2fe; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .comment-form { background: rgba(6, 9, 17, 0.8); border: 1px solid rgba(0, 242, 254, 0.3); border-radius: 14px; padding: 16px; margin-bottom: 20px; }
         .comment-textarea {
-            width: 100%;
-            background: #070a12;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            padding: 10px 14px;
-            color: #fff;
-            font-size: 13.5px;
-            outline: none;
-            margin-bottom: 10px;
-            resize: vertical;
-            min-height: 70px;
+            width: 100%; background: #070a12; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; padding: 10px 14px;
+            color: #fff; font-size: 13.5px; outline: none; margin-bottom: 10px; resize: vertical; min-height: 70px;
         }
-        .comment-textarea:focus { border-color: #60a5fa; }
+        .comment-textarea:focus { border-color: #00f2fe; }
         
         .submit-comment-btn {
-            background: #2563eb;
-            color: #fff;
-            border: none;
-            padding: 9px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 13.5px;
-            transition: 0.25s;
-        }
-        .submit-comment-btn:hover {
-            background: #3b82f6;
-            box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb 0%, #00f2fe 100%); color: #fff; border: none; padding: 9px 20px;
+            border-radius: 10px; font-weight: 800; cursor: pointer; font-size: 13.5px; transition: 0.25s;
         }
 
-        .comments-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
+        .comments-list { display: flex; flex-direction: column; gap: 12px; }
+        
+        /* كروت التعليقات المحسنة */
         .comment-card {
-            background: rgba(15, 23, 42, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 10px;
-            padding: 12px 16px;
-            position: relative;
+            background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(0, 242, 254, 0.2); border-radius: 14px; padding: 14px 18px; position: relative;
         }
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-        .comment-author-box {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .comment-author-box { display: flex; align-items: center; gap: 10px; }
         .comment-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #2563eb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #fff;
-            font-size: 13px;
-            overflow: hidden;
-            border: 1px solid #60a5fa;
-            flex-shrink: 0;
+            width: 38px; height: 38px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center;
+            font-weight: 800; color: #fff; font-size: 14px; overflow: hidden; border: 1.5px solid #00f2fe; flex-shrink: 0;
         }
         .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .comment-author {
-            font-weight: 700;
-            color: #ffffff;
-            font-size: 14px;
-        }
-        .comment-date {
-            font-size: 11px;
-            color: #64748b;
-        }
-        .comment-text {
-            color: #cbd5e1;
-            font-size: 13.5px;
-            line-height: 1.5;
-            white-space: pre-line;
-            margin-top: 4px;
-        }
+        .comment-author { font-weight: 800; color: #ffffff; font-size: 14.5px; }
+        .comment-date { font-size: 11.5px; color: #64748b; font-weight: 600; }
+        .comment-text { color: #e2e8f0; font-size: 14px; line-height: 1.6; white-space: pre-line; margin-top: 6px; font-weight: 600; }
         
         .developer-reply-box {
-            background: rgba(37, 99, 235, 0.12);
-            border-right: 3px solid #3b82f6;
-            border-radius: 6px;
-            padding: 10px 14px;
-            margin-top: 10px;
+            background: rgba(59, 130, 246, 0.12); border-right: 3px solid #00f2fe; border-radius: 10px; padding: 12px 14px; margin-top: 12px;
         }
-        .reply-header {
-            font-size: 13px;
-            font-weight: 800;
-            color: #60a5fa;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-        .reply-text {
-            font-size: 13.5px;
-            color: #e2e8f0;
-        }
+        .reply-header { font-size: 13px; font-weight: 800; color: #00f2fe; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .reply-text { font-size: 13.5px; color: #e2e8f0; font-weight: 600; }
 
-        .no-comments {
-            color: #64748b;
-            font-size: 13.5px;
-            text-align: center;
-            padding: 15px;
-        }
+        .no-comments { color: #64748b; font-size: 13.5px; text-align: center; padding: 15px; font-weight: 600; }
 
         /* Admin Controls */
-        .admin-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 18px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 12px;
-        }
+        .admin-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1px solid rgba(0, 242, 254, 0.2); padding-bottom: 12px; }
         .admin-manage-comments-btn {
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.5);
-            color: #60a5fa;
-            padding: 7px 15px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
+            background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(0, 242, 254, 0.4); color: #00f2fe; padding: 7px 15px; border-radius: 10px; font-size: 13px; font-weight: 800; cursor: pointer; transition: 0.2s;
         }
-        .admin-manage-comments-btn:hover {
-            background: #2563eb;
-            color: #fff;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
-        }
+        .admin-manage-comments-btn:hover { background: #2563eb; color: #fff; }
 
         .admin-form-group { margin-bottom: 16px; }
-        .admin-form-group label {
-            display: block;
-            font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 6px;
-            font-weight: 700;
-        }
+        .admin-form-group label { display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 6px; font-weight: 700; }
         .admin-input, .admin-textarea {
-            width: 100%;
-            background: #070a12;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            padding: 11px 14px;
-            color: #fff;
-            font-size: 13.5px;
-            outline: none;
+            width: 100%; background: #070a12; border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; padding: 11px 14px; color: #fff; font-size: 13.5px; outline: none;
         }
-        .admin-input:focus, .admin-textarea:focus { border-color: #60a5fa; }
+        .admin-input:focus, .admin-textarea:focus { border-color: #00f2fe; }
         .admin-textarea { resize: vertical; min-height: 130px; }
 
-        .image-upload-box {
-            border: 2px dashed rgba(59, 130, 246, 0.4);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            background: #070a12;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .image-upload-box:hover {
-            border-color: #60a5fa;
-            background: rgba(59, 130, 246, 0.05);
-        }
+        .image-upload-box { border: 2px dashed rgba(0, 242, 254, 0.4); border-radius: 12px; padding: 20px; text-align: center; background: #070a12; cursor: pointer; }
+        .image-upload-box:hover { border-color: #00f2fe; }
         .image-upload-box p { font-size: 13px; color: #94a3b8; margin-top: 5px; }
 
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-            margin-top: 12px;
-        }
-        .preview-thumb-wrap {
-            position: relative;
-            height: 75px;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-        }
+        .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; margin-top: 12px; }
+        .preview-thumb-wrap { position: relative; height: 75px; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0, 242, 254, 0.4); }
         .preview-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        .remove-thumb-btn {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            background: rgba(239, 68, 68, 0.85);
-            color: white;
-            border: none;
+        .remove-thumb-btn { position: absolute; top: 2px; right: 2px; background: rgba(239, 68, 68, 0.85); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+        .form-actions { display: flex; gap: 10px; margin-top: 10px; }
+        .submit-news-btn { background: linear-gradient(135deg, #2563eb, #00f2fe); color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: 800; cursor: pointer; flex: 1; font-size: 15px; }
+        .cancel-edit-btn { background: rgba(255, 255, 255, 0.1); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.2); padding: 12px 18px; border-radius: 10px; font-weight: 800; cursor: pointer; display: none; font-size: 14px; }
+
+        .manage-news-item { display: flex; justify-content: space-between; align-items: center; background: #070a12; padding: 10px 14px; border-radius: 10px; margin-top: 10px; border: 1px solid rgba(0, 242, 254, 0.15); }
+        .action-btns { display: flex; gap: 8px; }
+        .edit-news-btn { background: #eab308; color: #000; border: none; padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-weight: 800; }
+        .delete-news-btn { background: #ef4444; color: #fff; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; cursor: pointer; font-weight: 800; }
+
+        /* التصميم المرتب الجديد لـ "لوحة الردود على التعليقات" 💬 */
+        .admin-comment-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(6, 9, 17, 0.95) 100%);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+        .admin-comment-news-title {
+            font-size: 12.5px;
+            color: #00f2fe;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: rgba(0, 242, 254, 0.08);
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .admin-comment-user-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .admin-comment-user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .admin-comment-avatar {
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 11px;
-            cursor: pointer;
+            background: #2563eb;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .form-actions { display: flex; gap: 10px; margin-top: 10px; }
-
-        .submit-news-btn {
-            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+            font-weight: 800;
             color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            flex: 1;
-            font-size: 15px;
-            transition: 0.25s;
-        }
-        .submit-news-btn:hover {
-            background: #3b82f6;
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
-        }
-
-        .cancel-edit-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #cbd5e1;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 12px 18px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            display: none;
             font-size: 14px;
-            transition: 0.25s;
+            overflow: hidden;
+            border: 1.5px solid #00f2fe;
+            flex-shrink: 0;
         }
-
-        .manage-news-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #070a12;
-            padding: 10px 14px;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .action-btns { display: flex; gap: 8px; }
-        .edit-news-btn {
-            background: #eab308;
-            color: #000;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .delete-news-btn {
-            background: #ef4444;
-            color: #fff;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .admin-comment-box {
-            background: #070a12;
-            border: 1px solid rgba(59, 130, 246, 0.25);
-            border-radius: 10px;
-            padding: 14px;
-            margin-bottom: 14px;
-        }
-        .admin-comment-news-title {
-            font-size: 12px;
-            color: #3b82f6;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-        .admin-comment-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-        }
+        .admin-comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        
         .admin-reply-input-group {
             display: flex;
             gap: 8px;
-            margin-top: 10px;
+            margin-top: 12px;
         }
         .admin-reply-input {
             flex: 1;
-            background: #0d1322;
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            border-radius: 6px;
-            padding: 8px 12px;
+            background: rgba(6, 9, 17, 0.9);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 10px;
+            padding: 10px 14px;
             color: #fff;
-            font-size: 13px;
+            font-size: 13.5px;
+            outline: none;
         }
+        .admin-reply-input:focus { border-color: #00f2fe; }
+
         .admin-reply-btn {
-            background: #2563eb;
+            background: linear-gradient(135deg, #2563eb 0%, #00f2fe 100%);
             color: #fff;
             border: none;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 12.5px;
-            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
-        .no-results {
-            text-align: center;
-            padding: 50px;
-            color: #64748b;
-        }
+        .no-results { text-align: center; padding: 50px; color: #64748b; font-weight: 600; }
 
         .bottom-notice {
-            margin-top: 50px;
-            padding: 18px 24px;
-            background: rgba(13, 19, 34, 0.8);
-            border: 1px dashed rgba(59, 130, 246, 0.35);
-            border-radius: 12px;
-            text-align: center;
-            color: #94a3b8;
-            font-size: 14.5px;
-            line-height: 1.6;
+            margin-top: 50px; padding: 18px 24px; background: rgba(8, 13, 25, 0.8);
+            border: 1px dashed rgba(0, 242, 254, 0.35); border-radius: 14px; text-align: center; color: #94a3b8; font-size: 14.5px; line-height: 1.6; font-weight: 600;
         }
-        .notice-link { color: #60a5fa; font-weight: 800; text-decoration: underline; }
+        .notice-link { color: #00f2fe; font-weight: 800; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -762,7 +385,7 @@
         <div class="user-nav-box" id="userNavBox">
             <div class="user-avatar-mini" id="navAvatar">👤</div>
             <div>
-                <span id="navUsername" style="font-weight:700; font-size:13.5px; display:block;">لاعب</span>
+                <span id="navUsername" style="font-weight:800; font-size:13.5px; display:block;">لاعب</span>
                 <div id="navRoleBadge" class="role-badges-wrap">
                     <span class="role-badge role-player">🎮 لاعب</span>
                 </div>
@@ -809,7 +432,7 @@
                 </div>
 
                 <form id="commentForm" class="comment-form">
-                    <div style="margin-bottom:8px; font-size:13px; color:#60a5fa; font-weight:700;">
+                    <div style="margin-bottom:8px; font-size:13px; color:#00f2fe; font-weight:800;">
                         ✍️ التعليق باسم: <span id="commentingAsUser" style="color:#fff;"></span>
                     </div>
                     <textarea id="commentText" class="comment-textarea" placeholder="اكتب تعليقك هنا..." required></textarea>
@@ -827,8 +450,8 @@
             <button class="close-modal" type="button">✕</button>
             
             <div class="admin-header-row">
-                <h2 style="color:#60a5fa; font-size:19px;" id="formHeaderTitle">⚙ لوحة التحكم بالنشر</h2>
-                <button type="button" class="admin-manage-comments-btn" onclick="openAdminCommentsModal()">💬 إدارة التعليقات والردود</button>
+                <h2 style="color:#00f2fe; font-size:19px; font-weight: 900;" id="formHeaderTitle">⚙ لوحة التحكم بالنشر</h2>
+                <button type="button" class="admin-manage-comments-btn" onclick="openAdminCommentsModal()">💬 لوحة الردود على التعليقات</button>
             </div>
             
             <form id="addNewsForm">
@@ -858,24 +481,23 @@
                 </div>
             </form>
 
-            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin: 22px 0;">
+            <hr style="border:none; border-top:1px solid rgba(0,242,254,0.2); margin: 22px 0;">
 
-            <h3 style="color:#fff; font-size:15px; margin-bottom:12px;">إدارة الأخبار المنشورة:</h3>
+            <h3 style="color:#fff; font-size:15px; margin-bottom:12px; font-weight:800;">إدارة الأخبار المنشورة:</h3>
             <div id="adminNewsList"></div>
         </div>
     </div>
 
-    <!-- Modal 3: Admin Comments -->
+    <!-- Modal 3: Admin Comments (لوحة الردود على التعليقات المنظمة كلياً) -->
     <div class="modal-overlay" id="adminCommentsModal">
-        <div class="modal-content" style="max-width: 650px;">
+        <div class="modal-content" style="max-width: 680px;">
             <button class="close-modal" type="button">✕</button>
-            <h2 style="color:#60a5fa; font-size:19px; margin-bottom:18px; text-align:center;">💬 لوحة الردود على التعليقات</h2>
+            <h2 style="color:#00f2fe; font-size:20px; margin-bottom:18px; text-align:center; font-weight: 900;">💬 لوحة الردود على التعليقات</h2>
             <div id="adminAllCommentsList"></div>
         </div>
     </div>
 
     <script>
-        // تهيئة Firebase Realtime Database
         const firebaseConfig = {
             apiKey: "AIzaSyBiU1han_ruJl-U2EoK0ShEVm31MW3im1I",
             authDomain: "player-assistant-c8d93.firebaseapp.com",
@@ -897,21 +519,28 @@
         let currentSliderImages = [];
         let currentSliderIndex = 0;
         let newsList = [];
+        let globalAccountsDB = {}; // الداتابيز المحدثة أونلاين للحسابات
 
         const DEFAULT_FALLBACK_IMG = "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop";
+
+        // تعريف الرتب الشامل والدقيق
+        const ROLES_MAP = {
+            'owner':     { name: '🦁 أسد',      class: 'role-owner' },
+            'cub':       { name: '🦁 شبل',     class: 'role-cub' },
+            'youtuber':  { name: '🔴 يوتيوبر',  class: 'role-youtuber' },
+            'developer': { name: '💻 مطور',   class: 'role-developer' },
+            'vip':       { name: '⭐ VIP',    class: 'role-vip' },
+            'player':    { name: '🎮 لاعب',    class: 'role-player' }
+        };
 
         function renderRoleBadges(roles) {
             if (!roles) return '<span class="role-badge role-player">🎮 لاعب</span>';
             const roleList = Array.isArray(roles) ? roles : [roles];
-            
-            const roleBadges = {
-                'owner': '<span class="role-badge role-owner">👑 مالك</span>',
-                'developer': '<span class="role-badge role-developer">💻 مطور</span>',
-                'vip': '<span class="role-badge role-vip">⭐ VIP</span>',
-                'player': '<span class="role-badge role-player">🎮 لاعب</span>'
-            };
-
-            return roleList.map(r => roleBadges[r.toLowerCase()] || roleBadges['player']).join(' ');
+            return roleList.map(r => {
+                const rKey = (r || '').toLowerCase();
+                const rInfo = ROLES_MAP[rKey] || ROLES_MAP.player;
+                return `<span class="role-badge ${rInfo.class}">${rInfo.name}</span>`;
+            }).join(' ');
         }
 
         function hasRole(user, targetRole) {
@@ -962,8 +591,29 @@
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const addNewsForm = document.getElementById('addNewsForm');
 
-        // الربط بالبيانات أونلاين من Firebase
-        function listenToFirebaseNews() {
+        // الربط بالسحابة للحسابات والأخبار مبرمجة لمحي الحسابات المحذوفة مباشرة
+        function initFirebaseSync() {
+            // 1. جلب حسابات المستخدمين للتأكد من الرتب وصلاحية الحسابات أونلاين
+            db.ref('accounts').on('value', (accSnap) => {
+                globalAccountsDB = accSnap.val() || {};
+                
+                // تحديث بيانات المستخدم الحالي لو تغيرت رتبته أو صورته أونلاين
+                if (currentUser && currentUser.username !== 'زائر' && globalAccountsDB[currentUser.username]) {
+                    const accData = globalAccountsDB[currentUser.username];
+                    currentUser.roles = Array.isArray(accData.roles) ? accData.roles : [accData.role || 'player'];
+                    currentUser.avatar = accData.avatar || '';
+                    document.getElementById('navAvatar').innerHTML = currentUser.avatar ? `<img src="${currentUser.avatar}">` : currentUser.username.charAt(0).toUpperCase();
+                    document.getElementById('navRoleBadge').innerHTML = renderRoleBadges(currentUser.roles);
+                }
+
+                // إعادة تدوير الأخبار عند تحديث الحسابات
+                renderNewsFeed();
+                if (document.getElementById('adminCommentsModal').style.display === 'flex') {
+                    renderAdminComments();
+                }
+            });
+
+            // 2. جلب الأخبار وتصنيف التعليقات
             db.ref('minecraft_news').on('value', (snapshot) => {
                 newsList = [];
                 if (snapshot.exists()) {
@@ -982,17 +632,7 @@
                         
                         newsList.unshift(val);
                     });
-                } else {
-                    const defaultNews = {
-                        id: Date.now(),
-                        title: "عالم جديد باسم The Sift",
-                        images: ["https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000&auto=format&fit=crop"],
-                        content: "هذا العالم أضيف إلى Minecraft Dungeons II وسيضاف إلى ماين كرافت عام 2027.\n\nليس هناك معلومات كثيرة عنه، ويقال أنه للوصول إليه يجب فتح بوابة الواردن.",
-                        comments: {}
-                    };
-                    db.ref('minecraft_news').push(defaultNews);
                 }
-
                 renderNewsFeed();
                 renderAdminList();
                 
@@ -1004,6 +644,15 @@
                 if (document.getElementById('adminCommentsModal').style.display === 'flex') {
                     renderAdminComments();
                 }
+            });
+        }
+
+        // تصفية التعليقات لإلغاء التعليقات التي تعود لحسابات تم حذفها أونلاين 🧹
+        function filterValidComments(commentsArray) {
+            if (!commentsArray) return [];
+            return commentsArray.filter(c => {
+                // إذا الحساب موجود في الداتابيز أو كان تعليق قديم قبل السحابة يُبقى عليه
+                return globalAccountsDB[c.author] !== undefined || c.author === 'زائر';
             });
         }
 
@@ -1019,7 +668,7 @@
                 const imgs = getNewsImages(item);
                 const coverImg = imgs[0];
                 const countBadge = imgs.length > 1 ? `<div class="image-badge">📷 ${imgs.length} صور</div>` : '';
-                const commentCount = item.comments ? item.comments.length : 0;
+                const validComments = filterValidComments(item.comments);
 
                 const card = document.createElement('article');
                 card.className = 'news-card';
@@ -1037,7 +686,7 @@
                         <div class="card-actions-bar">
                             <button class="read-btn" type="button" onclick="event.stopPropagation(); openReaderModal('${item.firebaseId || item.id}')">اقرأ التفاصيل الكاملة</button>
                             <button class="card-comments-btn" type="button" onclick="event.stopPropagation(); openReaderModal('${item.firebaseId || item.id}', true)">
-                                💬 ${commentCount} تعليق
+                                💬 ${validComments.length} تعليق
                             </button>
                         </div>
                     </div>
@@ -1142,7 +791,6 @@
             document.getElementById('modalBody').textContent = item.content;
 
             renderComments(item);
-
             readerModal.style.display = 'flex';
 
             if (scrollToComments) {
@@ -1155,31 +803,37 @@
         function renderComments(item) {
             const commentsList = document.getElementById('commentsList');
             const commentsCount = document.getElementById('commentsCount');
-            const comments = item.comments || [];
+            const validComments = filterValidComments(item.comments || []);
 
-            commentsCount.textContent = comments.length;
+            commentsCount.textContent = validComments.length;
             commentsList.innerHTML = '';
 
-            if (comments.length === 0) {
+            if (validComments.length === 0) {
                 commentsList.innerHTML = '<div class="no-comments">لا توجد تعليقات بعد، كن أول من يعلق!</div>';
                 return;
             }
 
-            comments.forEach((c) => {
+            validComments.forEach((c) => {
                 const div = document.createElement('div');
                 div.className = 'comment-card';
 
+                // جلب أحدث بيانات صاحب التعليق أونلاين
+                const liveAcc = globalAccountsDB[c.author] || {};
+                const liveAvatar = liveAcc.avatar || c.avatar || '';
+                const liveRoles = liveAcc.roles || c.roles || ['player'];
+
                 let developerReplyHtml = '';
                 if (c.reply) {
-                    // تم تعديل الرد هنا ليعرض اسم المطور الحقيقي ورتبه بدلاً من "رد الإدارة" الثابت
-                    const replyAuthorName = c.replyAuthor || currentUser.username || "Osama Abu Hamra";
-                    const replyRoleBadge = renderRoleBadges(c.replyRoles || [c.replyRole || 'developer']);
+                    const replyAuthorName = c.replyAuthor || "Osama Abu Hamra";
+                    const replyAcc = globalAccountsDB[replyAuthorName] || {};
+                    const replyRoles = replyAcc.roles || c.replyRoles || ['developer'];
+
                     developerReplyHtml = `
                         <div class="developer-reply-box">
                             <div class="reply-header">
                                 <span>💬</span>
-                                <span style="color: #60a5fa;">${replyAuthorName}</span>
-                                ${replyRoleBadge}
+                                <span style="color: #00f2fe; font-weight:800;">${replyAuthorName}</span>
+                                ${renderRoleBadges(replyRoles)}
                             </div>
                             <div class="reply-text">${c.reply}</div>
                         </div>
@@ -1188,12 +842,12 @@
 
                 let isOwner = hasRole(currentUser, 'owner');
                 let deleteBtnHtml = isOwner ? `
-                    <div style="margin-top:8px; display:flex; gap:6px;">
+                    <div style="margin-top:10px; display:flex; gap:6px;">
                         <button type="button" class="delete-news-btn" onclick="deleteComment('${item.firebaseId}', '${c.commentId}')">حذف التعليق 🗑️</button>
                     </div>
                 ` : '';
 
-                const avatarHtml = c.avatar ? `<img src="${c.avatar}" alt="Avatar">` : c.author.charAt(0).toUpperCase();
+                const avatarHtml = liveAvatar ? `<img src="${liveAvatar}" alt="Avatar">` : c.author.charAt(0).toUpperCase();
 
                 div.innerHTML = `
                     <div class="comment-header">
@@ -1201,7 +855,7 @@
                             <div class="comment-avatar">${avatarHtml}</div>
                             <div>
                                 <span class="comment-author">${c.author}</span>
-                                <div style="margin-top:2px;">${renderRoleBadges(c.roles || [c.role || 'player'])}</div>
+                                <div style="margin-top:2px;">${renderRoleBadges(liveRoles)}</div>
                             </div>
                         </div>
                         <span class="comment-date">${c.date}</span>
@@ -1254,6 +908,7 @@
             adminCommentsModal.style.display = 'flex';
         };
 
+        /* بناء القائمة المنظمة والجميلة لـ "لوحة الردود على التعليقات" 🎨 */
         function renderAdminComments() {
             const listContainer = document.getElementById('adminAllCommentsList');
             listContainer.innerHTML = '';
@@ -1262,22 +917,29 @@
             const isOwner = hasRole(currentUser, 'owner');
 
             newsList.forEach((news) => {
-                if (news.comments && news.comments.length > 0) {
-                    news.comments.forEach((c) => {
+                const validComments = filterValidComments(news.comments);
+                if (validComments.length > 0) {
+                    validComments.forEach((c) => {
                         totalComments++;
                         const card = document.createElement('div');
-                        card.className = 'admin-comment-box';
+                        card.className = 'admin-comment-card';
 
-                        const replyVal = c.reply ? c.reply : '';
-                        const replyAuthorName = c.replyAuthor || currentUser.username || "Osama Abu Hamra";
-                        const replyBadge = c.reply ? renderRoleBadges(c.replyRoles || [c.replyRole || 'developer']) : '';
-                        
+                        const liveAcc = globalAccountsDB[c.author] || {};
+                        const liveAvatar = liveAcc.avatar || c.avatar || '';
+                        const liveRoles = liveAcc.roles || c.roles || ['player'];
+                        const avatarHtml = liveAvatar ? `<img src="${liveAvatar}">` : c.author.charAt(0).toUpperCase();
+
+                        const replyVal = c.reply || '';
+                        const replyAuthorName = c.replyAuthor || currentUser.username;
+                        const replyAcc = globalAccountsDB[replyAuthorName] || {};
+                        const replyRoles = replyAcc.roles || c.replyRoles || ['developer'];
+
                         const existingReplyHtml = c.reply ? `
                             <div class="developer-reply-box">
                                 <div class="reply-header">
                                     <span>💬 الرد الحالي:</span>
-                                    <span style="color:#60a5fa;">${replyAuthorName}</span>
-                                    ${replyBadge}
+                                    <span style="color:#00f2fe;">${replyAuthorName}</span>
+                                    ${renderRoleBadges(replyRoles)}
                                 </div>
                                 <div class="reply-text">${c.reply}</div>
                             </div>
@@ -1287,14 +949,20 @@
 
                         card.innerHTML = `
                             <div class="admin-comment-news-title">📍 الخبر: ${news.title}</div>
-                            <div class="admin-comment-info">
-                                <span style="color:#60a5fa; font-weight:bold; font-size:13.5px;">👤 ${c.author} ${renderRoleBadges(c.roles || [c.role || 'player'])}</span>
-                                <span style="color:#64748b; font-size:11px;">${c.date}</span>
+                            <div class="admin-comment-user-row">
+                                <div class="admin-comment-user-info">
+                                    <div class="admin-comment-avatar">${avatarHtml}</div>
+                                    <div>
+                                        <span style="color:#ffffff; font-weight:800; font-size:14.5px;">${c.author}</span>
+                                        <div style="margin-top:2px;">${renderRoleBadges(liveRoles)}</div>
+                                    </div>
+                                </div>
+                                <span style="color:#64748b; font-size:11.5px; font-weight:600;">${c.date}</span>
                             </div>
-                            <div style="color:#cbd5e1; font-size:13.5px; margin-bottom:10px;">${c.text}</div>
+                            <div style="color:#e2e8f0; font-size:14px; margin: 10px 0; font-weight:600; line-height:1.5;">${c.text}</div>
                             ${existingReplyHtml}
                             <div class="admin-reply-input-group">
-                                <input type="text" id="replyInput_${c.commentId}" class="admin-reply-input" placeholder="اكتب الرد هنا..." value="${replyVal}">
+                                <input type="text" id="replyInput_${c.commentId}" class="admin-reply-input" placeholder="اكتب رد المطور..." value="${replyVal}">
                                 <button type="button" class="admin-reply-btn" onclick="saveAdminReply('${news.firebaseId}', '${c.commentId}')">إرسال الرد 💬</button>
                                 ${deleteBtnHtml}
                             </div>
@@ -1421,7 +1089,7 @@
                 const div = document.createElement('div');
                 div.className = 'manage-news-item';
                 div.innerHTML = `
-                    <span style="font-size:13px; color:#cbd5e1; font-weight:600; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:60%;">${item.title}</span>
+                    <span style="font-size:13px; color:#cbd5e1; font-weight:800; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:60%;">${item.title}</span>
                     <div class="action-btns">
                         <button type="button" class="edit-news-btn" onclick="editNews('${item.firebaseId}')">تعديل</button>
                         ${isOwner ? `<button type="button" class="delete-news-btn" onclick="deleteNews('${item.firebaseId}')">حذف</button>` : ''}
@@ -1456,7 +1124,7 @@
         // عند بداية التحميل
         window.addEventListener('DOMContentLoaded', () => {
             initUserSession();
-            listenToFirebaseNews();
+            initFirebaseSync();
         });
     </script>
 </body>
