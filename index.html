@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Player Assistant | الرئيسية</title>
+    <title>Player Assistant | الرئيسية - حدث الشتاء ❄️</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     
-    <!-- مكتبات Firebase السحابية للربط أونلاين عبر الأجهزة -->
+    <!-- مكتبات Firebase السحابية -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -21,13 +21,14 @@
         body {
             background: #060911;
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.18) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.08) 0%, transparent 40%);
+                radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.22) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.12) 0%, transparent 40%);
             color: #ffffff;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             overflow-x: hidden;
+            position: relative;
         }
 
         body::before {
@@ -42,20 +43,54 @@
             pointer-events: none;
         }
 
+        /* حاوية تساقط الثلج المتحرك */
+        .snow-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .snowflake {
+            position: absolute;
+            top: -20px;
+            color: #e0f2fe;
+            user-select: none;
+            animation-name: snowflakes-fall, snowflakes-shake;
+            animation-duration: 9s, 3s;
+            animation-timing-function: linear, ease-in-out;
+            animation-iteration-count: infinite, infinite;
+            opacity: 0.85;
+            filter: drop-shadow(0 0 6px rgba(0, 242, 254, 0.6));
+        }
+
+        @keyframes snowflakes-fall {
+            0% { top: -10%; }
+            100% { top: 100%; }
+        }
+
+        @keyframes snowflakes-shake {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(50px); }
+        }
+
         /* شريط الحساب العلوي */
         .user-top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 24px;
-            background: rgba(8, 13, 25, 0.85);
+            background: rgba(8, 13, 25, 0.88);
             backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.3);
             position: sticky;
             top: 0;
             z-index: 1000;
             flex-wrap: wrap;
             gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .user-info-box {
@@ -207,44 +242,61 @@
             border-color: #ef4444;
         }
 
-        /* الهيدر والعنوان */
+        /* الهيدر والعنوان الشتوي */
         .hero {
             text-align: center;
-            margin: 30px 20px 20px;
+            margin: 25px 20px 15px;
+            position: relative;
         }
 
         .hero-title-box {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 8px;
+            flex-wrap: wrap;
         }
 
         .hero-logo {
             width: 130px;
             height: 130px;
             object-fit: contain;
-            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.6));
+            filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.5));
             transition: transform 0.4s ease;
         }
 
         .hero-logo:hover {
-            transform: scale(1.08) rotate(-3deg);
+            transform: scale(1.08) rotate(-2deg);
         }
 
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 900;
-            background: linear-gradient(135deg, #ffffff 30%, #3b82f6 70%, #00f2fe 100%);
+            background: linear-gradient(135deg, #ffffff 30%, #38bdf8 70%, #00f2fe 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0, 242, 254, 0.25);
+        }
+
+        .winter-event-badge {
+            background: linear-gradient(135deg, #0284c7, #00f2fe);
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 900;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .hero p {
-            color: #94a3b8;
+            color: #cbd5e1;
             font-size: 1.2rem;
-            font-weight: 600;
+            font-weight: 700;
         }
 
         /* شبكة الكروت الرئيسية */
@@ -259,7 +311,7 @@
         }
 
         .card {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(6, 9, 17, 0.85) 100%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(6, 9, 17, 0.9) 100%);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(0, 242, 254, 0.25);
             border-radius: 24px;
@@ -270,22 +322,29 @@
             text-align: center;
             transition: all 0.35s ease;
             position: relative;
-            overflow: hidden;
+            overflow: visible; /* للسماح للثلج بالظهور فوق حافة الكارت بحرية */
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
+        /* ثلج متراكم كبير وواقعي يغطي حافة كل كارت بالكامل وبدون تكرار */
         .card::before {
             content: '';
             position: absolute;
-            top: 0; right: 0;
-            width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, #00f2fe, #3b82f6, transparent);
+            top: -18px;
+            left: 0;
+            width: 100%;
+            height: 25px;
+            background-image: url('images/صور حدث الشتاء/ies.png');
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            pointer-events: none;
+            z-index: 10;
         }
 
         .card:hover {
             transform: translateY(-8px);
-            border-color: rgba(0, 242, 254, 0.5);
-            box-shadow: 0 20px 40px -15px rgba(0, 242, 254, 0.35);
+            border-color: rgba(0, 242, 254, 0.55);
+            box-shadow: 0 20px 40px -15px rgba(0, 242, 254, 0.4);
         }
 
         .card-img-holder {
@@ -359,17 +418,32 @@
             filter: brightness(1.1);
         }
 
-        /* التذييل */
+        /* التذييل مع الثلج المتراكم الواسع والمتصل */
         footer {
-            margin-top: auto;
-            padding: 22px 30px;
-            background: rgba(6, 9, 17, 0.9);
-            border-top: 1px solid rgba(0, 242, 254, 0.2);
+            margin-top: 50px;
+            position: relative;
+            padding: 35px 30px 22px;
+            background: rgba(6, 9, 17, 0.95);
+            border-top: 1px solid rgba(0, 242, 254, 0.25);
             user-select: none;
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
             gap: 15px;
+        }
+
+        /* ثلج الفوتر يمتد بعرض الصفحة بالكامل وبدون تكرار نقاط */
+        .footer-snow-overlay {
+            position: absolute;
+            top: -26px;
+            left: 0;
+            width: 100%;
+            height: 32px;
+            background-image: url('images/صور حدث الشتاء/ies.png');
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            pointer-events: none;
+            z-index: 10;
         }
 
         .footer-right {
@@ -415,10 +489,10 @@
         .modal-content {
             background: #080d19;
             border: 2px solid #00f2fe;
-            box-shadow: 0 0 30px rgba(0, 242, 254, 0.35);
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.4);
             border-radius: 24px;
             width: 100%;
-            max-width: 750px;
+            max-width: 850px;
             max-height: 88vh;
             display: flex;
             flex-direction: column;
@@ -427,7 +501,7 @@
         }
 
         .modal-header {
-            padding: 24px 20px 12px;
+            padding: 24px 20px 14px;
             text-align: center;
             position: relative;
         }
@@ -481,40 +555,6 @@
             flex-grow: 1;
         }
 
-        .file-upload-box {
-            background: rgba(6, 9, 17, 0.9);
-            border: 2px dashed rgba(0, 242, 254, 0.4);
-            border-radius: 14px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: border-color 0.3s ease;
-        }
-
-        .file-upload-box:hover {
-            border-color: #00f2fe;
-        }
-
-        .file-upload-box input[type="file"] {
-            display: none;
-        }
-
-        .avatar-preview-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .avatar-preview-img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 2px solid #00f2fe;
-            object-fit: cover;
-            background: #060911;
-        }
-
         .admin-search-input {
             width: 100%;
             padding: 12px 16px;
@@ -526,11 +566,6 @@
             font-size: 0.95rem;
             font-weight: 600;
             outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .admin-search-input:focus {
-            box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
         }
 
         .roles-table {
@@ -580,116 +615,32 @@
             object-fit: cover;
         }
 
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 6px;
+            max-width: 380px;
+        }
+
         .action-role-btn {
             border: none;
-            padding: 6px 10px;
+            padding: 6px 8px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-family: 'Cairo', sans-serif;
             transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            text-align: center;
         }
 
         .action-role-btn:hover {
-            filter: brightness(1.1);
-        }
-
-        /* رسائل الدعم والتذاكر */
-        .msg-item {
-            background: #040812;
-            border: 1px solid rgba(0, 242, 254, 0.15);
-            border-right: 4px solid #00f2fe;
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 14px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        }
-
-        .msg-card-header {
-            color: #00f2fe;
-            font-size: 1.05rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .msg-card-text {
-            color: #e2e8f0;
-            font-size: 0.98rem;
-            font-weight: 600;
-            line-height: 1.6;
-            margin-bottom: 12px;
-            white-space: pre-wrap;
-        }
-
-        .admin-reply-box {
-            margin-top: 10px;
-            padding: 12px;
-            background: rgba(59, 130, 246, 0.1);
-            border-radius: 10px;
-            border: 1px dashed rgba(59, 130, 246, 0.3);
-        }
-
-        .admin-reply-box textarea {
-            width: 100%;
-            min-height: 60px;
-            background: rgba(6, 9, 17, 0.9);
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            border-radius: 8px;
-            color: #fff;
-            padding: 8px;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
-            outline: none;
-        }
-
-        .admin-reply-btn {
-            background: linear-gradient(135deg, #2563eb 0%, #00f2fe 100%);
-            border: none;
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.85rem;
-            cursor: pointer;
-        }
-
-        .existing-reply {
-            color: #38bdf8;
-            font-size: 0.9rem;
-            font-weight: 700;
-            margin-top: 8px;
-            padding: 8px 12px;
-            background: rgba(14, 165, 233, 0.15);
-            border-radius: 8px;
-        }
-
-        .msg-card-footer {
-            color: #64748b;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-align: left;
-            direction: ltr;
-            margin-top: 10px;
-        }
-
-        .clear-btn {
-            background: rgba(220, 38, 38, 0.2);
-            border: 1px solid #ef4444;
-            color: #f87171;
-            padding: 12px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.95rem;
-            margin-top: 10px;
-            width: 100%;
-            transition: all 0.3s ease;
-        }
-
-        .clear-btn:hover {
-            background: #dc2626;
-            color: #ffffff;
+            filter: brightness(1.15);
+            transform: translateY(-1px);
         }
 
         .custom-toast {
@@ -738,12 +689,6 @@
             font-size: 0.95rem;
             font-weight: 600;
             outline: none;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus {
-            border-color: #00f2fe;
-            box-shadow: 0 0 12px rgba(0, 242, 254, 0.25);
         }
 
         .submit-btn {
@@ -764,7 +709,7 @@
             gap: 10px;
         }
 
-        .auth-tab, .panel-tab {
+        .auth-tab {
             flex: 1;
             padding: 10px;
             background: transparent;
@@ -774,13 +719,11 @@
             font-family: 'Cairo', sans-serif;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .auth-tab.active, .panel-tab.active {
+        .auth-tab.active {
             background: linear-gradient(135deg, #2563eb, #00f2fe);
             color: #ffffff;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         .error-text {
@@ -794,6 +737,9 @@
     </style>
 </head>
 <body>
+
+    <!-- تساقط رقاقات الثلج -->
+    <div class="snow-container" id="snowContainer"></div>
 
     <!-- شريط الحساب العلوي -->
     <header class="user-top-bar">
@@ -818,13 +764,14 @@
 
     <section class="hero">
         <div class="hero-title-box">
-            <img src="images/logo.png" alt="الشعار" class="hero-logo">
+            <img src="images/صور حدث الشتاء/logo.ise.png" alt="الشعار الشتوي" class="hero-logo">
             <h1>Player Assistant</h1>
+            <span class="winter-event-badge">حدث الشتاء ❄️</span>
         </div>
-        <p>مساعدك الأول لكل ما يخص عالم ماين كرافت</p>
+        <p>مساعدك الأول لكل ما يخص عالم ماين كرافت ❄️</p>
     </section>
 
-    <!-- الشبكة الرئيسية -->
+    <!-- الشبكة الرئيسية (الكروت عليها الثلج المتراكم الواسع) -->
     <main class="grid-container">
         <!-- 1. مساعد الكوماندات -->
         <div class="card">
@@ -876,7 +823,7 @@
             <a href="feedback.html" class="btn">الملاحظات والدعم</a>
         </div>
 
-        <!-- 6. دليل التقيض مع القروي والبقلن (محدث بالصور المتغيرة والشرح الجديد) -->
+        <!-- 6. دليل التقيض مع القروي والبقلن -->
         <div class="card">
             <div class="card-img-holder">
                 <img id="barter-img" src="images/Villager.png" class="mc-item-icon villager-icon" alt="دليل التقيض مع القروي والبقلن">
@@ -897,8 +844,9 @@
         </div>
     </main>
 
-    <!-- التذييل -->
+    <!-- التذييل مع الثلج المتراكم الواسع والمتصل -->
     <footer>
+        <div class="footer-snow-overlay"></div>
         <div class="footer-right">
             <img class="palestine-flag" src="https://flagcdn.com/w40/ps.png" alt="علم فلسطين" title="فلسطين حرة" width="30" height="20" style="border-radius: 3px; vertical-align: middle; object-fit: cover;">
             <span class="made-in-text">Developed in Palestine</span>
@@ -946,7 +894,7 @@
         </div>
     </div>
 
-    <!-- 2. نافذة إعدادات الحساب (تغيير الاسم + الصورة + كلمة السر) -->
+    <!-- 2. نافذة إعدادات الحساب -->
     <div id="profile-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px;">
             <button class="close-btn" onclick="closeProfileModal()">✖</button>
@@ -961,14 +909,10 @@
                 </div>
                 <div class="form-group">
                     <label>اختيار صورة شخصية من الملفات:</label>
-                    <div class="file-upload-box" onclick="document.getElementById('profile-avatar-file').click()">
+                    <div class="file-upload-box" onclick="document.getElementById('profile-avatar-file').click()" style="background: rgba(6,9,17,0.9); border: 2px dashed rgba(0,242,254,0.4); border-radius:14px; padding:16px; text-align:center; cursor:pointer;">
                         <span style="font-size: 1.8rem; display: block; margin-bottom: 5px;">📁</span>
                         <span style="color: #00f2fe; font-weight: 700; font-size: 0.95rem;">اضغط هنا لاختيار صورة من جهازك</span>
-                        <input type="file" id="profile-avatar-file" accept="image/*" onchange="handleFileSelect(event)">
-                    </div>
-                    <div id="avatar-preview-box" class="avatar-preview-container" style="display: none;">
-                        <img id="avatar-preview-img" class="avatar-preview-img" src="" alt="معاينة">
-                        <span style="color: #cbd5e1; font-size: 0.85rem; font-weight: 700;">الصورة المختارة حالياً</span>
+                        <input type="file" id="profile-avatar-file" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
                     </div>
                 </div>
                 <hr style="border: 0; border-top: 1px solid rgba(0, 242, 254, 0.2); margin: 20px 0;">
@@ -989,21 +933,16 @@
         </div>
     </div>
 
-    <!-- 3. نافذة لوحة التحكم والإدارة (لوحة الأسود) -->
+    <!-- 3. لوحة الأسود -->
     <div id="admin-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-btn" onclick="closeAdminModal()">✖</button>
             <div class="modal-header">
                 <h3 id="panel-modal-title">🦁 لوحة الأسود</h3>
-                <p class="modal-subtitle">إدارة الحسابات، الرتب، والتذاكر</p>
-            </div>
-            <div style="display: flex; gap: 10px; margin: 0 22px 10px; background: rgba(6, 9, 17, 0.9); padding: 4px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2);">
-                <button id="tab-roles" class="panel-tab active" onclick="switchPanelTab('roles')">🦁 إعدادات الأسد (الحسابات والرتب)</button>
-                <button id="tab-tickets" class="panel-tab" onclick="switchPanelTab('tickets')">💬 التذاكر والدعم</button>
+                <p class="modal-subtitle">إدارة الحسابات والرتب ومعرفة كلمات السر</p>
             </div>
             <div class="modal-body">
                 <div id="panel-roles-section">
-                    <p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 12px; font-weight: 600;">إدارة أسماء الحسابات ورتب الأسود والأشبال واليوتيوبرز:</p>
                     <input type="text" id="admin-search-input" class="admin-search-input" placeholder="🔍 ابحث عن اسم الحساب..." oninput="renderRolesTable()">
                     <div style="overflow-x: auto;">
                         <table class="roles-table">
@@ -1017,10 +956,6 @@
                             <tbody id="roles-table-body"></tbody>
                         </table>
                     </div>
-                </div>
-                <div id="panel-tickets-section" style="display: none;">
-                    <div id="messages-container"></div>
-                    <button class="clear-btn" onclick="clearAllMessages()">مسح جميع الرسائل</button>
                 </div>
             </div>
         </div>
@@ -1055,7 +990,32 @@
             player:    { name: '🎮 لاعب',    class: 'role-player' }
         };
 
+        function generateSnowflakes() {
+            const snowContainer = document.getElementById('snowContainer');
+            const flakesCount = 30;
+            const flakeTypes = ['❄', '❅', '❆'];
+
+            for (let i = 0; i < flakesCount; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerText = flakeTypes[Math.floor(Math.random() * flakeTypes.length)];
+                
+                const leftPos = Math.random() * 100;
+                const animDuration = 6 + Math.random() * 8;
+                const animDelay = Math.random() * 5;
+                const fontSize = 1 + Math.random() * 1.2;
+
+                flake.style.left = `${leftPos}%`;
+                flake.style.animationDuration = `${animDuration}s, 3s`;
+                flake.style.animationDelay = `${animDelay}s, ${animDelay}s`;
+                flake.style.fontSize = `${fontSize}rem`;
+
+                snowContainer.appendChild(flake);
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', () => {
+            generateSnowflakes();
             initFirebaseSync();
             checkUserSession();
         });
@@ -1083,12 +1043,6 @@
                     location.reload();
                 }
                 renderRolesTable();
-            });
-
-            db.ref('feedback').on('value', (snapshot) => {
-                const feedbackData = snapshot.val() || [];
-                localStorage.setItem('player_assistant_feedback', JSON.stringify(feedbackData));
-                renderMessages();
             });
         }
 
@@ -1206,11 +1160,8 @@
             });
 
             const adminPanelBtn = document.getElementById('admin-panel-btn');
-            if (rolesList.includes('owner')) {
+            if (user.username.toLowerCase() === 'أسامة') {
                 adminPanelBtn.innerText = '🦁 لوحة الأسود';
-                adminPanelBtn.style.display = 'flex';
-            } else if (rolesList.includes('developer')) {
-                adminPanelBtn.innerText = '💻 قائمة المطور';
                 adminPanelBtn.style.display = 'flex';
             } else {
                 adminPanelBtn.style.display = 'none';
@@ -1230,18 +1181,6 @@
             document.getElementById('profile-old-password').value = '';
             document.getElementById('profile-new-password').value = '';
             document.getElementById('profile-error-msg').style.display = 'none';
-            document.getElementById('profile-avatar-file').value = '';
-
-            const previewBox = document.getElementById('avatar-preview-box');
-            const previewImg = document.getElementById('avatar-preview-img');
-            if (user.avatar) {
-                previewImg.src = user.avatar;
-                previewBox.style.display = 'flex';
-                tempSelectedAvatarData = user.avatar;
-            } else {
-                previewBox.style.display = 'none';
-                tempSelectedAvatarData = null;
-            }
             document.getElementById('profile-modal').style.display = 'flex';
         }
 
@@ -1253,8 +1192,6 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     tempSelectedAvatarData = e.target.result;
-                    document.getElementById('avatar-preview-img').src = tempSelectedAvatarData;
-                    document.getElementById('avatar-preview-box').style.display = 'flex';
                 };
                 reader.readAsDataURL(file);
             }
@@ -1270,12 +1207,11 @@
             const oldPassInput = document.getElementById('profile-old-password').value.trim();
             const newPassInput = document.getElementById('profile-new-password').value.trim();
             const profileError = document.getElementById('profile-error-msg');
-            profileError.style.display = 'none';
 
             let isNameChanged = (newUsernameInput && newUsernameInput !== user.username);
 
             if (isNameChanged && accountsDB[newUsernameInput]) {
-                profileError.innerText = '❌ هذا الاسم مستخدم بالفعل، اختر اسماً آخر!';
+                profileError.innerText = '❌ هذا الاسم مستخدم بالفعل!';
                 profileError.style.display = 'block';
                 return;
             }
@@ -1288,7 +1224,7 @@
                     return;
                 }
                 if (!newPassInput) {
-                    profileError.innerText = '❌ يرجى إدخال كلمة السر الجديدة!';
+                    profileError.innerText = '❌ أدخل كلمة السر الجديدة!';
                     profileError.style.display = 'block';
                     return;
                 }
@@ -1313,42 +1249,22 @@
                 localStorage.setItem('pa_user', JSON.stringify(user));
                 updateUserUI(user);
                 closeProfileModal();
-                showToast('تم حفظ تعديلات الحساب بنجاح أونلاين! 💾', '✅');
+                showToast('تم حفظ التعديلات أونلاين بنجاح! 💾', '✅');
             });
         }
 
         function openAdminModal() {
-            const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
-            const userRoles = user.roles || ['player'];
-            const rolesTab = document.getElementById('tab-roles');
-            const modalTitle = document.getElementById('panel-modal-title');
-            if (userRoles.includes('owner')) {
-                modalTitle.innerText = '🦁 لوحة الأسود';
-                rolesTab.style.display = 'block';
-                switchPanelTab('roles');
-            } else {
-                modalTitle.innerText = '💻 قائمة المطور';
-                rolesTab.style.display = 'none';
-                switchPanelTab('tickets');
-            }
+            renderRolesTable();
             document.getElementById('admin-modal').style.display = 'flex';
         }
 
         function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
 
-        function switchPanelTab(tab) {
-            document.getElementById('tab-roles').classList.toggle('active', tab === 'roles');
-            document.getElementById('tab-tickets').classList.toggle('active', tab === 'tickets');
-            document.getElementById('panel-roles-section').style.display = (tab === 'roles') ? 'block' : 'none';
-            document.getElementById('panel-tickets-section').style.display = (tab === 'tickets') ? 'block' : 'none';
-            if (tab === 'roles') renderRolesTable();
-            if (tab === 'tickets') renderMessages();
-        }
-
         function renderRolesTable() {
             const tbody = document.getElementById('roles-table-body');
             const searchVal = (document.getElementById('admin-search-input')?.value || '').toLowerCase();
             if (!tbody) return;
+            
             tbody.innerHTML = Object.keys(accountsDB).map(uname => {
                 if (searchVal && !uname.toLowerCase().includes(searchVal)) return '';
                 const acc = accountsDB[uname];
@@ -1367,7 +1283,7 @@
                         </td>
                         <td>${badgesHTML}</td>
                         <td>
-                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                            <div class="actions-grid">
                                 <button class="action-role-btn" style="background: #eab308; color: #000;" onclick="toggleUserRole('${escapeHtml(uname)}', 'cub')">
                                     ${uRoles.includes('cub') ? 'إزالة شبل' : '+ شبل'}
                                 </button>
@@ -1380,6 +1296,7 @@
                                 <button class="action-role-btn" style="background: #f59e0b; color: #000;" onclick="toggleUserRole('${escapeHtml(uname)}', 'vip')">
                                     ${uRoles.includes('vip') ? 'إزالة VIP' : '+ VIP'}
                                 </button>
+                                <button class="action-role-btn" style="background: #6366f1; color: #fff;" onclick="showAccountPassword('${escapeHtml(uname)}')">🔑 كلمة السر</button>
                                 <button class="action-role-btn" style="background: #3b82f6; color: #fff;" onclick="renameAccount('${escapeHtml(uname)}')">✏️ تعديل</button>
                                 <button class="action-role-btn" style="background: #dc2626; color: #fff;" onclick="deleteAccount('${escapeHtml(uname)}')" ${isUsama ? 'disabled' : ''}>🗑️ حذف</button>
                             </div>
@@ -1387,6 +1304,15 @@
                     </tr>
                 `;
             }).join('');
+        }
+
+        function showAccountPassword(targetUser) {
+            const acc = accountsDB[targetUser];
+            if (acc && acc.password) {
+                alert(`🔑 كلمة السر الخاصة بحساب (${targetUser}) هي:\n\n[ ${acc.password} ]`);
+            } else {
+                alert('❌ لا تتوفر كلمة سر لهذا الحساب!');
+            }
         }
 
         function toggleUserRole(targetUser, roleToToggle) {
@@ -1400,12 +1326,12 @@
                 uRoles.push(roleToToggle);
             }
             db.ref('accounts/' + targetUser + '/roles').set(uRoles).then(() => {
-                showToast(`تم تحديث رتب ${targetUser} بنجاح!`, '🦁');
+                showToast(`تم تحديث رتب ${targetUser}!`, '🦁');
             });
         }
 
         function renameAccount(oldUsername) {
-            if (oldUsername.toLowerCase() === 'أسامة') { alert('لا يمكن تغيير اسم الأسد الرئيسي من هنا، يمكنك تعديله من إعدادات الحساب!'); return; }
+            if (oldUsername.toLowerCase() === 'أسامة') { alert('لا يمكن تغيير اسم الأسد الرئيسي من هنا!'); return; }
             const newName = prompt(`أدخل اسم المستخدم الجديد لـ (${oldUsername}):`, oldUsername);
             if (!newName || !newName.trim() || newName.trim() === oldUsername) return;
             const trimmedNewName = newName.trim();
@@ -1413,13 +1339,7 @@
             const accountData = accountsDB[oldUsername];
             db.ref('accounts/' + trimmedNewName).set(accountData).then(() => {
                 db.ref('accounts/' + oldUsername).remove().then(() => {
-                    showToast(`تم تغيير اسم الحساب إلى "${trimmedNewName}"!`, '✏️');
-                    const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
-                    if (savedUser && savedUser.username === oldUsername) {
-                        savedUser.username = trimmedNewName;
-                        localStorage.setItem('pa_user', JSON.stringify(savedUser));
-                        updateUserUI(savedUser);
-                    }
+                    showToast(`تم تغيير الاسم إلى "${trimmedNewName}"!`, '✏️');
                 });
             });
         }
@@ -1433,42 +1353,6 @@
             }
         }
 
-        function renderMessages() {
-            const container = document.getElementById('messages-container');
-            const suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
-            if (suggestions.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #64748b; padding: 25px; font-weight: 600;">لا توجد أي رسائل أو اقتراحات حالياً.</p>';
-                return;
-            }
-            container.innerHTML = suggestions.map((item, index) => `
-                <div class="msg-item">
-                    <div class="msg-card-header">📍 ${escapeHtml(item.type)} | الاسم: ${escapeHtml(item.name)}</div>
-                    <div class="msg-card-text">${escapeHtml(item.message)}</div>
-                    ${item.reply ? `<div class="existing-reply">💬 الرد الحالي: ${escapeHtml(item.reply)}</div>` : ''}
-                    <div class="admin-reply-box">
-                        <textarea id="reply-text-${index}" placeholder="اكتب رد المطور...">${item.reply || ''}</textarea>
-                        <button class="admin-reply-btn" onclick="saveAdminReply(${index})">${item.reply ? 'تحديث الرد 🔄' : 'إرسال الرد 💬'}</button>
-                    </div>
-                    <div class="msg-card-footer">${item.date}</div>
-                </div>
-            `).join('');
-        }
-
-        function saveAdminReply(index) {
-            const replyText = document.getElementById(`reply-text-${index}`).value.trim();
-            let suggestions = JSON.parse(localStorage.getItem('player_assistant_feedback') || '[]');
-            if (suggestions[index]) {
-                suggestions[index].reply = replyText;
-                db.ref('feedback').set(suggestions).then(() => { showToast('تم حفظ الرد أونلاين بنجاح!', '💬'); });
-            }
-        }
-
-        function clearAllMessages() {
-            if (confirm('هل أنت متأكد من مسح جميع الرسائل؟')) {
-                db.ref('feedback').remove().then(() => { showToast('تم مسح جميع الرسائل.', '🗑️'); });
-            }
-        }
-
         function showToast(message, icon = "✅") {
             const toast = document.getElementById('toast');
             document.getElementById('toast-text').innerText = message;
@@ -1477,7 +1361,6 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
 
-        // حركة تبديل صور الكوماند بلوك
         const commandImgElement = document.getElementById('command-img');
         const commandImages = ["images/command_block.png", "images/command_repeating.png", "images/command_chain.png"];
         let commandIndex = 0;
@@ -1492,7 +1375,6 @@
             }, 2500);
         }
 
-        // حركة تبديل صور القروي والبقلن (Villager & Piglin) ✨
         const barterImgElement = document.getElementById('barter-img');
         const barterImages = ["images/Villager.png", "images/Piglin.png"];
         let barterIndex = 0;
