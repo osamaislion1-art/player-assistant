@@ -791,7 +791,7 @@
                 message: message,
                 date: dateStr,
                 reply: "",
-                replyAdmin: null, // سيحفظ تفاصيل حساب الإداري الذي رد
+                replyAdmin: null,
                 likes: 0,
                 dislikes: 0,
                 likedBy: {},
@@ -813,7 +813,6 @@
             }
         }
 
-        // اختيار رد جاهز من قائمة المطور
         function selectQuickReply(selectEl, key) {
             const textVal = selectEl.value;
             if (textVal) {
@@ -859,7 +858,6 @@
             }
         }
 
-        // نظام اللايك والديسلايك السحابي
         function reactToFeedback(key, type) {
             if (!currentUser || currentUser.username === "زائر") {
                 showToast('يجب تسجيل الدخول للتصويت!', '⚠️');
@@ -867,11 +865,6 @@
             }
 
             const safeUserKey = currentUser.username.replace(/[.#$\/\[\]]/g, '_');
-            const itemRef = db.ref(`feedback/${key}`);
-
-            itemRef.once('transaction', (snapshot) => {
-                // سيتم التعامل مع التصويت بالاعتماد على القيم الحالية
-            });
 
             db.ref(`feedback/${key}`).transaction((post) => {
                 if (post) {
@@ -941,7 +934,6 @@
                     return `<span class="role-badge ${rInfo.class}">${rInfo.name}</span>`;
                 }).join(' ');
 
-                // تفاصيل الإداري الذي رد (الصورة، الاسم، الرتب)
                 let adminReplyHtml = '';
                 if (item.reply) {
                     const admin = item.replyAdmin || { name: "الإدارة", avatar: "", roles: ["owner"] };
@@ -1015,7 +1007,7 @@
                                 <select class="quick-replies-select" onchange="selectQuickReply(this, '${item.firebaseKey}')">
                                     <option value="">⚡ اختر رداً جاهزاً للمطور...</option>
                                     <option value="تم استلام الاقتراح ودراسته بعناية لتطوير الموقع 💡">تم استلام الاقتراح ودراسته بعناية لتطوير الموقع 💡</option>
-                                    <option value="تمت حل المشكلة والإبلاغ عنها في التحديث الأخير 🛠️">تمت حل المشكلة والإبلاغ عنها في التحديث الأخير 🛠️</option>
+                                    <option value="تم حل المشكلة والإبلاغ عنها في التحديث الأخير 🛠️">تم حل المشكلة والإبلاغ عنها في التحديث الأخير 🛠️</option>
                                     <option value="شكراً لك على كلماتك الرقيقة ودعمك المستمر ❤️">شكراً لك على كلماتك الرقيقة ودعمك المستمر ❤️</option>
                                     <option value="قيد الدراسة وسيتم تنفيذه قريباً إن شاء الله 🚀">قيد الدراسة وسيتم تنفيذه قريباً إن شاء الله 🚀</option>
                                 </select>
