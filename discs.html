@@ -91,7 +91,7 @@
         /* تصميم قسم العنوان الرئيسي مع الجوك بوكس */
         .page-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -125,6 +125,30 @@
             color: #94a3b8;
             font-size: 1.1rem;
             font-weight: 500;
+        }
+
+        /* زر فتح قائمة التحديد المخصص */
+        .playlist-trigger-btn {
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            color: #ffffff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 1.05rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.35);
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .playlist-trigger-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 242, 254, 0.5);
+            filter: brightness(1.1);
         }
 
         /* الشبكة والتصميم الزجاجي للبطاقات */
@@ -242,6 +266,49 @@
             box-shadow: 0 0 10px #38bdf8;
         }
 
+        /* أدوات التكرار والسرعة */
+        .extra-controls {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .extra-btn {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #94a3b8;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .extra-btn.active-mode {
+            background: #38bdf8;
+            color: #0f172a;
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        }
+
+        .speed-select {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+            padding: 4px 6px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            text-align: center;
+        }
+
         .play-btn {
             background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(59, 130, 246, 0.12));
             color: #ffffff;
@@ -273,6 +340,136 @@
             color: #ffffff;
             box-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
         }
+
+        /* نافذة اختيار الأقراص المخصصة (Modal) */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(4, 7, 13, 0.88);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #080d19;
+            border: 2px solid #38bdf8;
+            box-shadow: 0 0 35px rgba(56, 189, 248, 0.4);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: #38bdf8;
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .close-modal {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #f87171;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .modal-body {
+            padding: 20px 24px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        .selection-item {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 10px 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .selection-item:hover {
+            border-color: #38bdf8;
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .selection-item input[type="checkbox"] {
+            accent-color: #38bdf8;
+            width: 18px; height: 18px;
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid rgba(56, 189, 248, 0.2);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: rgba(6, 9, 17, 0.9);
+        }
+
+        .modal-btn {
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.1);
+            color: #cbd5e1;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #2563eb, #38bdf8);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .playlist-status-banner {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid #38bdf8;
+            padding: 12px 20px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1350px;
+            margin-left: auto;
+            margin-right: auto;
+        }
     </style>
 </head>
 <body>
@@ -291,11 +488,39 @@
                 <img src="images/Jukebox.png" alt="Jukebox" class="jukebox-img" onerror="this.src='images/jukebox.png'; this.onerror=null;">
                 <h1 class="page-title">إستمع إلى جميع الأقراص</h1>
             </div>
-            <p class="page-subtitle">استمع واستكشف جميع أقراص الموسيقى المتاحة في ماين كرافت</p>
+            <p class="page-subtitle">استمع واستكشف جميع أقراص الموسيقى المتاحة في ماين كرافت مع خيارات التكرار والسرعة</p>
+            
+            <button class="playlist-trigger-btn" onclick="openPlaylistModal()">🎵 حدد أقراص للتشغيل المتتابع</button>
+        </div>
+
+        <div id="playlistStatusBanner" class="playlist-status-banner">
+            <span id="playlistStatusText" style="font-weight: 700; color: #38bdf8;">قائمة التشغيل المخصصة قيد العمل...</span>
+            <button onclick="stopPlaylistMode()" style="background: #ef4444; border: none; color: #fff; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: 700;">إيقاف القائمة</button>
         </div>
 
         <div class="disc-grid" id="discGrid"></div>
     </main>
+
+    <!-- نافذة اختيار الأقراص -->
+    <div id="playlistModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎵 حدد الأقراص التي تريد تكرارها وتشغيلها واحد ورا واحد</h3>
+                <button class="close-modal" onclick="closePlaylistModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 15px; display: flex; gap: 10px;">
+                    <button onclick="selectAllDiscs(true)" style="background: rgba(56,189,248,0.2); border: 1px solid #38bdf8; color: #38bdf8; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: 700;">تحديد الكل</button>
+                    <button onclick="selectAllDiscs(false)" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #cbd5e1; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-weight: 700;">إلغاء التحديد</button>
+                </div>
+                <div class="selection-grid" id="selectionGrid"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-cancel" onclick="closePlaylistModal()">إلغاء</button>
+                <button class="modal-btn btn-submit" onclick="startCustomPlaylist()">تشغيل الأقراص المحددة 🚀</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const discs = [
@@ -325,9 +550,17 @@
 
         let currentAudio = new Audio();
         let currentActiveCard = null;
+        let isLooping = false;
+        let currentPlaybackSpeed = 1.0;
+
+        let customPlaylist = [];
+        let currentPlaylistIndex = 0;
+        let isPlaylistModeActive = false;
 
         const discGrid = document.getElementById('discGrid');
+        const selectionGrid = document.getElementById('selectionGrid');
 
+        // بناء بطاقات الأقراص وخيارات النافذة
         discs.forEach(disc => {
             const card = document.createElement('div');
             card.className = 'disc-card';
@@ -341,15 +574,40 @@
                 <div class="controls-container">
                     <div class="timer" id="timer-${disc.id}">0:00 / 0:00</div>
                     <input type="range" class="progress-bar" id="progress-${disc.id}" value="0" min="0" max="100">
+                    
+                    <div class="extra-controls">
+                        <button class="extra-btn" id="loop-btn-${disc.id}" onclick="toggleLoop('${disc.id}')">🔁 تكرار</button>
+                        <select class="speed-select" id="speed-select-${disc.id}" onchange="changeSpeed(this, '${disc.id}')">
+                            <option value="0.75">0.75x</option>
+                            <option value="1.0" selected>1.0x (عادي)</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2.0">2.0x</option>
+                        </select>
+                    </div>
                 </div>
 
                 <button class="play-btn" onclick="togglePlay('${disc.id}')">تشغيل</button>
             `;
-
             discGrid.appendChild(card);
+
+            // بناء خيارات نافذة التحديد المخصص
+            const selItem = document.createElement('label');
+            selItem.className = 'selection-item';
+            selItem.innerHTML = `
+                <input type="checkbox" value="${disc.id}" class="playlist-checkbox">
+                <span style="font-weight: 700; font-size: 0.95rem;">${disc.title} (${disc.author})</span>
+            `;
+            selectionGrid.appendChild(selItem);
         });
 
         function togglePlay(discId) {
+            isPlaylistModeActive = false;
+            document.getElementById('playlistStatusBanner').style.display = 'none';
+            playDiscDirect(discId);
+        }
+
+        function playDiscDirect(discId) {
             const card = document.getElementById(`card-${discId}`);
             const btn = card.querySelector('.play-btn');
             
@@ -369,12 +627,14 @@
             }
 
             currentAudio.src = audioSrc;
+            currentAudio.playbackRate = currentPlaybackSpeed;
             
             currentAudio.onerror = () => {
                 alert(`تعذر العثور على ملف الصوت أو تحميله:\n${audioSrc}\n\nتأكد أن الملف موجود داخل مجلد sounds.`);
                 btn.textContent = 'تشغيل';
                 card.classList.remove('active');
                 currentActiveCard = null;
+                playNextInPlaylist();
             };
 
             currentAudio.play().catch(e => {
@@ -400,7 +660,6 @@
 
                     const percent = (currentAudio.currentTime / currentAudio.duration) * 100;
                     progressBar.value = percent;
-                    
                     progressBar.style.background = `linear-gradient(to right, #ef4444 ${percent}%, #1e293b ${percent}%)`;
                 }
             };
@@ -413,12 +672,92 @@
             };
 
             currentAudio.onended = () => {
+                if (isLooping) {
+                    currentAudio.currentTime = 0;
+                    currentAudio.play();
+                    return;
+                }
+
                 if (currentActiveCard) {
                     currentActiveCard.classList.remove('active');
                     currentActiveCard.querySelector('.play-btn').textContent = 'تشغيل';
                     currentActiveCard = null;
                 }
+
+                if (isPlaylistModeActive) {
+                    playNextInPlaylist();
+                }
             };
+        }
+
+        function toggleLoop(discId) {
+            isLooping = !isLooping;
+            const btn = document.getElementById(`loop-btn-${discId}`);
+            if (isLooping) {
+                btn.classList.add('active-mode');
+                btn.textContent = '🔁 مكرر (شغال)';
+            } else {
+                btn.classList.remove('active-mode');
+                btn.textContent = '🔁 تكرار';
+            }
+        }
+
+        function changeSpeed(selectEl, discId) {
+            currentPlaybackSpeed = parseFloat(selectEl.value);
+            currentAudio.playbackRate = currentPlaybackSpeed;
+        }
+
+        // إدارة القائمة المخصصة (Playlist)
+        function openPlaylistModal() {
+            document.getElementById('playlistModal').style.display = 'flex';
+        }
+
+        function closePlaylistModal() {
+            document.getElementById('playlistModal').style.display = 'none';
+        }
+
+        function selectAllDiscs(select) {
+            document.querySelectorAll('.playlist-checkbox').forEach(cb => cb.checked = select);
+        }
+
+        function startCustomPlaylist() {
+            const checkboxes = document.querySelectorAll('.playlist-checkbox:checked');
+            if (checkboxes.length === 0) {
+                alert('الرجاء اختيار قرص واحد على الأقل من القائمة!');
+                return;
+            }
+
+            customPlaylist = Array.from(checkboxes).map(cb => cb.value);
+            currentPlaylistIndex = 0;
+            isPlaylistModeActive = true;
+            isLooping = false;
+
+            closePlaylistModal();
+
+            document.getElementById('playlistStatusBanner').style.display = 'flex';
+            document.getElementById('playlistStatusText').textContent = `قائمة التشغيل المخصصة نشطة (${customPlaylist.length} أقراص متتالية)`;
+
+            playDiscDirect(customPlaylist[currentPlaylistIndex]);
+        }
+
+        function playNextInPlaylist() {
+            if (!isPlaylistModeActive || customPlaylist.length === 0) return;
+            currentPlaylistIndex++;
+            if (currentPlaylistIndex >= customPlaylist.length) {
+                currentPlaylistIndex = 0; // إعادة تكرار القائمة الكاملة من البداية
+            }
+            playDiscDirect(customPlaylist[currentPlaylistIndex]);
+        }
+
+        function stopPlaylistMode() {
+            isPlaylistModeActive = false;
+            document.getElementById('playlistStatusBanner').style.display = 'none';
+            if (currentAudio) currentAudio.pause();
+            if (currentActiveCard) {
+                currentActiveCard.classList.remove('active');
+                currentActiveCard.querySelector('.play-btn').textContent = 'تشغيل';
+                currentActiveCard = null;
+            }
         }
 
         function formatTime(seconds) {

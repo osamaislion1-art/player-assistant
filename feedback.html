@@ -330,6 +330,7 @@
             border-radius: 16px;
             padding: 20px;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            position: relative;
         }
 
         .feedback-header {
@@ -400,7 +401,7 @@
             margin-top: 6px;
         }
 
-        /* صندوق الرد الخفيف */
+        /* صندوق الرد الخاص بالإداري (مع حسابه وصورته ورتبه) */
         .admin-reply-display {
             background: rgba(0, 242, 254, 0.08);
             border: 1px dashed rgba(0, 242, 254, 0.4);
@@ -410,13 +411,10 @@
         }
 
         .admin-reply-header {
-            color: #38bdf8;
-            font-weight: 800;
-            font-size: 0.95rem;
-            margin-bottom: 6px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .admin-reply-text {
@@ -424,6 +422,124 @@
             font-size: 0.95rem;
             font-weight: 600;
             line-height: 1.6;
+            padding-right: 48px;
+        }
+
+        /* شريط التقييم (لايك ودس لايك) والأدوات */
+        .feedback-footer-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .reactions-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .reaction-btn {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            color: #cbd5e1;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .reaction-btn:hover {
+            border-color: #00f2fe;
+            background: rgba(56, 189, 248, 0.15);
+            color: #fff;
+        }
+
+        .reaction-btn.liked {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            color: #34d399;
+        }
+
+        .reaction-btn.disliked {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #f87171;
+        }
+
+        /* أزرار التحكم الخاصة بالإدارة (رد وحذف) */
+        .admin-actions-bar {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-action-reply {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid #3b82f6;
+            color: #60a5fa;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-action-reply:hover { background: #3b82f6; color: #fff; }
+
+        .btn-action-delete {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #f87171;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-action-delete:hover { background: #ef4444; color: #fff; }
+
+        .reply-input-box {
+            display: none;
+            margin-top: 10px;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .quick-replies-select {
+            background: rgba(6, 9, 17, 0.9);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            color: #38bdf8;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .reply-input-box textarea {
+            width: 100%;
+            background: rgba(6, 9, 17, 0.9);
+            border: 1px solid #00f2fe;
+            border-radius: 10px;
+            color: #fff;
+            padding: 10px;
+            font-size: 0.9rem;
+            outline: none;
+            resize: vertical;
+            min-height: 70px;
         }
 
         .feedback-date {
@@ -432,7 +548,6 @@
             font-weight: 600;
             text-align: left;
             direction: ltr;
-            margin-top: 8px;
         }
 
         .empty-state {
@@ -581,23 +696,20 @@
         });
 
         function initFirebaseSync() {
-            // جلب الحسابات والرتب بدقة سحابية
             db.ref('accounts').on('value', (snapshot) => {
                 accountsDB = snapshot.val() || {};
                 checkUserSession();
             });
 
-            // جلب التذاكر والملاحظات أونلاين لحل قلتش عدم وصول الرسائل نهائياً
             db.ref('feedback').on('value', (snapshot) => {
                 feedbackList = [];
                 const data = snapshot.val();
                 if (data) {
                     if (Array.isArray(data)) {
-                        feedbackList = data;
+                        feedbackList = data.map((item, idx) => ({ firebaseKey: idx.toString(), ...item }));
                     } else {
                         feedbackList = Object.keys(data).map(k => ({ firebaseKey: k, ...data[k] }));
                     }
-                    // ترتيب الرسائل من الأحدث للأقدم
                     feedbackList.reverse();
                 }
                 renderPublicFeedback();
@@ -607,7 +719,6 @@
         function checkUserSession() {
             const savedUser = JSON.parse(localStorage.getItem('pa_user')) || { username: "زائر", roles: ['player'], avatar: "" };
             
-            // تحديث بيانات المستخدم أونلاين لو كان مسجلاً
             if (accountsDB[savedUser.username]) {
                 const acc = accountsDB[savedUser.username];
                 savedUser.roles = Array.isArray(acc.roles) ? acc.roles : [acc.role || 'player'];
@@ -652,7 +763,6 @@
             }, 3000);
         }
 
-        // إرسال الملاحظة سحابياً عبر Firebase لمنع ضياع الرسائل
         function handleFormSubmit(event) {
             event.preventDefault();
             
@@ -680,19 +790,130 @@
                 type: type,
                 message: message,
                 date: dateStr,
-                reply: ""
+                reply: "",
+                replyAdmin: null, // سيحفظ تفاصيل حساب الإداري الذي رد
+                likes: 0,
+                dislikes: 0,
+                likedBy: {},
+                dislikedBy: {}
             };
 
-            // رفع الرسالة مباشرة إلى Firebase Database
             db.ref('feedback').push(newFeedback).then(() => {
                 messageInput.value = '';
                 showToast('تم إرسال ملاحظتك بنجاح أونلاين!', '🚀');
-            }).catch((error) => {
+            }).catch(() => {
                 showToast('❌ حدث خطأ أثناء الإرسال، حاول مرة أخرى!', '⚠️');
             });
         }
 
-        // عرض الملاحظات والردود الحية لجميع اللاعبين
+        function toggleReplyBox(key) {
+            const box = document.getElementById(`reply-box-${key}`);
+            if (box) {
+                box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
+            }
+        }
+
+        // اختيار رد جاهز من قائمة المطور
+        function selectQuickReply(selectEl, key) {
+            const textVal = selectEl.value;
+            if (textVal) {
+                const textarea = document.getElementById(`reply-text-${key}`);
+                if (textarea) {
+                    textarea.value = textVal;
+                }
+            }
+        }
+
+        function submitAdminReply(key) {
+            const textarea = document.getElementById(`reply-text-${key}`);
+            const replyText = textarea ? textarea.value.trim() : '';
+
+            if (!replyText) {
+                showToast('اكتب نص الرد أولاً!', '❌');
+                return;
+            }
+
+            const adminInfo = {
+                name: currentUser.username,
+                avatar: currentUser.avatar || "",
+                roles: Array.isArray(currentUser.roles) ? currentUser.roles : [currentUser.roles || 'player']
+            };
+
+            db.ref(`feedback/${key}`).update({
+                reply: replyText,
+                replyAdmin: adminInfo
+            }).then(() => {
+                showToast('تم إرسال الرد بنجاح أونلاين! 🛡️', '✅');
+            }).catch(() => {
+                showToast('❌ فشل إرسال الرد', '⚠️');
+            });
+        }
+
+        function deleteFeedbackItem(key) {
+            if (confirm('هل أنت متأكد من حذف هذه الرسالة نهائياً؟')) {
+                db.ref(`feedback/${key}`).remove().then(() => {
+                    showToast('تم حذف الرسالة بنجاح.', '🗑️');
+                }).catch(() => {
+                    showToast('❌ فشل حذف الرسالة', '⚠️');
+                });
+            }
+        }
+
+        // نظام اللايك والديسلايك السحابي
+        function reactToFeedback(key, type) {
+            if (!currentUser || currentUser.username === "زائر") {
+                showToast('يجب تسجيل الدخول للتصويت!', '⚠️');
+                return;
+            }
+
+            const safeUserKey = currentUser.username.replace(/[.#$\/\[\]]/g, '_');
+            const itemRef = db.ref(`feedback/${key}`);
+
+            itemRef.once('transaction', (snapshot) => {
+                // سيتم التعامل مع التصويت بالاعتماد على القيم الحالية
+            });
+
+            db.ref(`feedback/${key}`).transaction((post) => {
+                if (post) {
+                    if (!post.likedBy) post.likedBy = {};
+                    if (!post.dislikedBy) post.dislikedBy = {};
+                    if (typeof post.likes !== 'number') post.likes = 0;
+                    if (typeof post.dislikes !== 'number') post.dislikes = 0;
+
+                    if (type === 'like') {
+                        if (post.likedBy[safeUserKey]) {
+                            post.likedBy[safeUserKey] = null;
+                            post.likes -= 1;
+                        } else {
+                            post.likedBy[safeUserKey] = true;
+                            post.likes += 1;
+                            if (post.dislikedBy[safeUserKey]) {
+                                post.dislikedBy[safeUserKey] = null;
+                                post.dislikes -= 1;
+                            }
+                        }
+                    } else if (type === 'dislike') {
+                        if (post.dislikedBy[safeUserKey]) {
+                            post.dislikedBy[safeUserKey] = null;
+                            post.dislikes -= 1;
+                        } else {
+                            post.dislikedBy[safeUserKey] = true;
+                            post.dislikes += 1;
+                            if (post.likedBy[safeUserKey]) {
+                                post.likedBy[safeUserKey] = null;
+                                post.likes -= 1;
+                            }
+                        }
+                    }
+                }
+                return post;
+            }, (error, committed) => {
+                if (committed) {
+                    showToast('تم تحديث التقييم بنجاح ⭐', '✅');
+                }
+            });
+        }
+
         function renderPublicFeedback() {
             const container = document.getElementById('feedback-container');
 
@@ -702,16 +923,14 @@
             }
 
             container.innerHTML = feedbackList.map(item => {
-                // جلب أحدث رتب وصورة صاحب الملاحظة من الداتابيز الحية لو توفرت
                 const liveAcc = accountsDB[item.name] || {};
                 const liveAvatar = liveAcc.avatar || item.avatar || "";
                 const liveRoles = liveAcc.roles || item.roles || (item.role ? [item.role] : ['player']);
 
-                const isAuthor = currentUser && (currentUser.username === item.name);
                 const currentUserRoles = currentUser && currentUser.roles ? currentUser.roles : [];
-                const isAdmin = currentUserRoles.includes('owner') || currentUserRoles.includes('developer');
-
-                const shouldShowReply = item.reply && (isAuthor || isAdmin);
+                const isOwner = currentUserRoles.includes('owner');
+                const isDeveloper = currentUserRoles.includes('developer');
+                const canManage = isOwner || isDeveloper;
 
                 const avatarHtml = liveAvatar 
                     ? `<img src="${liveAvatar}" class="feedback-user-avatar" alt="${escapeHtml(item.name)}">`
@@ -721,6 +940,43 @@
                     const rInfo = ROLES_MAP[r] || ROLES_MAP.player;
                     return `<span class="role-badge ${rInfo.class}">${rInfo.name}</span>`;
                 }).join(' ');
+
+                // تفاصيل الإداري الذي رد (الصورة، الاسم، الرتب)
+                let adminReplyHtml = '';
+                if (item.reply) {
+                    const admin = item.replyAdmin || { name: "الإدارة", avatar: "", roles: ["owner"] };
+                    const adminLiveAcc = accountsDB[admin.name] || {};
+                    const adminAvatar = adminLiveAcc.avatar || admin.avatar || "";
+                    const adminRoles = adminLiveAcc.roles || admin.roles || ["owner"];
+
+                    const adminAvatarHtml = adminAvatar 
+                        ? `<img src="${adminAvatar}" class="feedback-user-avatar" alt="${escapeHtml(admin.name)}">`
+                        : `<div class="feedback-avatar-placeholder">${admin.name ? admin.name.charAt(0).toUpperCase() : '🛡️'}</div>`;
+
+                    const adminBadgesHtml = adminRoles.map(r => {
+                        const rInfo = ROLES_MAP[r] || ROLES_MAP.player;
+                        return `<span class="role-badge ${rInfo.class}">${rInfo.name}</span>`;
+                    }).join(' ');
+
+                    adminReplyHtml = `
+                        <div class="admin-reply-display">
+                            <div class="admin-reply-header">
+                                ${adminAvatarHtml}
+                                <div class="user-name">
+                                    <span>${escapeHtml(admin.name)}</span>
+                                    <div class="roles-container">${adminBadgesHtml}</div>
+                                </div>
+                            </div>
+                            <div class="admin-reply-text">${escapeHtml(item.reply)}</div>
+                        </div>
+                    `;
+                }
+
+                const safeUserKey = currentUser && currentUser.username !== "زائر" ? currentUser.username.replace(/[.#$\/\[\]]/g, '_') : '';
+                const hasLiked = item.likedBy && safeUserKey && item.likedBy[safeUserKey];
+                const hasDisliked = item.dislikedBy && safeUserKey && item.dislikedBy[safeUserKey];
+                const likesCount = item.likes || 0;
+                const dislikesCount = item.dislikes || 0;
 
                 return `
                     <div class="feedback-item">
@@ -736,17 +992,37 @@
                         </div>
                         <div class="feedback-text">${escapeHtml(item.message)}</div>
 
-                        ${shouldShowReply ? `
-                            <div class="admin-reply-display">
-                                <div class="admin-reply-header">
-                                    <span>🛡️</span>
-                                    <span>رد المطور / الإدارة:</span>
-                                </div>
-                                <div class="admin-reply-text">${escapeHtml(item.reply)}</div>
+                        ${adminReplyHtml}
+
+                        <div class="feedback-footer-bar">
+                            <div class="reactions-group">
+                                <button class="reaction-btn ${hasLiked ? 'liked' : ''}" onclick="reactToFeedback('${item.firebaseKey}', 'like')">
+                                    <span>👍</span> <span>${likesCount}</span>
+                                </button>
+                                <button class="reaction-btn ${hasDisliked ? 'disliked' : ''}" onclick="reactToFeedback('${item.firebaseKey}', 'dislike')">
+                                    <span>👎</span> <span>${dislikesCount}</span>
+                                </button>
+                            </div>
+                            <div class="feedback-date">${item.date}</div>
+                        </div>
+
+                        ${canManage ? `
+                            <div class="admin-actions-bar">
+                                <button class="btn-action-reply" onclick="toggleReplyBox('${item.firebaseKey}')">💬 ${item.reply ? 'تعديل الرد' : 'إضافة رد'}</button>
+                                ${isOwner ? `<button class="btn-action-delete" onclick="deleteFeedbackItem('${item.firebaseKey}')">🗑️ حذف الرسالة (للأسد)</button>` : ''}
+                            </div>
+                            <div id="reply-box-${item.firebaseKey}" class="reply-input-box">
+                                <select class="quick-replies-select" onchange="selectQuickReply(this, '${item.firebaseKey}')">
+                                    <option value="">⚡ اختر رداً جاهزاً للمطور...</option>
+                                    <option value="تم استلام الاقتراح ودراسته بعناية لتطوير الموقع 💡">تم استلام الاقتراح ودراسته بعناية لتطوير الموقع 💡</option>
+                                    <option value="تمت حل المشكلة والإبلاغ عنها في التحديث الأخير 🛠️">تمت حل المشكلة والإبلاغ عنها في التحديث الأخير 🛠️</option>
+                                    <option value="شكراً لك على كلماتك الرقيقة ودعمك المستمر ❤️">شكراً لك على كلماتك الرقيقة ودعمك المستمر ❤️</option>
+                                    <option value="قيد الدراسة وسيتم تنفيذه قريباً إن شاء الله 🚀">قيد الدراسة وسيتم تنفيذه قريباً إن شاء الله 🚀</option>
+                                </select>
+                                <textarea id="reply-text-${item.firebaseKey}" placeholder="اكتب رد الإدارة هنا...">${item.reply || ''}</textarea>
+                                <button onclick="submitAdminReply('${item.firebaseKey}')" style="background:#00f2fe; color:#060911; font-weight:800; border:none; padding:8px 14px; border-radius:8px; cursor:pointer;">إرسال الرد 🚀</button>
                             </div>
                         ` : ''}
-
-                        <div class="feedback-date">${item.date}</div>
                     </div>
                 `;
             }).join('');
