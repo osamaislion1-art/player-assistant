@@ -322,11 +322,10 @@
             text-align: center;
             transition: all 0.35s ease;
             position: relative;
-            overflow: visible; /* للسماح للثلج بالظهور فوق حافة الكارت بحرية */
+            overflow: visible;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
-        /* ثلج متراكم كبير وواقعي يغطي حافة كل كارت بالكامل وبدون تكرار */
         .card::before {
             content: '';
             position: absolute;
@@ -368,6 +367,12 @@
             image-rendering: pixelated;
             filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.7));
             transition: opacity 0.3s ease;
+        }
+
+        .community-icon {
+            width: 110px !important;
+            height: 110px !important;
+            filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.6)) !important;
         }
 
         .villager-icon {
@@ -418,7 +423,7 @@
             filter: brightness(1.1);
         }
 
-        /* التذييل مع الثلج المتراكم الواسع والمتصل */
+        /* التذييل */
         footer {
             margin-top: 50px;
             position: relative;
@@ -432,7 +437,6 @@
             gap: 15px;
         }
 
-        /* ثلج الفوتر يمتد بعرض الصفحة بالكامل وبدون تكرار نقاط */
         .footer-snow-overlay {
             position: absolute;
             top: -26px;
@@ -771,9 +775,19 @@
         <p>مساعدك الأول لكل ما يخص عالم ماين كرافت ❄️</p>
     </section>
 
-    <!-- الشبكة الرئيسية (الكروت عليها الثلج المتراكم الواسع) -->
+    <!-- الشبكة الرئيسية (الكروت) -->
     <main class="grid-container">
-        <!-- 1. مساعد الكوماندات -->
+        <!-- 1. مجتمع اللاعبين (اسم الصورة community.png ومثبتة تماماً) -->
+        <div class="card">
+            <div class="card-img-holder">
+                <img src="images/community.png" class="mc-item-icon community-icon" alt="مجتمع اللاعبين">
+            </div>
+            <h2>مجتمع اللاعبين</h2>
+            <p>انستغرام وفيسبوك الخاص بلاعبين ماين كرافت! شارك صور بناياتك وإنجازاتك الأسطورية مع اللاعبين، وتفاعل مع المنشورات باللايكات والتعليقات الحية.</p>
+            <a href="community.html" class="btn">دخول مجتمع اللاعبين</a>
+        </div>
+
+        <!-- 2. مساعد الكوماندات -->
         <div class="card">
             <div class="card-img-holder">
                 <img id="command-img" src="images/command_block.png" class="mc-item-icon" alt="Command Block">
@@ -783,7 +797,7 @@
             <a href="commands.html" class="btn">أبحث عن الكوماند</a>
         </div>
 
-        <!-- 2. معاينة الدروع -->
+        <!-- 3. معاينة الدروع -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/netherite_chestplate.png" class="mc-item-icon" alt="معاينة الدروع">
@@ -793,7 +807,7 @@
             <a href="armor-preview.html" class="btn">معاينة الدروع</a>
         </div>
 
-        <!-- 3. مشغل الأقراص -->
+        <!-- 4. مشغل الأقراص -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/Jukebox.png" class="mc-item-icon" alt="مشغل الموسيقى">
@@ -803,7 +817,7 @@
             <a href="discs.html" class="btn">مشغل الموسيقى</a>
         </div>
 
-        <!-- 4. أخبار ماين كرافت -->
+        <!-- 5. أخبار ماين كرافت -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/paper.png" class="mc-item-icon" alt="أخبار ماين كرافت">
@@ -813,7 +827,7 @@
             <a href="minecraft-news.html" class="btn">أخبار ماين كرافت</a>
         </div>
 
-        <!-- 5. الملاحظات والدعم -->
+        <!-- 6. الملاحظات والدعم -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/support.png" class="mc-item-icon" alt="الاقتراحات والدعم">
@@ -823,17 +837,17 @@
             <a href="feedback.html" class="btn">الملاحظات والدعم</a>
         </div>
 
-        <!-- 6. دليل التقيض مع القروي والبقلن -->
+        <!-- 7. دليل المقايضة مع القروي والبقلن -->
         <div class="card">
             <div class="card-img-holder">
-                <img id="barter-img" src="images/Villager.png" class="mc-item-icon villager-icon" alt="دليل التقيض مع القروي والبقلن">
+                <img id="barter-img" src="images/Villager.png" class="mc-item-icon villager-icon" alt="دليل المقايضة مع القروي والبقلن">
             </div>
-            <h2>دليل التقيض مع القروي والبقلن</h2>
+            <h2>دليل المقايضة مع القروي والبقلن</h2>
             <p>تعرف بدقة على صفقات القرويين في نسختي (Java وBedrock) وأفضل مقايضات الذهب مع البقلن (Piglin) لتستفيد من أفضل الموارد وتوفر وقتك ومواردك باللعبة!</p>
             <a href="villagers.html" class="btn">دليل المقايضة والصفقات</a>
         </div>
 
-        <!-- 7. قسم جديد -->
+        <!-- 8. قسم جديد -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/Question_mark.png" class="mc-item-icon" alt="قسم جديد">
@@ -844,7 +858,7 @@
         </div>
     </main>
 
-    <!-- التذييل مع الثلج المتراكم الواسع والمتصل -->
+    <!-- التذييل -->
     <footer>
         <div class="footer-snow-overlay"></div>
         <div class="footer-right">
@@ -894,19 +908,15 @@
         </div>
     </div>
 
-    <!-- 2. نافذة إعدادات الحساب -->
+    <!-- 2. نافذة إعدادات الحساب (بدون خانة تعديل الاسم بناءً على طلبك) -->
     <div id="profile-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px;">
             <button class="close-btn" onclick="closeProfileModal()">✖</button>
             <div class="modal-header">
                 <h3>⚙️ إعدادات الحساب</h3>
-                <p class="modal-subtitle">تعديل اسم المستخدم، الصورة الشخصية، وكلمة السر</p>
+                <p class="modal-subtitle">تعديل الصورة الشخصية وكلمة السر</p>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label for="profile-username">تغيير اسم الحساب:</label>
-                    <input type="text" id="profile-username" class="form-input" placeholder="أدخل اسم الحساب الجديد">
-                </div>
                 <div class="form-group">
                     <label>اختيار صورة شخصية من الملفات:</label>
                     <div class="file-upload-box" onclick="document.getElementById('profile-avatar-file').click()" style="background: rgba(6,9,17,0.9); border: 2px dashed rgba(0,242,254,0.4); border-radius:14px; padding:16px; text-align:center; cursor:pointer;">
@@ -992,6 +1002,7 @@
 
         function generateSnowflakes() {
             const snowContainer = document.getElementById('snowContainer');
+            if (!snowContainer) return;
             const flakesCount = 30;
             const flakeTypes = ['❄', '❅', '❆'];
 
@@ -1015,6 +1026,13 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            // إصلاح تلقائي لاسم المستخدم لو كان "أسامة 1" وتحويله إلى "أسامة"
+            let savedUserCheck = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            if (savedUserCheck && savedUserCheck.username === 'أسامة 1') {
+                savedUserCheck.username = 'أسامة';
+                localStorage.setItem('pa_user', JSON.stringify(savedUserCheck));
+            }
+
             generateSnowflakes();
             initFirebaseSync();
             checkUserSession();
@@ -1023,6 +1041,8 @@
         function initFirebaseSync() {
             db.ref('accounts').on('value', (snapshot) => {
                 accountsDB = snapshot.val() || {};
+                
+                // التأكد التام من وجود حساب "أسامة" ودعمه بكامل الصلاحيات والرتب أونلاين
                 if (!accountsDB['أسامة']) {
                     db.ref('accounts/أسامة').set({
                         password: '1osama1lion1',
@@ -1030,7 +1050,15 @@
                         avatar: '',
                         createdAt: new Date().toISOString()
                     });
+                } else {
+                    let acc = accountsDB['أسامة'];
+                    let currentRoles = getAccountRolesArray(acc);
+                    if (!currentRoles.includes('owner')) {
+                        currentRoles.push('owner', 'developer', 'vip');
+                        db.ref('accounts/أسامة/roles').set(currentRoles);
+                    }
                 }
+
                 const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
                 if (savedUser && accountsDB[savedUser.username]) {
                     const acc = accountsDB[savedUser.username];
@@ -1176,8 +1204,6 @@
         }
 
         function openProfileModal() {
-            const user = JSON.parse(localStorage.getItem('pa_user') || '{}');
-            document.getElementById('profile-username').value = user.username || '';
             document.getElementById('profile-old-password').value = '';
             document.getElementById('profile-new-password').value = '';
             document.getElementById('profile-error-msg').style.display = 'none';
@@ -1197,24 +1223,16 @@
             }
         }
 
+        // حفظ إعدادات الحساب (كلمة السر والصورة فقط، بدون تعديل الاسم نهائياً)
         function saveProfileSettings() {
             const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
             if (!user) return;
             const currentAcc = accountsDB[user.username];
             if (!currentAcc) return;
 
-            const newUsernameInput = document.getElementById('profile-username').value.trim();
             const oldPassInput = document.getElementById('profile-old-password').value.trim();
             const newPassInput = document.getElementById('profile-new-password').value.trim();
             const profileError = document.getElementById('profile-error-msg');
-
-            let isNameChanged = (newUsernameInput && newUsernameInput !== user.username);
-
-            if (isNameChanged && accountsDB[newUsernameInput]) {
-                profileError.innerText = '❌ هذا الاسم مستخدم بالفعل!';
-                profileError.style.display = 'block';
-                return;
-            }
 
             let updatedPassword = null;
             if (oldPassInput || newPassInput) {
@@ -1231,20 +1249,20 @@
                 updatedPassword = newPassInput;
             }
 
+            let currentRoles = getAccountRolesArray(currentAcc);
+            if (user.username.toLowerCase() === 'أسامة') {
+                currentRoles = ['owner', 'developer', 'vip'];
+            }
+
             const newAccData = {
                 ...currentAcc,
                 password: updatedPassword || currentAcc.password,
+                roles: currentRoles,
                 avatar: tempSelectedAvatarData || currentAcc.avatar || ''
             };
 
-            const oldUsername = user.username;
-            const targetUsername = isNameChanged ? newUsernameInput : oldUsername;
-
-            db.ref('accounts/' + targetUsername).set(newAccData).then(() => {
-                if (isNameChanged) {
-                    db.ref('accounts/' + oldUsername).remove();
-                }
-                user.username = targetUsername;
+            db.ref('accounts/' + user.username).set(newAccData).then(() => {
+                user.roles = currentRoles;
                 user.avatar = newAccData.avatar;
                 localStorage.setItem('pa_user', JSON.stringify(user));
                 updateUserUI(user);

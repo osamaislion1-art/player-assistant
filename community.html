@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Assistant | مجتمع اللاعبين 🎮</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- مكتبات Firebase السحابية -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: #060911;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.22) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.12) 0%, transparent 40%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* الشريط العلوي: زر الرئيسية يمين والشعار مكبر والاسم يسار */
+        .user-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 28px;
+            background: #060911;
+            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .btn-home {
+            padding: 9px 20px;
+            background: transparent;
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            color: #00f2fe;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-home:hover {
+            background: rgba(0, 242, 254, 0.1);
+            border-color: #00f2fe;
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.3);
+        }
+
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 30%, #38bdf8 70%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .brand-logo {
+            width: 65px;
+            height: 65px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.7));
+        }
+
+        /* حاوية مجتمع اللاعبين */
+        .feed-container {
+            max-width: 720px;
+            margin: 35px auto;
+            padding: 0 15px;
+            width: 100%;
+        }
+
+        /* صندوق إنشاء منشور */
+        .create-post-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .create-post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar-sm {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+            overflow: hidden;
+            border: 2px solid #00f2fe;
+            flex-shrink: 0;
+        }
+        .user-avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+
+        .create-post-card textarea {
+            width: 100%;
+            height: 110px;
+            background: rgba(6, 9, 17, 0.95);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 14px;
+            padding: 15px;
+            color: #fff;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            margin-bottom: 12px;
+        }
+
+        .create-post-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .file-upload-label {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+        }
+        .file-upload-label:hover { background: rgba(59, 130, 246, 0.35); color: #fff; }
+
+        .btn-post {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-post:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+        /* كرت المنشور */
+        .instagram-card {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+        }
+
+        .ig-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .ig-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ig-username {
+            font-weight: 900;
+            font-size: 1.05rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* الرتب المحدثة (مع تفعيل الشبل واليوتيوبر) */
+        .role-badge {
+            font-size: 0.72rem;
+            padding: 3px 9px;
+            border-radius: 7px;
+            font-weight: 900;
+            color: #fff;
+        }
+        .role-owner { background: linear-gradient(135deg, #1d4ed8, #00f2fe); box-shadow: 0 0 10px rgba(0, 242, 254, 0.4); }
+        .role-cub { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+        .role-youtuber { background: linear-gradient(135deg, #dc2626, #ef4444); box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+        .role-developer { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+        .role-vip { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+        .role-player { background: #64748b; }
+
+        .btn-delete-post {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #f87171;
+            padding: 6px 12px;
+            border-radius: 9px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-delete-post:hover { background: #ef4444; color: #fff; }
+
+        .ig-body {
+            padding: 20px;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #e2e8f0;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .post-image-container {
+            width: 100%;
+            max-height: 450px;
+            background: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .post-image-container img {
+            width: 100%;
+            height: auto;
+            max-height: 450px;
+            object-fit: contain;
+        }
+
+        /* أزرار التفاعل */
+        .ig-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 12px 20px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .action-icon-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .action-icon-btn:hover { color: #00f2fe; }
+        .action-icon-btn.active-like { color: #ef4444; }
+        .action-icon-btn.active-dislike { color: #3b82f6; }
+
+        /* قسم التعليقات */
+        .ig-comments-section {
+            padding: 16px 20px;
+            background: rgba(6, 9, 17, 0.7);
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .comment-item {
+            font-size: 0.92rem;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .comment-user-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+            overflow: hidden;
+            border: 1px solid #00f2fe;
+            flex-shrink: 0;
+        }
+        .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        .comment-content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-grow: 1;
+        }
+
+        .comment-author-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .comment-author-name {
+            font-weight: 900;
+            color: #38bdf8;
+            font-size: 0.92rem;
+        }
+
+        .comment-text {
+            color: #e2e8f0;
+            font-size: 0.92rem;
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .comment-input-box {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .comment-input {
+            flex-grow: 1;
+            padding: 10px 14px;
+            background: rgba(6, 9, 17, 0.95);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.92rem;
+            outline: none;
+        }
+
+        .btn-comment {
+            padding: 10px 18px;
+            background: rgba(59, 130, 246, 0.25);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            color: #60a5fa;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-comment:hover { background: #2563eb; color: #fff; }
+
+        footer {
+            margin-top: auto;
+            padding: 25px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(0,242,254,0.1);
+        }
+
+        .custom-toast {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #080d19;
+            border: 1px solid #00f2fe;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            z-index: 999999;
+            transition: bottom 0.4s ease;
+        }
+        .custom-toast.show { bottom: 30px; }
+    </style>
+</head>
+<body>
+
+    <!-- الشريط العلوي المطلوب (الرئيسية يمين، الشعار مكبر والإسم يسار) -->
+    <header class="user-top-bar">
+        <a href="index.html" class="btn-home">الرئيسية ←</a>
+        <div class="brand-container">
+            <span class="brand-title">Player Assistant</span>
+            <img src="images/صور حدث الشتاء/logo.ise.png" alt="Logo" class="brand-logo">
+        </div>
+    </header>
+
+    <main class="feed-container">
+        <!-- صندوق إنشاء منشور مع خيار رفع صورة -->
+        <div class="create-post-card">
+            <div class="create-post-header">
+                <div id="current-user-avatar" class="user-avatar-sm">👤</div>
+                <span id="current-username-display" style="font-weight: 900; font-size: 1rem;">زائر</span>
+            </div>
+            <textarea id="post-content-input" placeholder="شارك إنجازاتك أو صور بناياتك مع مجتمع اللاعبين..."></textarea>
+            
+            <div id="image-preview-container" style="display:none; margin-bottom: 12px; position:relative; max-height: 200px; overflow:hidden; border-radius:10px;">
+                <img id="image-preview" src="" alt="Preview" style="width:100%; object-fit:contain;">
+                <button onclick="clearImageSelection()" style="position:absolute; top:8px; left:8px; background:rgba(239,68,68,0.8); border:none; color:#fff; border-radius:50%; width:26px; height:26px; cursor:pointer; font-weight:bold;">✕</button>
+            </div>
+
+            <div class="create-post-footer">
+                <label class="file-upload-label">
+                    📷 إرفاق صورة
+                    <input type="file" id="post-image-file" accept="image/*" style="display:none;" onchange="handlePostImageSelect(event)">
+                </label>
+                <button class="btn-post" onclick="createNewPost()">نشر 🚀</button>
+            </div>
+        </div>
+
+        <!-- قائمة المنشورات -->
+        <div id="posts-feed">
+            <p style="text-align: center; color: #64748b; margin-top: 40px;">جاري تحميل المنشورات من السحابة...</p>
+        </div>
+    </main>
+
+    <footer>
+        <span>© 2026 جميع الحقوق محفوظة لـ Osama is Lion - Player Assistant</span>
+    </footer>
+
+    <div id="toast" class="custom-toast">تمت العملية بنجاح!</div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiU1han_ruJl-U2EoK0ShEVm31MW3im1I",
+            authDomain: "player-assistant-c8d93.firebaseapp.com",
+            databaseURL: "https://player-assistant-c8d93-default-rtdb.firebaseio.com",
+            projectId: "player-assistant-c8d93",
+            storageBucket: "player-assistant-c8d93.firebasestorage.app",
+            messagingSenderId: "331981263283",
+            appId: "1:331981263283:web:2a8996acc4edf06de4fbc6"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        // جدول الرتب مع تفعيل الشبل واليوتيوبر بكامل خصائصهم
+        const ROLES = {
+            owner:     { name: '🦁 أسد', class: 'role-owner' },
+            cub:       { name: '🦁 شبل', class: 'role-cub' },
+            youtuber:  { name: '🔴 يوتيوبر', class: 'role-youtuber' },
+            developer: { name: '💻 مطور', class: 'role-developer' },
+            vip:       { name: '⭐ VIP', class: 'role-vip' },
+            player:    { name: '🎮 لاعب', class: 'role-player' }
+        };
+
+        let tempPostImageData = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initUserUI();
+            loadPostsFromCloud();
+        });
+
+        function initUserUI() {
+            const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            if (savedUser) {
+                document.getElementById('current-username-display').innerText = savedUser.username;
+                const avatarBox = document.getElementById('current-user-avatar');
+                if (savedUser.avatar) {
+                    avatarBox.innerHTML = `<img src="${savedUser.avatar}" alt="Avatar">`;
+                } else {
+                    avatarBox.innerHTML = savedUser.username.charAt(0).toUpperCase();
+                }
+            }
+        }
+
+        function handlePostImageSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    tempPostImageData = e.target.result;
+                    document.getElementById('image-preview').src = tempPostImageData;
+                    document.getElementById('image-preview-container').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearImageSelection() {
+            tempPostImageData = null;
+            document.getElementById('post-image-file').value = '';
+            document.getElementById('image-preview-container').style.display = 'none';
+        }
+
+        function createNewPost() {
+            const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            if (!savedUser) {
+                showToast('⚠️ يجب تسجيل الدخول من الرئيسية أولاً!');
+                return;
+            }
+
+            const input = document.getElementById('post-content-input');
+            const content = input.value.trim();
+            if (!content && !tempPostImageData) {
+                showToast('❌ لا يمكن نشر منشور فارغ (اكتب نصاً أو أرفق صورة)!');
+                return;
+            }
+
+            db.ref('accounts/' + savedUser.username).once('value').then(snapshot => {
+                const acc = snapshot.val() || {};
+                const postData = {
+                    author: savedUser.username,
+                    avatar: acc.avatar || '',
+                    roles: Array.isArray(acc.roles) ? acc.roles : ['player'],
+                    content: content,
+                    image: tempPostImageData || '',
+                    timestamp: Date.now()
+                };
+
+                db.ref('community_posts').push(postData).then(() => {
+                    input.value = '';
+                    clearImageSelection();
+                    showToast('تم نشر المنشور بنجاح! 🔥');
+                });
+            });
+        }
+
+        function loadPostsFromCloud() {
+            db.ref('community_posts').on('value', (snapshot) => {
+                const feed = document.getElementById('posts-feed');
+                const data = snapshot.val() || {};
+                const keys = Object.keys(data).reverse();
+
+                if (keys.length === 0) {
+                    feed.innerHTML = `<p style="text-align: center; color: #64748b; margin-top: 30px;">لا توجد منشورات حالياً.</p>`;
+                    return;
+                }
+
+                const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
+                const currentUsername = savedUser ? savedUser.username : '';
+
+                feed.innerHTML = keys.map(postId => {
+                    const post = data[postId];
+                    const avatarHtml = post.avatar ? `<img src="${post.avatar}" alt="Avatar">` : post.author.charAt(0).toUpperCase();
+                    const rolesHtml = (post.roles || ['player']).map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || 'لاعب'}</span>`).join(' ');
+                    
+                    const canDelete = (currentUsername === post.author || currentUsername.toLowerCase() === 'أسامة');
+                    const deleteBtnHtml = canDelete ? `<button class="btn-delete-post" onclick="deletePost('${postId}')">🗑️ حذف</button>` : '';
+
+                    // صور المنشور إن وجدت
+                    const postImageHtml = post.image ? `<div class="post-image-container"><img src="${post.image}" alt="Post Image"></div>` : '';
+
+                    // نظام التصويت الفريد (لايك أو دس لايك واحد فقط)
+                    const votes = post.votes || {};
+                    let likesCount = 0;
+                    let dislikesCount = 0;
+                    let userVote = null;
+
+                    Object.keys(votes).forEach(user => {
+                        if (votes[user] === 'like') likesCount++;
+                        if (votes[user] === 'dislike') dislikesCount++;
+                        if (user === currentUsername) userVote = votes[user];
+                    });
+
+                    // جلب التعليقات مع البروفايل والرتب المحدثة (شبل، يوتيوبر، إلخ)
+                    const commentsObj = post.comments || {};
+                    const commentKeys = Object.keys(commentsObj);
+
+                    const commentsHtml = commentKeys.map(cid => {
+                        const com = commentsObj[cid];
+                        const comAvatarHtml = com.avatar ? `<img src="${com.avatar}" alt="Avatar">` : com.author.charAt(0).toUpperCase();
+                        const comRolesHtml = (com.roles || ['player']).map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || 'لاعب'}</span>`).join(' ');
+                        const canDeleteComment = (currentUsername === com.author || currentUsername.toLowerCase() === 'أسامة');
+
+                        return `
+                            <div class="comment-item">
+                                <div class="comment-user-box">
+                                    <div class="comment-avatar">${comAvatarHtml}</div>
+                                    <div class="comment-content-area">
+                                        <div class="comment-author-row">
+                                            <span class="comment-author-name">${escapeHtml(com.author)}</span>
+                                            ${comRolesHtml}
+                                        </div>
+                                        <div class="comment-text">${escapeHtml(com.text)}</div>
+                                    </div>
+                                </div>
+                                ${canDeleteComment ? `<span style="color:#ef4444; cursor:pointer; font-size:0.75rem; font-weight:700;" onclick="deleteComment('${postId}', '${cid}')">حذف</span>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+
+                    return `
+                        <div class="instagram-card">
+                            <div class="ig-header">
+                                <div class="ig-user-info">
+                                    <div class="user-avatar-sm">${avatarHtml}</div>
+                                    <div>
+                                        <div class="ig-username">${escapeHtml(post.author)} ${rolesHtml}</div>
+                                        <div style="font-size: 0.72rem; color: #64748b; margin-top:2px;">${getTimeAgo(post.timestamp)}</div>
+                                    </div>
+                                </div>
+                                ${deleteBtnHtml}
+                            </div>
+                            ${post.content ? `<div class="ig-body">${escapeHtml(post.content)}</div>` : ''}
+                            ${postImageHtml}
+                            <div class="ig-actions">
+                                <button class="action-icon-btn ${userVote === 'like' ? 'active-like' : ''}" onclick="votePost('${postId}', 'like')">❤️ أعجبني (<span id="likes-${postId}">${likesCount}</span>)</button>
+                                <button class="action-icon-btn ${userVote === 'dislike' ? 'active-dislike' : ''}" onclick="votePost('${postId}', 'dislike')">👎 لا يعجبني (<span id="dislikes-${postId}">${dislikesCount}</span>)</button>
+                            </div>
+                            <div class="ig-comments-section">
+                                <div id="comments-list-${postId}">
+                                    ${commentsHtml || '<div style="color:#64748b; font-size:0.85rem; margin-bottom:10px;">لا توجد تعليقات بعد. كن أول من يعلق!</div>'}
+                                </div>
+                                <div class="comment-input-box">
+                                    <input type="text" id="comment-input-${postId}" class="comment-input" placeholder="اكتب تعليقاً...">
+                                    <button class="btn-comment" onclick="addComment('${postId}')">تعليق</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+
+        function votePost(postId, type) {
+            const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            if (!savedUser) {
+                showToast('⚠️ يجب تسجيل الدخول للتفاعل!');
+                return;
+            }
+            const voteRef = db.ref(`community_posts/${postId}/votes/${savedUser.username}`);
+            voteRef.once('value').then(snapshot => {
+                const currentVote = snapshot.val();
+                if (currentVote === type) {
+                    voteRef.remove();
+                } else {
+                    voteRef.set(type);
+                }
+            });
+        }
+
+        function deletePost(postId) {
+            if (confirm('هل أنت متأكد من حذف هذا المنشور؟')) {
+                db.ref('community_posts/' + postId).remove().then(() => {
+                    showToast('تم حذف المنشور بنجاح.');
+                });
+            }
+        }
+
+        function addComment(postId) {
+            const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            if (!savedUser) {
+                showToast('⚠️ يجب تسجيل الدخول لتتمكن من التعليق!');
+                return;
+            }
+            const input = document.getElementById(`comment-input-${postId}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            db.ref('accounts/' + savedUser.username).once('value').then(snapshot => {
+                const acc = snapshot.val() || {};
+                const commentData = {
+                    author: savedUser.username,
+                    avatar: acc.avatar || '',
+                    roles: Array.isArray(acc.roles) ? acc.roles : ['player'],
+                    text: text,
+                    timestamp: Date.now()
+                };
+
+                db.ref(`community_posts/${postId}/comments`).push(commentData).then(() => {
+                    input.value = '';
+                });
+            });
+        }
+
+        function deleteComment(postId, commentId) {
+            db.ref(`community_posts/${postId}/comments/${commentId}`).remove();
+        }
+
+        function getTimeAgo(ts) {
+            const s = Math.floor((Date.now() - ts) / 1000);
+            if (s < 60) return 'الآن';
+            const m = Math.floor(s / 60);
+            if (m < 60) return `منذ ${m} دقيقة`;
+            const h = Math.floor(m / 60);
+            if (h < 24) return `منذ ${h} ساعة`;
+            return `منذ ${Math.floor(h / 24)} يوم`;
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m]));
+        }
+    </script>
+</body>
+</html>
