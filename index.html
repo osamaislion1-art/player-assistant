@@ -8,6 +8,7 @@
     
     <!-- مكتبات Firebase السحابية -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <style>
@@ -156,37 +157,101 @@
             color: #ffffff;
         }
 
-        .role-owner {
-            background: linear-gradient(135deg, #1d4ed8, #00f2fe);
-            box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        .role-owner { background: linear-gradient(135deg, #1d4ed8, #00f2fe); box-shadow: 0 0 10px rgba(0, 242, 254, 0.5); }
+        .role-cub { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; }
+        .role-developer { background: linear-gradient(135deg, #10b981, #059669); }
+        .role-vip { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; }
+        .role-youtuber { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .role-player { background: linear-gradient(135deg, #64748b, #475569); border: 1px solid rgba(255, 255, 255, 0.15); }
+        .role-guest { background: linear-gradient(135deg, #4b5563, #374151); border: 1px dashed rgba(255, 255, 255, 0.3); color: #d1d5db; }
+
+        /* حاوية الكوينز مع زر الزائد (+) */
+        .coins-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
         }
 
-        .role-cub {
-            background: linear-gradient(135deg, #f59e0b, #eab308);
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
-            color: #000;
+        .coins-display {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #FFD700;
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
         }
 
-        .role-developer {
+        .coins-display img {
+            width: 26px !important;
+            height: 26px !important;
+            object-fit: contain !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+        }
+
+        /* زر الزائد بجانب الكوينز */
+        .btn-add-coin {
             background: linear-gradient(135deg, #10b981, #059669);
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+            color: #fff;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+            transition: all 0.2s;
         }
 
-        .role-vip {
-            background: linear-gradient(135deg, #f59e0b, #eab308);
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
-            color: #000;
+        .btn-add-coin:hover {
+            transform: scale(1.1);
+            filter: brightness(1.15);
         }
 
-        .role-youtuber {
-            background: linear-gradient(135deg, #dc2626, #ef4444);
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
-            color: #ffffff;
+        /* قائمة منسدلة صغيرة تظهر عند الضغط على زر الزائد */
+        .coin-popup-menu {
+            display: none;
+            position: absolute;
+            top: 45px;
+            right: 0;
+            background: #080d19;
+            border: 1px solid #00f2fe;
+            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.3);
+            border-radius: 12px;
+            padding: 10px;
+            z-index: 2000;
+            width: 200px;
+            text-align: center;
         }
 
-        .role-player {
-            background: linear-gradient(135deg, #64748b, #475569);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        .coin-popup-menu.show {
+            display: block;
+        }
+
+        .btn-watch-from-menu {
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .user-actions {
@@ -208,44 +273,13 @@
             gap: 6px;
         }
 
-        .btn-admin-panel {
-            background: linear-gradient(135deg, #2563eb, #00f2fe);
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3);
-        }
+        .btn-admin-panel { background: linear-gradient(135deg, #2563eb, #00f2fe); color: #fff; box-shadow: 0 4px 12px rgba(0, 242, 254, 0.3); }
+        .btn-profile-settings { background: rgba(59, 130, 246, 0.2); border: 1px solid rgba(59, 130, 246, 0.4); color: #60a5fa; }
+        .btn-logout { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #cbd5e1; }
 
-        .btn-admin-panel:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-
-        .btn-profile-settings {
-            background: rgba(59, 130, 246, 0.2);
-            border: 1px solid rgba(59, 130, 246, 0.4);
-            color: #60a5fa;
-        }
-
-        .btn-profile-settings:hover {
-            background: rgba(59, 130, 246, 0.35);
-            color: #fff;
-        }
-
-        .btn-logout {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #cbd5e1;
-        }
-
-        .btn-logout:hover {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-            border-color: #ef4444;
-        }
-
-        /* الهيدر والعنوان الشتوي */
         .hero {
             text-align: center;
-            margin: 25px 20px 15px;
+            margin: 25px 20px 25px;
             position: relative;
         }
 
@@ -263,11 +297,6 @@
             height: 130px;
             object-fit: contain;
             filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.5));
-            transition: transform 0.4s ease;
-        }
-
-        .hero-logo:hover {
-            transform: scale(1.08) rotate(-2deg);
         }
 
         .hero h1 {
@@ -276,7 +305,6 @@
             background: linear-gradient(135deg, #ffffff 30%, #38bdf8 70%, #00f2fe 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 30px rgba(0, 242, 254, 0.25);
         }
 
         .winter-event-badge {
@@ -286,26 +314,18 @@
             border-radius: 12px;
             font-size: 0.9rem;
             font-weight: 900;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.4);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .hero p {
-            color: #cbd5e1;
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
+        .hero p { color: #cbd5e1; font-size: 1.2rem; font-weight: 700; }
 
-        /* شبكة الكروت الرئيسية */
+        /* شبكة الكروت الرئيسية (نظيفة بدون إعلانات مزعجة بالمنتصف) */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 28px;
             max-width: 1250px;
-            margin: 30px auto;
+            margin: 10px auto 30px;
             padding: 0 20px;
             width: 100%;
         }
@@ -322,8 +342,7 @@
             text-align: center;
             transition: all 0.35s ease;
             position: relative;
-            overflow: visible;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
         }
 
         .card::before {
@@ -357,7 +376,6 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            position: relative;
         }
 
         .mc-item-icon {
@@ -365,40 +383,13 @@
             height: 130px;
             object-fit: contain;
             image-rendering: pixelated;
-            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.7));
-            transition: opacity 0.3s ease;
         }
 
-        .community-icon {
-            width: 110px !important;
-            height: 110px !important;
-            filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.6)) !important;
-        }
+        .community-icon { width: 110px !important; height: 110px !important; }
+        .villager-icon { width: 150px !important; height: 150px !important; }
 
-        .villager-icon {
-            width: 150px !important;
-            height: 150px !important;
-            image-rendering: auto !important;
-            transform: scale(1.05);
-        }
-
-        .card h2 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #ffffff 40%, #00f2fe 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .card p {
-            color: #94a3b8;
-            font-size: 0.95rem;
-            line-height: 1.7;
-            margin-bottom: 22px;
-            flex-grow: 1;
-            font-weight: 600;
-        }
+        .card h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; color: #fff; }
+        .card p { color: #94a3b8; font-size: 0.95rem; line-height: 1.7; margin-bottom: 22px; flex-grow: 1; font-weight: 600; }
 
         .btn {
             width: 100%;
@@ -417,11 +408,7 @@
             box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(0, 242, 254, 0.6);
-            filter: brightness(1.1);
-        }
+        .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
         /* التذييل */
         footer {
@@ -430,7 +417,6 @@
             padding: 35px 30px 22px;
             background: rgba(6, 9, 17, 0.95);
             border-top: 1px solid rgba(0, 242, 254, 0.25);
-            user-select: none;
             display: grid;
             grid-template-columns: 1fr auto 1fr;
             align-items: center;
@@ -450,31 +436,9 @@
             z-index: 10;
         }
 
-        .footer-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            justify-self: start;
-        }
-
-        .footer-center {
-            color: #94a3b8;
-            font-weight: 600;
-            font-size: 0.95rem;
-            text-align: center;
-            justify-self: center;
-        }
-
-        .footer-left {
-            justify-self: end;
-        }
-
-        .made-in-text {
-            color: #ffffff;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            font-size: 0.95rem;
-        }
+        .footer-right { display: flex; align-items: center; gap: 12px; }
+        .footer-center { color: #94a3b8; font-weight: 600; font-size: 0.95rem; text-align: center; }
+        .made-in-text { color: #ffffff; font-weight: 800; }
 
         /* النوافذ المنبثقة */
         .modal-overlay {
@@ -496,247 +460,127 @@
             box-shadow: 0 0 35px rgba(0, 242, 254, 0.4);
             border-radius: 24px;
             width: 100%;
-            max-width: 850px;
-            max-height: 88vh;
+            max-width: 520px;
+            max-height: 90vh;
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
         }
 
-        .modal-header {
-            padding: 24px 20px 14px;
-            text-align: center;
-            position: relative;
-        }
-
-        .modal-header h3 {
-            color: #00f2fe;
-            font-size: 1.6rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .modal-subtitle {
-            color: #94a3b8;
-            font-size: 0.95rem;
-            margin-top: 4px;
-            font-weight: 600;
-        }
+        .modal-header { padding: 22px 20px 12px; text-align: center; position: relative; }
+        .modal-header h3 { color: #00f2fe; font-size: 1.5rem; font-weight: 900; }
+        .modal-subtitle { color: #94a3b8; font-size: 0.9rem; margin-top: 4px; }
 
         .close-btn {
             position: absolute;
-            top: 18px;
-            left: 20px;
+            top: 18px; left: 20px;
             background: rgba(239, 68, 68, 0.15);
             border: 1px solid rgba(239, 68, 68, 0.4);
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            color: #ff4d4d;
-            font-size: 1.2rem;
-            font-weight: bold;
+            width: 36px; height: 36px;
+            color: #ff4d4d; font-size: 1.2rem; font-weight: bold;
             cursor: pointer;
-            transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10000;
+            transition: 0.2s;
         }
+        .close-btn:hover { background: #ef4444; color: #fff; transform: scale(1.1); }
 
-        .close-btn:hover {
-            background: #ef4444;
-            color: #ffffff;
-            transform: scale(1.1);
-        }
-
-        .modal-body {
-            padding: 16px 22px 24px;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
+        .modal-body { padding: 16px 22px 24px; overflow-y: auto; flex-grow: 1; text-align: center; }
 
         .admin-search-input {
-            width: 100%;
-            padding: 12px 16px;
-            margin-bottom: 15px;
-            background: rgba(6, 9, 17, 0.9);
-            border: 1px solid #00f2fe;
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 0.95rem;
-            font-weight: 600;
-            outline: none;
+            width: 100%; padding: 12px 16px; margin-bottom: 15px;
+            background: rgba(6, 9, 17, 0.9); border: 1px solid #00f2fe;
+            border-radius: 12px; color: #fff; font-weight: 600; outline: none;
         }
 
-        .roles-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+        .roles-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .roles-table th, .roles-table td { padding: 12px; text-align: right; border-bottom: 1px solid rgba(0, 242, 254, 0.15); }
+        .roles-table th { color: #00f2fe; font-weight: 800; background: rgba(6, 9, 17, 0.8); }
 
-        .roles-table th, .roles-table td {
-            padding: 12px;
-            text-align: right;
-            border-bottom: 1px solid rgba(0, 242, 254, 0.15);
-            vertical-align: middle;
-        }
-
-        .roles-table th {
-            color: #00f2fe;
-            font-weight: 800;
-            background: rgba(6, 9, 17, 0.8);
-        }
-
-        .table-user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .table-user-info { display: flex; align-items: center; gap: 10px; }
         .table-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #2563eb;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.85rem;
-            overflow: hidden;
-            border: 1px solid #00f2fe;
-            flex-shrink: 0;
+            width: 32px; height: 32px; border-radius: 50%; background: #2563eb;
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; overflow: hidden; border: 1px solid #00f2fe;
         }
+        .table-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .table-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 6px;
-            max-width: 380px;
-        }
-
+        .actions-grid { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
         .action-role-btn {
-            border: none;
-            padding: 6px 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 0.78rem;
-            font-family: 'Cairo', sans-serif;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            text-align: center;
-        }
-
-        .action-role-btn:hover {
-            filter: brightness(1.15);
-            transform: translateY(-1px);
+            border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer;
+            font-weight: 700; font-size: 0.78rem; font-family: 'Cairo', sans-serif;
         }
 
         .custom-toast {
-            position: fixed;
-            bottom: -80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #080d19;
-            border: 1px solid #00f2fe;
-            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
-            color: #ffffff;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 0.95rem;
-            z-index: 999999;
-            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            position: fixed; bottom: -80px; left: 50%; transform: translateX(-50%);
+            background: #080d19; border: 1px solid #00f2fe; box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            color: #ffffff; padding: 12px 24px; border-radius: 12px; font-weight: 700;
+            z-index: 999999; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex; align-items: center; gap: 10px;
         }
+        .custom-toast.show { bottom: 30px; }
 
-        .custom-toast.show {
-            bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #cbd5e1;
-            font-weight: 700;
-            font-size: 0.9rem;
-        }
-
+        .form-group { margin-bottom: 18px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 8px; color: #cbd5e1; font-weight: 700; }
         .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(6, 9, 17, 0.9);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 12px;
-            color: #ffffff;
-            font-size: 0.95rem;
-            font-weight: 600;
-            outline: none;
+            width: 100%; padding: 12px 16px; background: rgba(6, 9, 17, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px;
+            color: #ffffff; font-size: 0.95rem; font-weight: 600; outline: none;
         }
 
         .submit-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #2563eb 0%, #00f2fe 100%);
-            color: #ffffff;
-            border: none;
+            width: 100%; padding: 14px; background: linear-gradient(135deg, #2563eb 0%, #00f2fe 100%);
+            color: #ffffff; border: none; border-radius: 12px; font-weight: 800; font-size: 1rem;
+            cursor: pointer; box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin-top: 15px;
+        }
+
+        .social-login-box { display: flex; gap: 10px; margin-top: 15px; }
+        .social-btn {
+            flex: 1; padding: 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05); color: #fff; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .social-btn:hover { background: rgba(255, 255, 255, 0.12); }
+
+        .guest-btn {
+            width: 100%; padding: 12px; margin-top: 10px; background: rgba(255, 255, 255, 0.08);
+            border: 1px dashed rgba(0, 242, 254, 0.5); color: #cbd5e1; border-radius: 12px;
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .guest-btn:hover { background: rgba(0, 242, 254, 0.15); color: #00f2fe; }
+
+        .auth-tab {
+            flex: 1; padding: 10px; background: transparent; border: none;
+            color: #94a3b8; font-weight: 700; font-family: 'Cairo', sans-serif;
+            border-radius: 8px; cursor: pointer;
+        }
+        .auth-tab.active { background: linear-gradient(135deg, #2563eb, #00f2fe); color: #ffffff; }
+
+        .error-text { color: #ff4d4d; font-size: 0.9rem; font-weight: 700; text-align: center; margin-bottom: 12px; display: none; }
+
+        /* حاوية الإعلان داخل النافذة مع تايمر متغير 8 أو 10 ثواني */
+        .ad-container-box {
+            width: 300px;
+            height: 250px;
+            margin: 0 auto 15px;
+            background: #000;
             border-radius: 12px;
-            font-weight: 800;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.35s ease;
-            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+            border: 1px solid #00f2fe;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            overflow: hidden;
+            position: relative;
         }
-
-        .auth-tab {
-            flex: 1;
-            padding: 10px;
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-weight: 700;
-            font-family: 'Cairo', sans-serif;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .auth-tab.active {
-            background: linear-gradient(135deg, #2563eb, #00f2fe);
-            color: #ffffff;
-        }
-
-        .error-text {
-            color: #ff4d4d;
-            font-size: 0.9rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 12px;
-            display: none;
+        .ad-timer-badge {
+            position: absolute; top: 10px; left: 10px;
+            background: rgba(0,0,0,0.8); color: #00f2fe; padding: 5px 10px;
+            border-radius: 6px; font-weight: bold; font-size: 0.85rem; border: 1px solid rgba(0,242,254,0.4);
+            z-index: 10;
         }
     </style>
 </head>
@@ -759,6 +603,22 @@
             </div>
         </div>
 
+        <!-- عرض الكوينز بجانبه زر الزائد (+) -->
+        <div class="coins-wrapper">
+            <div class="coins-display" title="رصيد الكوينز الحالي">
+                <img src="images/couns.png" alt="Coins">
+                <span id="user-coins-count">0</span> كوينز 🪙
+            </div>
+            <button class="btn-add-coin" title="إضافة كوينز مجانية" onclick="toggleCoinMenu(event)">+</button>
+            
+            <!-- قائمة منسدلة تظهر عند الضغط على الزائد -->
+            <div id="coin-popup-menu" class="coin-popup-menu">
+                <button class="btn-watch-from-menu" onclick="openRewardAdModal()">
+                    🎬 شاهد إعلان واربح +10
+                </button>
+            </div>
+        </div>
+
         <div class="user-actions">
             <button id="admin-panel-btn" class="btn-small btn-admin-panel" style="display: none;" onclick="openAdminModal()">🦁 لوحة الأسود</button>
             <button class="btn-small btn-profile-settings" onclick="openProfileModal()">⚙️ إعدادات الحساب</button>
@@ -775,15 +635,15 @@
         <p>مساعدك الأول لكل ما يخص عالم ماين كرافت ❄️</p>
     </section>
 
-    <!-- الشبكة الرئيسية (الكروت) -->
+    <!-- شبكة الكروت الرئيسية (نظيفة تماماً) -->
     <main class="grid-container">
-        <!-- 1. مجتمع اللاعبين (اسم الصورة community.png ومثبتة تماماً) -->
+        <!-- 1. مجتمع اللاعبين -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/community.png" class="mc-item-icon community-icon" alt="مجتمع اللاعبين">
             </div>
             <h2>مجتمع اللاعبين</h2>
-            <p>انستغرام وفيسبوك الخاص بلاعبين ماين كرافت! شارك صور بناياتك وإنجازاتك الأسطورية مع اللاعبين، وتفاعل مع المنشورات باللايكات والتعليقات الحية.</p>
+            <p>انستغرام وفيسبوك الخاص بلاعبين ماين كرافت! شارك صور بناياتك وإنجازاتك الأسطورية مع اللاعبين.</p>
             <a href="community.html" class="btn">دخول مجتمع اللاعبين</a>
         </div>
 
@@ -793,7 +653,7 @@
                 <img id="command-img" src="images/command_block.png" class="mc-item-icon" alt="Command Block">
             </div>
             <h2>مساعد الكوماندات AI</h2>
-            <p>هذه الميزة تحل مشكلة أن الكوماندات كثيرة ومعقدة بحيث أنك تبحث عن الكوماند الذي تحتاجه عن طريق Player Assistant AI سواءً جافا أو بيدروك وتجده مع كيفية التعديل وأنت تنسخ الكود وتضعه بماين كرافت.</p>
+            <p>أبحث عن الكوماند الذي تحتاجه عن طريق Player Assistant AI سواءً جافا أو بيدروك.</p>
             <a href="commands.html" class="btn">أبحث عن الكوماند</a>
         </div>
 
@@ -803,7 +663,7 @@
                 <img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/netherite_chestplate.png" class="mc-item-icon" alt="معاينة الدروع">
             </div>
             <h2>معاينة الدروع</h2>
-            <p>إذا كنت تريد أن تزين دروعك بماين كرافت ولا تعرف التزيينة المناسبة وتنجبر أن تخاطر بمواردك فهذه الميزة تستطيع أن ترى كيف شكل دروعك قبل أن تصنعها باللعبة أو تصنع تزيينة خاصة فيك مثل اليوتيوبرز.</p>
+            <p>تستطيع أن ترى كيف شكل دروعك قبل أن تصنعها باللعبة أو تصنع تزيينة خاصة فيك مثل اليوتيوبرز.</p>
             <a href="armor-preview.html" class="btn">معاينة الدروع</a>
         </div>
 
@@ -813,7 +673,7 @@
                 <img src="images/Jukebox.png" class="mc-item-icon" alt="مشغل الموسيقى">
             </div>
             <h2>مشغل الأقراص</h2>
-            <p>إذا كنت تتساءل عن الأصوات والموسيقى الموجودة داخل أقراص ماين كرافت وتريد الاستماع إليها بسهولة دون الحاجة للبحث الطويل أو تجميعها باللعبة، يمكنك الاستماع لأي قرص هنا فوراً.</p>
+            <p>استمع لأي قرص موسيقي داخل أقراص ماين كرافت هنا فوراً بكل سهولة.</p>
             <a href="discs.html" class="btn">مشغل الموسيقى</a>
         </div>
 
@@ -823,7 +683,7 @@
                 <img src="images/paper.png" class="mc-item-icon" alt="أخبار ماين كرافت">
             </div>
             <h2>أخبار ماين كرافت</h2>
-            <p>هناك أخبار كثيرة عن ماين كرافت ومبعثرة بالإنترنت وصعب تجميعها ومنها المضللة فهذه الميزة تجمع أخبار ماين كرافت بمكان واحد ومن مصادر موثوقة وأخبار صحيحة.</p>
+            <p>تجمع أخبار ماين كرافت بمكان واحد ومن مصادر موثوقة وأخبار صحيحة بعيداً عن الشائعات.</p>
             <a href="minecraft-news.html" class="btn">أخبار ماين كرافت</a>
         </div>
 
@@ -833,7 +693,7 @@
                 <img src="images/support.png" class="mc-item-icon" alt="الاقتراحات والدعم">
             </div>
             <h2>الملاحظات والدعم</h2>
-            <p>شاركنا أفكارك واقتراحاتك لتطوير الموقع أو أبلغ عن أي مشكلة تطلب حلها، واطلع على الردود والإجابات المباشرة المقدمة من فريق التطوير متابعةً لجميع اللاعبين.</p>
+            <p>شاركنا أفكارك واقتراحاتك لتطوير الموقع أو أبلغ عن أي مشكلة تطلب حلها من فريق التطوير.</p>
             <a href="feedback.html" class="btn">الملاحظات والدعم</a>
         </div>
 
@@ -843,7 +703,7 @@
                 <img id="barter-img" src="images/Villager.png" class="mc-item-icon villager-icon" alt="دليل المقايضة مع القروي والبقلن">
             </div>
             <h2>دليل المقايضة مع القروي والبقلن</h2>
-            <p>تعرف بدقة على صفقات القرويين في نسختي (Java وBedrock) وأفضل مقايضات الذهب مع البقلن (Piglin) لتستفيد من أفضل الموارد وتوفر وقتك ومواردك باللعبة!</p>
+            <p>تعرف بدقة على صفقات القرويين في نسختي (Java وBedrock) وأفضل مقايضات الذهب مع البقلن (Piglin).</p>
             <a href="villagers.html" class="btn">دليل المقايضة والصفقات</a>
         </div>
 
@@ -862,29 +722,48 @@
     <footer>
         <div class="footer-snow-overlay"></div>
         <div class="footer-right">
-            <img class="palestine-flag" src="https://flagcdn.com/w40/ps.png" alt="علم فلسطين" title="فلسطين حرة" width="30" height="20" style="border-radius: 3px; vertical-align: middle; object-fit: cover;">
+            <img class="palestine-flag" src="https://flagcdn.com/w40/ps.png" alt="علم فلسطين" title="فلسطين حرة" width="30" height="20" style="border-radius: 3px; object-fit: cover;">
             <span class="made-in-text">Developed in Palestine</span>
         </div>
-
         <div class="footer-center">
             <span>© 2026 جميع الحقوق محفوظة لـ Osama is Lion - Player Assistant</span>
         </div>
-
         <div class="footer-left"></div>
     </footer>
     
-    <!-- عناصر الإشعارات -->
+    <!-- إشعارات Toast -->
     <div id="toast" class="custom-toast">
         <span id="toast-icon">✨</span>
         <span id="toast-text">تمت العملية بنجاح!</span>
     </div>
 
-    <!-- 1. نافذة تسجيل الدخول / إنشاء حساب -->
+    <!-- نافذة إعلان الكوينز مع التايمر والإعلان المتغير -->
+    <div id="reward-video-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeRewardAdModal()">✖</button>
+            <div class="modal-header">
+                <h3>🪙 إعلان مكافأة الكوينز</h3>
+                <p class="modal-subtitle">انتظر انتهاء المؤقت لاستلام هدية الكوينز</p>
+            </div>
+            <div class="modal-body">
+                <div class="ad-container-box">
+                    <div class="ad-timer-badge" id="ad-timer-text">التايمر: 10 ثوانٍ</div>
+                    <div id="dynamic-ad-wrapper" style="width: 300px; height: 250px; display:flex; align-items:center; justify-content:center;"></div>
+                </div>
+                <p id="ad-status-msg" style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 10px;">شاهد الإعلان بالأسفل وانتظر انتهاء العداد...</p>
+                <button id="claim-reward-btn" class="submit-btn" style="opacity: 0.5; pointer-events: none;" onclick="claimRewardCoins()">
+                    <span>استلام +10 كوينز 🪙</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تسجيل الدخول -->
     <div id="auth-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 440px;">
             <div class="modal-header">
                 <h3>🎮 مرحباً بك في Player Assistant</h3>
-                <p class="modal-subtitle">اختر تسجيل الدخول أو إنشاء حساب جديد</p>
+                <p class="modal-subtitle">اختر طريقة تسجيل الدخول المفضلة</p>
             </div>
             <div style="display: flex; gap: 10px; margin: 5px 22px 15px; background: rgba(6, 9, 17, 0.9); padding: 4px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2);">
                 <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
@@ -904,11 +783,24 @@
                     <span>تسجيل الدخول</span>
                     <span style="font-size: 1.1rem;">🚀</span>
                 </button>
+
+                <div class="social-login-box">
+                    <button class="social-btn" onclick="socialLogin('google')">
+                        <span style="color: #ea4335; font-weight: bold;">G</span> Google
+                    </button>
+                    <button class="social-btn" onclick="socialLogin('microsoft')">
+                        <span style="color: #00a4ef; font-weight: bold;">M</span> Microsoft
+                    </button>
+                </div>
+
+                <button class="guest-btn" onclick="loginAsGuest()">
+                    <span>الدخول كـ ضيف 👤 (للتصفح فقط)</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- 2. نافذة إعدادات الحساب (بدون خانة تعديل الاسم بناءً على طلبك) -->
+    <!-- نافذة إعدادات الحساب -->
     <div id="profile-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px;">
             <button class="close-btn" onclick="closeProfileModal()">✖</button>
@@ -921,18 +813,18 @@
                     <label>اختيار صورة شخصية من الملفات:</label>
                     <div class="file-upload-box" onclick="document.getElementById('profile-avatar-file').click()" style="background: rgba(6,9,17,0.9); border: 2px dashed rgba(0,242,254,0.4); border-radius:14px; padding:16px; text-align:center; cursor:pointer;">
                         <span style="font-size: 1.8rem; display: block; margin-bottom: 5px;">📁</span>
-                        <span style="color: #00f2fe; font-weight: 700; font-size: 0.95rem;">اضغط هنا لاختيار صورة من جهازك</span>
+                        <span style="color: #00f2fe; font-weight: 700;">اضغط هنا لاختيار صورة من جهازك</span>
                         <input type="file" id="profile-avatar-file" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
                     </div>
                 </div>
                 <hr style="border: 0; border-top: 1px solid rgba(0, 242, 254, 0.2); margin: 20px 0;">
                 <div class="form-group">
                     <label for="profile-old-password">كلمة السر القديمة:</label>
-                    <input type="password" id="profile-old-password" class="form-input" placeholder="أدخل كلمة السر القديمة">
+                    <input type="password" id="profile-old-password" class="form-input" placeholder="كلمة السر القديمة">
                 </div>
                 <div class="form-group">
                     <label for="profile-new-password">كلمة السر الجديدة:</label>
-                    <input type="password" id="profile-new-password" class="form-input" placeholder="أدخل كلمة السر الجديدة">
+                    <input type="password" id="profile-new-password" class="form-input" placeholder="كلمة السر الجديدة">
                 </div>
                 <p id="profile-error-msg" class="error-text"></p>
                 <button class="submit-btn" onclick="saveProfileSettings()">
@@ -943,29 +835,28 @@
         </div>
     </div>
 
-    <!-- 3. لوحة الأسود -->
+    <!-- لوحة الأسود -->
     <div id="admin-modal" class="modal-overlay">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 850px;">
             <button class="close-btn" onclick="closeAdminModal()">✖</button>
             <div class="modal-header">
-                <h3 id="panel-modal-title">🦁 لوحة الأسود</h3>
-                <p class="modal-subtitle">إدارة الحسابات والرتب ومعرفة كلمات السر</p>
+                <h3>🦁 لوحة الأسود</h3>
+                <p class="modal-subtitle">إدارة الحسابات والرتب والتحكم بعدد الكوينز لأي مستخدم</p>
             </div>
             <div class="modal-body">
-                <div id="panel-roles-section">
-                    <input type="text" id="admin-search-input" class="admin-search-input" placeholder="🔍 ابحث عن اسم الحساب..." oninput="renderRolesTable()">
-                    <div style="overflow-x: auto;">
-                        <table class="roles-table">
-                            <thead>
-                                <tr>
-                                    <th>الحساب والاسم</th>
-                                    <th>الرتب الحالية</th>
-                                    <th>التحكم بالرتب والحساب</th>
-                                </tr>
-                            </thead>
-                            <tbody id="roles-table-body"></tbody>
-                        </table>
-                    </div>
+                <input type="text" id="admin-search-input" class="admin-search-input" placeholder="🔍 ابحث عن اسم الحساب..." oninput="renderRolesTable()">
+                <div style="overflow-x: auto;">
+                    <table class="roles-table">
+                        <thead>
+                            <tr>
+                                <th>الحساب والاسم</th>
+                                <th>الرتب الحالية</th>
+                                <th>الكوينز 🪙</th>
+                                <th>التحكم بالرتب والكوينز والحساب</th>
+                            </tr>
+                        </thead>
+                        <tbody id="roles-table-body"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -986,10 +877,18 @@
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
+        const auth = firebase.auth();
 
         let currentAuthMode = 'login';
         let tempSelectedAvatarData = null;
         let accountsDB = {};
+        let adInterval = null;
+        let currentTimerDuration = 10;
+
+        const adKeysList = [
+            'fd35cc1eabd28ddd8193e6e79056cd83',
+            'fd35cc1eabd28ddd8193e6e79056cd83'
+        ];
 
         const ROLES = {
             owner:     { name: '🦁 أسد',      class: 'role-owner' },
@@ -997,7 +896,8 @@
             youtuber:  { name: '🔴 يوتيوبر',  class: 'role-youtuber' },
             developer: { name: '💻 مطور',   class: 'role-developer' },
             vip:       { name: '⭐ VIP',    class: 'role-vip' },
-            player:    { name: '🎮 لاعب',    class: 'role-player' }
+            player:    { name: '🎮 لاعب',    class: 'role-player' },
+            guest:     { name: '👤 ضيف',    class: 'role-guest' }
         };
 
         function generateSnowflakes() {
@@ -1026,7 +926,6 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // إصلاح تلقائي لاسم المستخدم لو كان "أسامة 1" وتحويله إلى "أسامة"
             let savedUserCheck = JSON.parse(localStorage.getItem('pa_user') || 'null');
             if (savedUserCheck && savedUserCheck.username === 'أسامة 1') {
                 savedUserCheck.username = 'أسامة';
@@ -1036,18 +935,31 @@
             generateSnowflakes();
             initFirebaseSync();
             checkUserSession();
+
+            // إغلاق قائمة الزائد عند النقر في أي مكان خارجها
+            window.addEventListener('click', (e) => {
+                if (!e.target.closest('.coins-wrapper')) {
+                    document.getElementById('coin-popup-menu').classList.remove('show');
+                }
+            });
         });
+
+        function toggleCoinMenu(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('coin-popup-menu');
+            menu.classList.toggle('show');
+        }
 
         function initFirebaseSync() {
             db.ref('accounts').on('value', (snapshot) => {
                 accountsDB = snapshot.val() || {};
                 
-                // التأكد التام من وجود حساب "أسامة" ودعمه بكامل الصلاحيات والرتب أونلاين
                 if (!accountsDB['أسامة']) {
                     db.ref('accounts/أسامة').set({
                         password: '1osama1lion1',
                         roles: ['owner', 'developer', 'vip'],
                         avatar: '',
+                        coins: 100,
                         createdAt: new Date().toISOString()
                     });
                 } else {
@@ -1064,7 +976,10 @@
                     const acc = accountsDB[savedUser.username];
                     savedUser.roles = getAccountRolesArray(acc);
                     savedUser.avatar = acc.avatar || '';
+                    savedUser.coins = acc.coins || 0;
                     localStorage.setItem('pa_user', JSON.stringify(savedUser));
+                    updateUserUI(savedUser);
+                } else if (savedUser && savedUser.isGuest) {
                     updateUserUI(savedUser);
                 } else if (savedUser && !accountsDB[savedUser.username]) {
                     localStorage.removeItem('pa_user');
@@ -1089,6 +1004,7 @@
                     const acc = accountsDB[savedUser.username];
                     savedUser.roles = getAccountRolesArray(acc);
                     savedUser.avatar = acc.avatar || '';
+                    savedUser.coins = acc.coins || 0;
                     localStorage.setItem('pa_user', JSON.stringify(savedUser));
                 }
                 updateUserUI(savedUser);
@@ -1115,8 +1031,8 @@
             }
 
             if (currentAuthMode === 'signup') {
-                if (accountsDB[usernameInput]) {
-                    errorMsg.innerText = '❌ اسم المستخدم موجود بالفعل!';
+                if (accountsDB[usernameInput] || usernameInput.toLowerCase() === 'ضيف') {
+                    errorMsg.innerText = '❌ اسم المستخدم موجود بالفعل أو غير مسموح به!';
                     errorMsg.style.display = 'block';
                     return;
                 }
@@ -1135,11 +1051,12 @@
                     password: passwordInput,
                     roles: assignedRoles,
                     avatar: '',
+                    coins: 0,
                     createdAt: new Date().toISOString()
                 };
 
                 db.ref('accounts/' + usernameInput).set(newAccount).then(() => {
-                    const userObj = { username: usernameInput, roles: assignedRoles, avatar: '' };
+                    const userObj = { username: usernameInput, roles: assignedRoles, avatar: '', coins: 0, isGuest: false };
                     localStorage.setItem('pa_user', JSON.stringify(userObj));
                     document.getElementById('auth-modal').style.display = 'none';
                     updateUserUI(userObj);
@@ -1158,7 +1075,7 @@
                     return;
                 }
                 const userRoles = getAccountRolesArray(account);
-                const userObj = { username: usernameInput, roles: userRoles, avatar: account.avatar || '' };
+                const userObj = { username: usernameInput, roles: userRoles, avatar: account.avatar || '', coins: account.coins || 0, isGuest: false };
                 localStorage.setItem('pa_user', JSON.stringify(userObj));
                 document.getElementById('auth-modal').style.display = 'none';
                 updateUserUI(userObj);
@@ -1166,8 +1083,65 @@
             }
         }
 
+        // إصلاح المصادقة بـ Google و Microsoft
+        function socialLogin(providerType) {
+            let provider;
+            if (providerType === 'google') {
+                provider = new firebase.auth.GoogleAuthProvider();
+            } else {
+                provider = new firebase.auth.OAuthProvider('microsoft.com');
+            }
+
+            auth.signInWithPopup(provider).then((result) => {
+                const user = result.user;
+                const username = user.displayName || user.email.split('@')[0];
+                const avatar = user.photoURL || '';
+
+                db.ref('accounts/' + username).once('value').then((snapshot) => {
+                    let coins = 0;
+                    let roles = ['player'];
+                    if (snapshot.exists()) {
+                        coins = snapshot.val().coins || 0;
+                        roles = getAccountRolesArray(snapshot.val());
+                    } else {
+                        db.ref('accounts/' + username).set({
+                            password: 'social_login_user',
+                            roles: roles,
+                            avatar: avatar,
+                            coins: 0,
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+
+                    const userObj = { username: username, roles: roles, avatar: avatar, coins: coins, isGuest: false };
+                    localStorage.setItem('pa_user', JSON.stringify(userObj));
+                    document.getElementById('auth-modal').style.display = 'none';
+                    updateUserUI(userObj);
+                    showToast(`أهلاً بك ${username}! 🦁`, '🚀');
+                });
+            }).catch((error) => {
+                alert('فشل تسجيل الدخول: ' + error.message);
+            });
+        }
+
+        function loginAsGuest() {
+            const guestUser = {
+                username: 'ضيف',
+                roles: ['guest'],
+                avatar: '',
+                coins: 0,
+                isGuest: true
+            };
+            localStorage.setItem('pa_user', JSON.stringify(guestUser));
+            document.getElementById('auth-modal').style.display = 'none';
+            updateUserUI(guestUser);
+            showToast('تم تسجيل الدخول كـ ضيف 👤', 'ℹ️');
+        }
+
         function updateUserUI(user) {
             document.getElementById('user-display-name').innerText = user.username;
+            document.getElementById('user-coins-count').innerText = user.coins || 0;
+
             const avatarBox = document.getElementById('user-avatar');
             if (user.avatar) {
                 avatarBox.innerHTML = `<img src="${user.avatar}" alt="Avatar">`;
@@ -1196,6 +1170,94 @@
             }
         }
 
+        /* نظام الإعلان عبر الضغط على الزائد -> مشاهدة الإعلان (تايمر 8 أو 10 ثواني وإعلان متغير) */
+        function openRewardAdModal() {
+            document.getElementById('coin-popup-menu').classList.remove('show');
+            const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            if (!user) {
+                document.getElementById('auth-modal').style.display = 'flex';
+                return;
+            }
+            if (user.isGuest) {
+                alert('⚠️ حساب الضيف لا يمكنه جمع الكوينز. يرجى تسجيل الدخول بحساب خاص!');
+                document.getElementById('auth-modal').style.display = 'flex';
+                return;
+            }
+
+            // اختيار مدة عشوائية بين 8 أو 10 ثواني
+            currentTimerDuration = Math.random() < 0.5 ? 8 : 10;
+
+            document.getElementById('reward-video-modal').style.display = 'flex';
+            const claimBtn = document.getElementById('claim-reward-btn');
+            claimBtn.style.opacity = '0.5';
+            claimBtn.style.pointerEvents = 'none';
+
+            let timeLeft = currentTimerDuration;
+            const timerBadge = document.getElementById('ad-timer-text');
+            const statusMsg = document.getElementById('ad-status-msg');
+            timerBadge.innerText = `التايمر: ${timeLeft} ثوانٍ`;
+            statusMsg.innerText = 'شاهد الإعلان المتغير بالأسفل وانتظر انتهاء العداد...';
+
+            const adWrapper = document.getElementById('dynamic-ad-wrapper');
+            adWrapper.innerHTML = '';
+
+            const randomKey = adKeysList[Math.floor(Math.random() * adKeysList.length)];
+            
+            const script1 = document.createElement('script');
+            script1.type = 'text/javascript';
+            script1.text = `
+                atOptions = {
+                    'key' : '${randomKey}',
+                    'format' : 'iframe',
+                    'height' : 250,
+                    'width' : 300,
+                    'params' : {}
+                };
+            `;
+            const script2 = document.createElement('script');
+            script2.type = 'text/javascript';
+            script2.src = `https://bauval.org/22/${randomKey}`;
+
+            adWrapper.appendChild(script1);
+            adWrapper.appendChild(script2);
+
+            if (adInterval) clearInterval(adInterval);
+
+            adInterval = setInterval(() => {
+                timeLeft--;
+                timerBadge.innerText = `التايمر: ${timeLeft} ثوانٍ`;
+                if (timeLeft <= 0) {
+                    clearInterval(adInterval);
+                    timerBadge.innerText = '✅ اكتمل الإعلان بنجاح!';
+                    statusMsg.innerText = 'رائع! يمكنك الآن استلام مكافأة الكوينز.';
+                    claimBtn.style.opacity = '1';
+                    claimBtn.style.pointerEvents = 'auto';
+                }
+            }, 1000);
+        }
+
+        function closeRewardAdModal() {
+            if (adInterval) clearInterval(adInterval);
+            document.getElementById('reward-video-modal').style.display = 'none';
+        }
+
+        function claimRewardCoins() {
+            const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            if (!user || user.isGuest) return;
+
+            const newCoins = (user.coins || 0) + 10;
+            user.coins = newCoins;
+            localStorage.setItem('pa_user', JSON.stringify(user));
+            document.getElementById('user-coins-count').innerText = newCoins;
+
+            if (accountsDB[user.username]) {
+                db.ref('accounts/' + user.username + '/coins').set(newCoins);
+            }
+
+            closeRewardAdModal();
+            showToast('تمت إضافة +10 كوينز بنجاح إلى رصيدك! 🪙', '💰');
+        }
+
         function logoutUser() {
             if (confirm('هل ترغب بتغيير الحساب الحالي أو تسجيل الخروج؟')) {
                 localStorage.removeItem('pa_user');
@@ -1204,6 +1266,11 @@
         }
 
         function openProfileModal() {
+            const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            if (user && user.isGuest) {
+                alert('⚠️ حساب الضيف لا يملك إعدادات خاصة. يرجى إنشاء حساب حقيقي لتخصيص صورتك.');
+                return;
+            }
             document.getElementById('profile-old-password').value = '';
             document.getElementById('profile-new-password').value = '';
             document.getElementById('profile-error-msg').style.display = 'none';
@@ -1216,17 +1283,14 @@
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    tempSelectedAvatarData = e.target.result;
-                };
+                reader.onload = function(e) { tempSelectedAvatarData = e.target.result; };
                 reader.readAsDataURL(file);
             }
         }
 
-        // حفظ إعدادات الحساب (كلمة السر والصورة فقط، بدون تعديل الاسم نهائياً)
         function saveProfileSettings() {
             const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
-            if (!user) return;
+            if (!user || user.isGuest) return;
             const currentAcc = accountsDB[user.username];
             if (!currentAcc) return;
 
@@ -1276,7 +1340,9 @@
             document.getElementById('admin-modal').style.display = 'flex';
         }
 
-        function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
+        function closeAdminModal() { 
+            document.getElementById('admin-modal').style.display = 'none'; 
+        }
 
         function renderRolesTable() {
             const tbody = document.getElementById('roles-table-body');
@@ -1300,23 +1366,15 @@
                             </div>
                         </td>
                         <td>${badgesHTML}</td>
+                        <td style="color: #FFD700; font-weight: 800;">🪙 ${acc.coins || 0}</td>
                         <td>
                             <div class="actions-grid">
-                                <button class="action-role-btn" style="background: #eab308; color: #000;" onclick="toggleUserRole('${escapeHtml(uname)}', 'cub')">
-                                    ${uRoles.includes('cub') ? 'إزالة شبل' : '+ شبل'}
-                                </button>
-                                <button class="action-role-btn" style="background: #ef4444; color: #fff;" onclick="toggleUserRole('${escapeHtml(uname)}', 'youtuber')">
-                                    ${uRoles.includes('youtuber') ? 'إزالة يوتيوبر' : '+ يوتيوبر🔴'}
-                                </button>
-                                <button class="action-role-btn" style="background: #10b981; color: #fff;" onclick="toggleUserRole('${escapeHtml(uname)}', 'developer')">
-                                    ${uRoles.includes('developer') ? 'إزالة مطور' : '+ مطور'}
-                                </button>
-                                <button class="action-role-btn" style="background: #f59e0b; color: #000;" onclick="toggleUserRole('${escapeHtml(uname)}', 'vip')">
-                                    ${uRoles.includes('vip') ? 'إزالة VIP' : '+ VIP'}
-                                </button>
-                                <button class="action-role-btn" style="background: #6366f1; color: #fff;" onclick="showAccountPassword('${escapeHtml(uname)}')">🔑 كلمة السر</button>
-                                <button class="action-role-btn" style="background: #3b82f6; color: #fff;" onclick="renameAccount('${escapeHtml(uname)}')">✏️ تعديل</button>
-                                <button class="action-role-btn" style="background: #dc2626; color: #fff;" onclick="deleteAccount('${escapeHtml(uname)}')" ${isUsama ? 'disabled' : ''}>🗑️ حذف</button>
+                                <button class="action-role-btn" style="background: #eab308; color: #000;" onclick="toggleUserRole('${escapeHtml(uname)}', 'cub')">شبل</button>
+                                <button class="action-role-btn" style="background: #10b981; color: #fff;" onclick="toggleUserRole('${escapeHtml(uname)}', 'developer')">مطور</button>
+                                <button class="action-role-btn" style="background: #f59e0b; color: #000;" onclick="toggleUserRole('${escapeHtml(uname)}', 'vip')">VIP</button>
+                                <button class="action-role-btn" style="background: #3b82f6; color: #fff;" onclick="editUserCoins('${escapeHtml(uname)}')">🪙 تعديل الكوينز</button>
+                                <button class="action-role-btn" style="background: #6366f1; color: #fff;" onclick="showAccountPassword('${escapeHtml(uname)}')">🔑 الباسورد</button>
+                                <button class="action-role-btn" style="background: #dc2626; color: #fff;" onclick="deleteAccount('${escapeHtml(uname)}')" ${isUsama ? 'disabled' : ''}>🗑️</button>
                             </div>
                         </td>
                     </tr>
@@ -1324,12 +1382,24 @@
             }).join('');
         }
 
+        function editUserCoins(targetUser) {
+            const acc = accountsDB[targetUser];
+            const currentCoins = acc ? (acc.coins || 0) : 0;
+            const newAmount = prompt(`أدخل عدد الكوينز الجديد لحساب (${targetUser}):`, currentCoins);
+            if (newAmount === null || isNaN(newAmount)) return;
+
+            const parsedCoins = parseInt(newAmount);
+            db.ref('accounts/' + targetUser + '/coins').set(parsedCoins).then(() => {
+                showToast(`تم تحديث كوينز ${targetUser} إلى ${parsedCoins} كوينز بنجاح! 🪙`, '🦁');
+            });
+        }
+
         function showAccountPassword(targetUser) {
             const acc = accountsDB[targetUser];
             if (acc && acc.password) {
                 alert(`🔑 كلمة السر الخاصة بحساب (${targetUser}) هي:\n\n[ ${acc.password} ]`);
             } else {
-                alert('❌ لا تتوفر كلمة سر لهذا الحساب!');
+                alert('❌ لا توجد كلمة سر مسجلة لهذا الحساب!');
             }
         }
 
@@ -1345,20 +1415,6 @@
             }
             db.ref('accounts/' + targetUser + '/roles').set(uRoles).then(() => {
                 showToast(`تم تحديث رتب ${targetUser}!`, '🦁');
-            });
-        }
-
-        function renameAccount(oldUsername) {
-            if (oldUsername.toLowerCase() === 'أسامة') { alert('لا يمكن تغيير اسم الأسد الرئيسي من هنا!'); return; }
-            const newName = prompt(`أدخل اسم المستخدم الجديد لـ (${oldUsername}):`, oldUsername);
-            if (!newName || !newName.trim() || newName.trim() === oldUsername) return;
-            const trimmedNewName = newName.trim();
-            if (accountsDB[trimmedNewName]) { alert('الاسم موجود مسبقاً!'); return; }
-            const accountData = accountsDB[oldUsername];
-            db.ref('accounts/' + trimmedNewName).set(accountData).then(() => {
-                db.ref('accounts/' + oldUsername).remove().then(() => {
-                    showToast(`تم تغيير الاسم إلى "${trimmedNewName}"!`, '✏️');
-                });
             });
         }
 
