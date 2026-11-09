@@ -195,7 +195,6 @@
             vertical-align: middle !important;
         }
 
-        /* زر الزائد بجانب الكوينز */
         .btn-add-coin {
             background: linear-gradient(135deg, #10b981, #059669);
             color: #fff;
@@ -218,7 +217,6 @@
             filter: brightness(1.15);
         }
 
-        /* قائمة منسدلة صغيرة تظهر عند الضغط على زر الزائد */
         .coin-popup-menu {
             display: none;
             position: absolute;
@@ -319,7 +317,6 @@
 
         .hero p { color: #cbd5e1; font-size: 1.2rem; font-weight: 700; }
 
-        /* شبكة الكروت الرئيسية (نظيفة بدون إعلانات مزعجة بالمنتصف) */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -410,7 +407,6 @@
 
         .btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
 
-        /* التذييل */
         footer {
             margin-top: 50px;
             position: relative;
@@ -440,7 +436,6 @@
         .footer-center { color: #94a3b8; font-weight: 600; font-size: 0.95rem; text-align: center; }
         .made-in-text { color: #ffffff; font-weight: 800; }
 
-        /* النوافذ المنبثقة */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -496,14 +491,14 @@
         }
 
         .roles-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        .roles-table th, .roles-table td { padding: 12px; text-align: right; border-bottom: 1px solid rgba(0, 242, 254, 0.15); }
+        .roles-table th, .roles-table td { padding: 12px; text-align: right; border-bottom: 1px solid rgba(0, 242, 254, 0.15); font-size: 0.9rem; }
         .roles-table th { color: #00f2fe; font-weight: 800; background: rgba(6, 9, 17, 0.8); }
 
         .table-user-info { display: flex; align-items: center; gap: 10px; }
         .table-avatar {
             width: 32px; height: 32px; border-radius: 50%; background: #2563eb;
             color: #fff; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; overflow: hidden; border: 1px solid #00f2fe;
+            font-weight: bold; overflow: hidden; border: 1px solid #00f2fe; flex-shrink: 0;
         }
         .table-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -522,8 +517,8 @@
         }
         .custom-toast.show { bottom: 30px; }
 
-        .form-group { margin-bottom: 18px; text-align: right; }
-        .form-group label { display: block; margin-bottom: 8px; color: #cbd5e1; font-weight: 700; }
+        .form-group { margin-bottom: 15px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 6px; color: #cbd5e1; font-weight: 700; font-size: 0.9rem; }
         .form-input {
             width: 100%; padding: 12px 16px; background: rgba(6, 9, 17, 0.9);
             border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px;
@@ -535,23 +530,70 @@
             color: #ffffff; border: none; border-radius: 12px; font-weight: 800; font-size: 1rem;
             cursor: pointer; box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
-        .social-login-box { display: flex; gap: 10px; margin-top: 15px; }
-        .social-btn {
-            flex: 1; padding: 10px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05); color: #fff; font-weight: 700; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
+        /* تنسيق أزرار خيارات تسجيل الدخول الـ 4 الجديدة */
+        .auth-options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
         }
-        .social-btn:hover { background: rgba(255, 255, 255, 0.12); }
 
-        .guest-btn {
-            width: 100%; padding: 12px; margin-top: 10px; background: rgba(255, 255, 255, 0.08);
-            border: 1px dashed rgba(0, 242, 254, 0.5); color: #cbd5e1; border-radius: 12px;
-            font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        .auth-option-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 14px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: 0.3s ease;
         }
-        .guest-btn:hover { background: rgba(0, 242, 254, 0.15); color: #00f2fe; }
+
+        .auth-option-card:hover {
+            border-color: #00f2fe;
+            background: rgba(0, 242, 254, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .auth-option-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .auth-option-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(37, 99, 235, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(0, 242, 254, 0.3);
+        }
+
+        .auth-option-text h4 { font-size: 1rem; font-weight: 800; color: #fff; }
+        .auth-option-text p { font-size: 0.8rem; color: #94a3b8; font-weight: 600; }
+
+        .auth-back-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #cbd5e1;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .auth-back-btn:hover { background: rgba(255, 255, 255, 0.1); }
 
         .auth-tab {
             flex: 1; padding: 10px; background: transparent; border: none;
@@ -562,7 +604,6 @@
 
         .error-text { color: #ff4d4d; font-size: 0.9rem; font-weight: 700; text-align: center; margin-bottom: 12px; display: none; }
 
-        /* حاوية الإعلان داخل النافذة مع تايمر متغير 8 أو 10 ثواني */
         .ad-container-box {
             width: 300px;
             height: 250px;
@@ -586,10 +627,8 @@
 </head>
 <body>
 
-    <!-- تساقط رقاقات الثلج -->
     <div class="snow-container" id="snowContainer"></div>
 
-    <!-- شريط الحساب العلوي -->
     <header class="user-top-bar">
         <div class="user-info-box">
             <div id="user-avatar" class="user-avatar">👤</div>
@@ -603,7 +642,6 @@
             </div>
         </div>
 
-        <!-- عرض الكوينز بجانبه زر الزائد (+) -->
         <div class="coins-wrapper">
             <div class="coins-display" title="رصيد الكوينز الحالي">
                 <img src="images/couns.png" alt="Coins">
@@ -611,7 +649,6 @@
             </div>
             <button class="btn-add-coin" title="إضافة كوينز مجانية" onclick="toggleCoinMenu(event)">+</button>
             
-            <!-- قائمة منسدلة تظهر عند الضغط على الزائد -->
             <div id="coin-popup-menu" class="coin-popup-menu">
                 <button class="btn-watch-from-menu" onclick="openRewardAdModal()">
                     🎬 شاهد إعلان واربح +10
@@ -635,9 +672,7 @@
         <p>مساعدك الأول لكل ما يخص عالم ماين كرافت ❄️</p>
     </section>
 
-    <!-- شبكة الكروت الرئيسية (نظيفة تماماً) -->
     <main class="grid-container">
-        <!-- 1. مجتمع اللاعبين -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/community.png" class="mc-item-icon community-icon" alt="مجتمع اللاعبين">
@@ -647,7 +682,6 @@
             <a href="community.html" class="btn">دخول مجتمع اللاعبين</a>
         </div>
 
-        <!-- 2. مساعد الكوماندات -->
         <div class="card">
             <div class="card-img-holder">
                 <img id="command-img" src="images/command_block.png" class="mc-item-icon" alt="Command Block">
@@ -657,7 +691,6 @@
             <a href="commands.html" class="btn">أبحث عن الكوماند</a>
         </div>
 
-        <!-- 3. معاينة الدروع -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/netherite_chestplate.png" class="mc-item-icon" alt="معاينة الدروع">
@@ -667,7 +700,6 @@
             <a href="armor-preview.html" class="btn">معاينة الدروع</a>
         </div>
 
-        <!-- 4. مشغل الأقراص -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/Jukebox.png" class="mc-item-icon" alt="مشغل الموسيقى">
@@ -677,7 +709,6 @@
             <a href="discs.html" class="btn">مشغل الموسيقى</a>
         </div>
 
-        <!-- 5. أخبار ماين كرافت -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/paper.png" class="mc-item-icon" alt="أخبار ماين كرافت">
@@ -687,7 +718,6 @@
             <a href="minecraft-news.html" class="btn">أخبار ماين كرافت</a>
         </div>
 
-        <!-- 6. الملاحظات والدعم -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/support.png" class="mc-item-icon" alt="الاقتراحات والدعم">
@@ -697,17 +727,15 @@
             <a href="feedback.html" class="btn">الملاحظات والدعم</a>
         </div>
 
-        <!-- 7. دليل المقايضة مع القروي والبقلن -->
         <div class="card">
             <div class="card-img-holder">
-                <img id="barter-img" src="images/Villager.png" class="mc-item-icon villager-icon" alt="دليل المقايضة مع القروي والبقلن">
+                <img id="barter-img" src="images/Villager.png" class="mc-item-icon villager-icon" alt="دليل المقايضة">
             </div>
             <h2>دليل المقايضة مع القروي والبقلن</h2>
             <p>تعرف بدقة على صفقات القرويين في نسختي (Java وBedrock) وأفضل مقايضات الذهب مع البقلن (Piglin).</p>
             <a href="villagers.html" class="btn">دليل المقايضة والصفقات</a>
         </div>
 
-        <!-- 8. قسم جديد -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/Question_mark.png" class="mc-item-icon" alt="قسم جديد">
@@ -718,7 +746,6 @@
         </div>
     </main>
 
-    <!-- التذييل -->
     <footer>
         <div class="footer-snow-overlay"></div>
         <div class="footer-right">
@@ -731,13 +758,11 @@
         <div class="footer-left"></div>
     </footer>
     
-    <!-- إشعارات Toast -->
     <div id="toast" class="custom-toast">
         <span id="toast-icon">✨</span>
         <span id="toast-text">تمت العملية بنجاح!</span>
     </div>
 
-    <!-- نافذة إعلان الكوينز مع التايمر والإعلان المتغير -->
     <div id="reward-video-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-btn" onclick="closeRewardAdModal()">✖</button>
@@ -758,55 +783,96 @@
         </div>
     </div>
 
-    <!-- نافذة تسجيل الدخول -->
+    <!-- نافذة تسجيل الدخول الجديدة كلياً (4 خيارات) -->
     <div id="auth-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 440px;">
             <div class="modal-header">
                 <h3>🎮 مرحباً بك في Player Assistant</h3>
-                <p class="modal-subtitle">اختر طريقة تسجيل الدخول المفضلة</p>
+                <p class="modal-subtitle">اختر طريقة تسجيل الدخول المناسبة لك</p>
             </div>
-            <div style="display: flex; gap: 10px; margin: 5px 22px 15px; background: rgba(6, 9, 17, 0.9); padding: 4px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2);">
-                <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
-                <button id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')">إنشاء حساب</button>
-            </div>
-            <div class="modal-body" style="padding-top: 5px;">
-                <div class="form-group">
-                    <label for="auth-username">اسم المستخدم / اللاعب:</label>
-                    <input type="text" id="auth-username" class="form-input" placeholder="أدخل اسمك هنا..." autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label for="auth-password">كلمة السر:</label>
-                    <input type="password" id="auth-password" class="form-input" placeholder="كلمة السر..." autocomplete="off">
-                </div>
-                <p id="auth-error-msg" class="error-text"></p>
-                <button id="auth-submit-btn" class="submit-btn" onclick="handleAuthSubmit()">
-                    <span>تسجيل الدخول</span>
-                    <span style="font-size: 1.1rem;">🚀</span>
-                </button>
+            
+            <div class="modal-body" style="padding-top: 10px;">
+                <!-- القائمة الرئيسية بـ 4 خيارات -->
+                <div id="auth-main-options" class="auth-options-container">
+                    <div class="auth-option-card" onclick="selectAuthOption('pa')">
+                        <div class="auth-option-info">
+                            <div class="auth-option-icon">🔑</div>
+                            <div class="auth-option-text">
+                                <h4>حساب Player Assistant</h4>
+                                <p>تسجيل الدخول أو إنشاء حساب بالاسم وكلمة السر</p>
+                            </div>
+                        </div>
+                        <span style="color: #00f2fe; font-weight: bold;">➔</span>
+                    </div>
 
-                <div class="social-login-box">
-                    <button class="social-btn" onclick="socialLogin('google')">
-                        <span style="color: #ea4335; font-weight: bold;">G</span> Google
-                    </button>
-                    <button class="social-btn" onclick="socialLogin('microsoft')">
-                        <span style="color: #00a4ef; font-weight: bold;">M</span> Microsoft
-                    </button>
+                    <div class="auth-option-card" onclick="socialLogin('google')">
+                        <div class="auth-option-info">
+                            <div class="auth-option-icon" style="color: #ea4335;">G</div>
+                            <div class="auth-option-text">
+                                <h4>تسجيل عبر Google</h4>
+                                <p>دخول سريع وآمن بحساب جوجل الخاص بك</p>
+                            </div>
+                        </div>
+                        <span style="color: #00f2fe; font-weight: bold;">➔</span>
+                    </div>
+
+                    <div class="auth-option-card" onclick="socialLogin('microsoft')">
+                        <div class="auth-option-info">
+                            <div class="auth-option-icon" style="color: #00a4ef;">M</div>
+                            <div class="auth-option-text">
+                                <h4>تسجيل عبر Microsoft</h4>
+                                <p>دخول سريع وآمن بحساب ماينكرافت / مايكروسوفت</p>
+                            </div>
+                        </div>
+                        <span style="color: #00f2fe; font-weight: bold;">➔</span>
+                    </div>
+
+                    <div class="auth-option-card" onclick="loginAsGuest()">
+                        <div class="auth-option-info">
+                            <div class="auth-option-icon">👤</div>
+                            <div class="auth-option-text">
+                                <h4>دخول كـ ضيف</h4>
+                                <p>تصفح الموقع بدون حفظ البيانات أو الكوينز</p>
+                            </div>
+                        </div>
+                        <span style="color: #00f2fe; font-weight: bold;">➔</span>
+                    </div>
                 </div>
 
-                <button class="guest-btn" onclick="loginAsGuest()">
-                    <span>الدخول كـ ضيف 👤 (للتصفح فقط)</span>
-                </button>
+                <!-- نموذج Player Assistant الفرعي (مخفي حتى يتم اختياره) -->
+                <div id="pa-auth-form-container" style="display: none; text-align: right;">
+                    <button class="auth-back-btn" onclick="backToAuthOptions()">⬅ رجوع للخيار الرئيسي</button>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; background: rgba(6, 9, 17, 0.9); padding: 4px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2);">
+                        <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
+                        <button id="tab-signup" class="auth-tab" onclick="switchAuthTab('signup')">إنشاء حساب</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="auth-username">اسم المستخدم / اللاعب:</label>
+                        <input type="text" id="auth-username" class="form-input" placeholder="أدخل اسمك هنا..." autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="auth-password">كلمة السر:</label>
+                        <input type="password" id="auth-password" class="form-input" placeholder="كلمة السر..." autocomplete="off">
+                    </div>
+                    <p id="auth-error-msg" class="error-text"></p>
+                    <button id="auth-submit-btn" class="submit-btn" onclick="handleAuthSubmit()">
+                        <span>تسجيل الدخول</span>
+                        <span style="font-size: 1.1rem;">🚀</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- نافذة إعدادات الحساب -->
+    <!-- نافذة إعدادات الحساب (تغيير كلمة السر يكلف 50 كوينز) -->
     <div id="profile-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px;">
             <button class="close-btn" onclick="closeProfileModal()">✖</button>
             <div class="modal-header">
                 <h3>⚙️ إعدادات الحساب</h3>
-                <p class="modal-subtitle">تعديل الصورة الشخصية وكلمة السر</p>
+                <p class="modal-subtitle">تعديل الصورة الشخصية وكلمة السر (تغيير كلمة السر يكلف 50 🪙)</p>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -823,7 +889,7 @@
                     <input type="password" id="profile-old-password" class="form-input" placeholder="كلمة السر القديمة">
                 </div>
                 <div class="form-group">
-                    <label for="profile-new-password">كلمة السر الجديدة:</label>
+                    <label for="profile-new-password">كلمة السر الجديدة (تكلفة التغيير 50 كوينز):</label>
                     <input type="password" id="profile-new-password" class="form-input" placeholder="كلمة السر الجديدة">
                 </div>
                 <p id="profile-error-msg" class="error-text"></p>
@@ -837,11 +903,11 @@
 
     <!-- لوحة الأسود -->
     <div id="admin-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 850px;">
+        <div class="modal-content" style="max-width: 900px;">
             <button class="close-btn" onclick="closeAdminModal()">✖</button>
             <div class="modal-header">
                 <h3>🦁 لوحة الأسود</h3>
-                <p class="modal-subtitle">إدارة الحسابات والرتب والتحكم بعدد الكوينز لأي مستخدم</p>
+                <p class="modal-subtitle">إدارة الحسابات، طرق التسجيل، الرتب، والتحكم بالكوينز</p>
             </div>
             <div class="modal-body">
                 <input type="text" id="admin-search-input" class="admin-search-input" placeholder="🔍 ابحث عن اسم الحساب..." oninput="renderRolesTable()">
@@ -850,9 +916,10 @@
                         <thead>
                             <tr>
                                 <th>الحساب والاسم</th>
+                                <th>طريقة التسجيل</th>
                                 <th>الرتب الحالية</th>
                                 <th>الكوينز 🪙</th>
-                                <th>التحكم بالرتب والكوينز والحساب</th>
+                                <th>التحكم والرتب والحساب</th>
                             </tr>
                         </thead>
                         <tbody id="roles-table-body"></tbody>
@@ -936,7 +1003,6 @@
             initFirebaseSync();
             checkUserSession();
 
-            // إغلاق قائمة الزائد عند النقر في أي مكان خارجها
             window.addEventListener('click', (e) => {
                 if (!e.target.closest('.coins-wrapper')) {
                     document.getElementById('coin-popup-menu').classList.remove('show');
@@ -957,6 +1023,7 @@
                 if (!accountsDB['أسامة']) {
                     db.ref('accounts/أسامة').set({
                         password: '1osama1lion1',
+                        authMethod: 'player_assistant',
                         roles: ['owner', 'developer', 'vip'],
                         avatar: '',
                         coins: 100,
@@ -1011,6 +1078,19 @@
             }
         }
 
+        // التنقل بين الخيارات في نافذة تسجيل الدخول
+        function selectAuthOption(option) {
+            if (option === 'pa') {
+                document.getElementById('auth-main-options').style.display = 'none';
+                document.getElementById('pa-auth-form-container').style.display = 'block';
+            }
+        }
+
+        function backToAuthOptions() {
+            document.getElementById('pa-auth-form-container').style.display = 'none';
+            document.getElementById('auth-main-options').style.display = 'flex';
+        }
+
         function switchAuthTab(mode) {
             currentAuthMode = mode;
             document.getElementById('tab-login').classList.toggle('active', mode === 'login');
@@ -1049,6 +1129,7 @@
 
                 const newAccount = {
                     password: passwordInput,
+                    authMethod: 'player_assistant',
                     roles: assignedRoles,
                     avatar: '',
                     coins: 0,
@@ -1083,41 +1164,65 @@
             }
         }
 
-        // إصلاح المصادقة بـ Google و Microsoft
+        // تسجيل دخول جوجل أو مايكروسوفت مع اختيار اسم لاعب مخصص
         function socialLogin(providerType) {
-            let provider;
-            if (providerType === 'google') {
-                provider = new firebase.auth.GoogleAuthProvider();
-            } else {
-                provider = new firebase.auth.OAuthProvider('microsoft.com');
-            }
+            let provider = (providerType === 'google') ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.OAuthProvider('microsoft.com');
 
             auth.signInWithPopup(provider).then((result) => {
                 const user = result.user;
-                const username = user.displayName || user.email.split('@')[0];
+                const email = user.email;
                 const avatar = user.photoURL || '';
 
-                db.ref('accounts/' + username).once('value').then((snapshot) => {
-                    let coins = 0;
-                    let roles = ['player'];
-                    if (snapshot.exists()) {
-                        coins = snapshot.val().coins || 0;
-                        roles = getAccountRolesArray(snapshot.val());
+                db.ref('accounts').once('value').then((snapshot) => {
+                    const allAccs = snapshot.val() || {};
+                    let existingUname = null;
+                    for (let uname in allAccs) {
+                        if (allAccs[uname].email === email) {
+                            existingUname = uname;
+                            break;
+                        }
+                    }
+
+                    if (existingUname) {
+                        const acc = allAccs[existingUname];
+                        const userObj = { username: existingUname, roles: getAccountRolesArray(acc), avatar: acc.avatar || avatar, coins: acc.coins || 0, isGuest: false };
+                        localStorage.setItem('pa_user', JSON.stringify(userObj));
+                        document.getElementById('auth-modal').style.display = 'none';
+                        updateUserUI(userObj);
+                        showToast(`مرحباً بعودتك ${existingUname}! 🦁`, '🚀');
                     } else {
-                        db.ref('accounts/' + username).set({
-                            password: 'social_login_user',
-                            roles: roles,
+                        let chosenName = prompt("أدخل اسم اللاعب (Username) الخاص بك في الموقع:", user.displayName || email.split('@')[0]);
+                        if (!chosenName || chosenName.trim() === '') return;
+                        chosenName = chosenName.trim();
+
+                        if (allAccs[chosenName] || chosenName.toLowerCase() === 'ضيف') {
+                            alert("❌ اسم المستخدم هذا موجود بالفعل أو غير مسموح به! حاول مرة أخرى.");
+                            return;
+                        }
+
+                        let assignedRoles = ['player'];
+                        if (chosenName.toLowerCase() === 'أسامة') {
+                            assignedRoles = ['owner', 'developer', 'vip'];
+                        }
+
+                        const newAcc = {
+                            password: 'social_login',
+                            email: email,
+                            authMethod: providerType,
+                            roles: assignedRoles,
                             avatar: avatar,
                             coins: 0,
                             createdAt: new Date().toISOString()
+                        };
+
+                        db.ref('accounts/' + chosenName).set(newAcc).then(() => {
+                            const userObj = { username: chosenName, roles: assignedRoles, avatar: avatar, coins: 0, isGuest: false };
+                            localStorage.setItem('pa_user', JSON.stringify(userObj));
+                            document.getElementById('auth-modal').style.display = 'none';
+                            updateUserUI(userObj);
+                            showToast(`أهلاً بك يا ${chosenName}! 🦁`, '🚀');
                         });
                     }
-
-                    const userObj = { username: username, roles: roles, avatar: avatar, coins: coins, isGuest: false };
-                    localStorage.setItem('pa_user', JSON.stringify(userObj));
-                    document.getElementById('auth-modal').style.display = 'none';
-                    updateUserUI(userObj);
-                    showToast(`أهلاً بك ${username}! 🦁`, '🚀');
                 });
             }).catch((error) => {
                 alert('فشل تسجيل الدخول: ' + error.message);
@@ -1170,7 +1275,6 @@
             }
         }
 
-        /* نظام الإعلان عبر الضغط على الزائد -> مشاهدة الإعلان (تايمر 8 أو 10 ثواني وإعلان متغير) */
         function openRewardAdModal() {
             document.getElementById('coin-popup-menu').classList.remove('show');
             const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
@@ -1184,7 +1288,6 @@
                 return;
             }
 
-            // اختيار مدة عشوائية بين 8 أو 10 ثواني
             currentTimerDuration = Math.random() < 0.5 ? 8 : 10;
 
             document.getElementById('reward-video-modal').style.display = 'flex';
@@ -1288,6 +1391,7 @@
             }
         }
 
+        // تغيير كلمة السر يكلف 50 كوينز
         function saveProfileSettings() {
             const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
             if (!user || user.isGuest) return;
@@ -1299,7 +1403,14 @@
             const profileError = document.getElementById('profile-error-msg');
 
             let updatedPassword = null;
+            let finalCoins = user.coins || 0;
+
             if (oldPassInput || newPassInput) {
+                if (currentAcc.authMethod && currentAcc.authMethod !== 'player_assistant') {
+                    profileError.innerText = '❌ هذا الحساب مسجل عبر (Google/Microsoft)، لا يمكن تغيير كلمة السر!';
+                    profileError.style.display = 'block';
+                    return;
+                }
                 if (!oldPassInput || oldPassInput !== currentAcc.password) {
                     profileError.innerText = '❌ كلمة السر القديمة غير صحيحة!';
                     profileError.style.display = 'block';
@@ -1310,7 +1421,16 @@
                     profileError.style.display = 'block';
                     return;
                 }
+                if (user.username.toLowerCase() !== 'أسامة' && finalCoins < 50) {
+                    profileError.innerText = '❌ رصيدك غير كافي! تحتاج إلى 50 كوينز لتغيير كلمة السر.';
+                    profileError.style.display = 'block';
+                    return;
+                }
+
                 updatedPassword = newPassInput;
+                if (user.username.toLowerCase() !== 'أسامة') {
+                    finalCoins -= 50;
+                }
             }
 
             let currentRoles = getAccountRolesArray(currentAcc);
@@ -1322,16 +1442,18 @@
                 ...currentAcc,
                 password: updatedPassword || currentAcc.password,
                 roles: currentRoles,
+                coins: finalCoins,
                 avatar: tempSelectedAvatarData || currentAcc.avatar || ''
             };
 
             db.ref('accounts/' + user.username).set(newAccData).then(() => {
                 user.roles = currentRoles;
+                user.coins = finalCoins;
                 user.avatar = newAccData.avatar;
                 localStorage.setItem('pa_user', JSON.stringify(user));
                 updateUserUI(user);
                 closeProfileModal();
-                showToast('تم حفظ التعديلات أونلاين بنجاح! 💾', '✅');
+                showToast(updatedPassword ? 'تم تغيير كلمة السر بخصم 50 كوينز وحفظ التعديلات بنجاح! 🪙' : 'تم حفظ التعديلات بنجاح! 💾', '✅');
             });
         }
 
@@ -1357,6 +1479,13 @@
                 const badgesHTML = uRoles.map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || '🎮 لاعب'}</span>`).join(' ');
                 const avatarHtml = acc.avatar ? `<img src="${acc.avatar}" alt="Avatar">` : uname.charAt(0).toUpperCase();
 
+                // عرض طريقة التسجيل بوضوح
+                let methodLabel = '🔑 Player Assistant';
+                let methodColor = '#3b82f6';
+                if (acc.authMethod === 'google') { methodLabel = '🌐 Google'; methodColor = '#ea4335'; }
+                else if (acc.authMethod === 'microsoft') { methodLabel = '🪟 Microsoft'; methodColor = '#00a4ef'; }
+                else if (acc.authMethod === 'guest') { methodLabel = '👤 ضيف'; methodColor = '#64748b'; }
+
                 return `
                     <tr>
                         <td>
@@ -1365,14 +1494,16 @@
                                 <span style="font-weight: 800; color: #fff;">${escapeHtml(uname)}</span>
                             </div>
                         </td>
+                        <td><span style="font-size:0.8rem; font-weight:700; color:${methodColor};">${methodLabel}</span></td>
                         <td>${badgesHTML}</td>
                         <td style="color: #FFD700; font-weight: 800;">🪙 ${acc.coins || 0}</td>
                         <td>
                             <div class="actions-grid">
                                 <button class="action-role-btn" style="background: #eab308; color: #000;" onclick="toggleUserRole('${escapeHtml(uname)}', 'cub')">شبل</button>
+                                <button class="action-role-btn" style="background: #dc2626; color: #fff;" onclick="toggleUserRole('${escapeHtml(uname)}', 'youtuber')">يوتيوبر</button>
                                 <button class="action-role-btn" style="background: #10b981; color: #fff;" onclick="toggleUserRole('${escapeHtml(uname)}', 'developer')">مطور</button>
                                 <button class="action-role-btn" style="background: #f59e0b; color: #000;" onclick="toggleUserRole('${escapeHtml(uname)}', 'vip')">VIP</button>
-                                <button class="action-role-btn" style="background: #3b82f6; color: #fff;" onclick="editUserCoins('${escapeHtml(uname)}')">🪙 تعديل الكوينز</button>
+                                <button class="action-role-btn" style="background: #3b82f6; color: #fff;" onclick="editUserCoins('${escapeHtml(uname)}')">🪙 الكوينز</button>
                                 <button class="action-role-btn" style="background: #6366f1; color: #fff;" onclick="showAccountPassword('${escapeHtml(uname)}')">🔑 الباسورد</button>
                                 <button class="action-role-btn" style="background: #dc2626; color: #fff;" onclick="deleteAccount('${escapeHtml(uname)}')" ${isUsama ? 'disabled' : ''}>🗑️</button>
                             </div>
@@ -1394,8 +1525,14 @@
             });
         }
 
+        // عرض كلمة السر فقط إن كان مسجلاً عبر Player Assistant
         function showAccountPassword(targetUser) {
             const acc = accountsDB[targetUser];
+            const method = acc.authMethod || 'player_assistant';
+            if (method !== 'player_assistant' || acc.password === 'social_login') {
+                alert(`❌ هذا الحساب مسجل عبر (${method.toUpperCase()}) ولا تتوفر له كلمة سر نصية في قاعدة البيانات!`);
+                return;
+            }
             if (acc && acc.password) {
                 alert(`🔑 كلمة السر الخاصة بحساب (${targetUser}) هي:\n\n[ ${acc.password} ]`);
             } else {
