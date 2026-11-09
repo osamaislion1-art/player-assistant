@@ -44,7 +44,6 @@
             pointer-events: none;
         }
 
-        /* حاوية تساقط الثلج المتحرك */
         .snow-container {
             position: fixed;
             top: 0; left: 0;
@@ -77,7 +76,6 @@
             50% { transform: translateX(50px); }
         }
 
-        /* شريط الحساب العلوي */
         .user-top-bar {
             display: flex;
             justify-content: space-between;
@@ -165,7 +163,6 @@
         .role-player { background: linear-gradient(135deg, #64748b, #475569); border: 1px solid rgba(255, 255, 255, 0.15); }
         .role-guest { background: linear-gradient(135deg, #4b5563, #374151); border: 1px dashed rgba(255, 255, 255, 0.3); color: #d1d5db; }
 
-        /* حاوية الكوينز مع زر الزائد (+) */
         .coins-wrapper {
             display: flex;
             align-items: center;
@@ -455,7 +452,7 @@
             box-shadow: 0 0 35px rgba(0, 242, 254, 0.4);
             border-radius: 24px;
             width: 100%;
-            max-width: 520px;
+            max-width: 440px;
             max-height: 90vh;
             display: flex;
             flex-direction: column;
@@ -464,8 +461,8 @@
         }
 
         .modal-header { padding: 22px 20px 12px; text-align: center; position: relative; }
-        .modal-header h3 { color: #00f2fe; font-size: 1.5rem; font-weight: 900; }
-        .modal-subtitle { color: #94a3b8; font-size: 0.9rem; margin-top: 4px; }
+        .modal-header h3 { color: #00f2fe; font-size: 1.4rem; font-weight: 900; }
+        .modal-subtitle { color: #94a3b8; font-size: 0.85rem; margin-top: 4px; }
 
         .close-btn {
             position: absolute;
@@ -533,11 +530,10 @@
             margin-top: 10px;
         }
 
-        /* تنسيق أزرار خيارات تسجيل الدخول الـ 4 الجديدة */
         .auth-options-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
             margin-top: 10px;
         }
 
@@ -545,7 +541,7 @@
             background: rgba(15, 23, 42, 0.8);
             border: 1px solid rgba(0, 242, 254, 0.3);
             border-radius: 14px;
-            padding: 14px 18px;
+            padding: 10px 14px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -566,19 +562,17 @@
         }
 
         .auth-option-icon {
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            background: rgba(37, 99, 235, 0.2);
-            border-radius: 10px;
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(0, 242, 254, 0.3);
         }
 
-        .auth-option-text h4 { font-size: 1rem; font-weight: 800; color: #fff; }
-        .auth-option-text p { font-size: 0.8rem; color: #94a3b8; font-weight: 600; }
+        .auth-option-text { text-align: right; }
+        .auth-option-text h4 { font-size: 0.9rem; font-weight: 800; color: #fff; }
+        .auth-option-text p { font-size: 0.72rem; color: #94a3b8; font-weight: 600; }
 
         .auth-back-btn {
             background: transparent;
@@ -783,23 +777,34 @@
         </div>
     </div>
 
-    <!-- نافذة تسجيل الدخول الجديدة كلياً (4 خيارات) -->
+    <!-- نافذة اختيار تسجيل الدخول (بزر واحد ذكي لجوجل) -->
     <div id="auth-modal" class="modal-overlay">
-        <div class="modal-content" style="max-width: 440px;">
+        <div class="modal-content">
             <div class="modal-header">
                 <h3>🎮 مرحباً بك في Player Assistant</h3>
-                <p class="modal-subtitle">اختر طريقة تسجيل الدخول المناسبة لك</p>
+                <p class="modal-subtitle">اختر طريقة الدخول أو التسجيل المناسبة لك</p>
             </div>
             
             <div class="modal-body" style="padding-top: 10px;">
-                <!-- القائمة الرئيسية بـ 4 خيارات -->
+                <!-- القائمة الرئيسية -->
                 <div id="auth-main-options" class="auth-options-container">
-                    <div class="auth-option-card" onclick="selectAuthOption('pa')">
+                    <div class="auth-option-card" onclick="openPaAuthMode('login')">
                         <div class="auth-option-info">
-                            <div class="auth-option-icon">🔑</div>
+                            <img src="images/logo.png" class="auth-option-icon" alt="Logo">
                             <div class="auth-option-text">
-                                <h4>حساب Player Assistant</h4>
-                                <p>تسجيل الدخول أو إنشاء حساب بالاسم وكلمة السر</p>
+                                <h4>تسجيل الدخول - Player Assistant</h4>
+                                <p>لديك حساب مسبق؟ سجل دخولك الآن</p>
+                            </div>
+                        </div>
+                        <span style="color: #00f2fe; font-weight: bold;">➔</span>
+                    </div>
+
+                    <div class="auth-option-card" onclick="openPaAuthMode('signup')">
+                        <div class="auth-option-info">
+                            <img src="images/logo.png" class="auth-option-icon" alt="Logo">
+                            <div class="auth-option-text">
+                                <h4>إنشاء حساب - Player Assistant</h4>
+                                <p>أنشئ حساباً جديداً برتبة لاعب فوراً</p>
                             </div>
                         </div>
                         <span style="color: #00f2fe; font-weight: bold;">➔</span>
@@ -807,21 +812,10 @@
 
                     <div class="auth-option-card" onclick="socialLogin('google')">
                         <div class="auth-option-info">
-                            <div class="auth-option-icon" style="color: #ea4335;">G</div>
+                            <img src="images/Google.png" class="auth-option-icon" alt="Google">
                             <div class="auth-option-text">
-                                <h4>تسجيل عبر Google</h4>
-                                <p>دخول سريع وآمن بحساب جوجل الخاص بك</p>
-                            </div>
-                        </div>
-                        <span style="color: #00f2fe; font-weight: bold;">➔</span>
-                    </div>
-
-                    <div class="auth-option-card" onclick="socialLogin('microsoft')">
-                        <div class="auth-option-info">
-                            <div class="auth-option-icon" style="color: #00a4ef;">M</div>
-                            <div class="auth-option-text">
-                                <h4>تسجيل عبر Microsoft</h4>
-                                <p>دخول سريع وآمن بحساب ماينكرافت / مايكروسوفت</p>
+                                <h4>تسجيل / إنشاء حساب عبر Google</h4>
+                                <p>دخول سريع وآمن (تسجيل دخول أو إنشاء حساب جديد تلقائياً)</p>
                             </div>
                         </div>
                         <span style="color: #00f2fe; font-weight: bold;">➔</span>
@@ -829,19 +823,19 @@
 
                     <div class="auth-option-card" onclick="loginAsGuest()">
                         <div class="auth-option-info">
-                            <div class="auth-option-icon">👤</div>
+                            <span style="font-size: 1.4rem; width: 32px; text-align: center;">👤</span>
                             <div class="auth-option-text">
                                 <h4>دخول كـ ضيف</h4>
-                                <p>تصفح الموقع بدون حفظ البيانات أو الكوينز</p>
+                                <p>تصفح الموقع بدون حفظ البيانات</p>
                             </div>
                         </div>
                         <span style="color: #00f2fe; font-weight: bold;">➔</span>
                     </div>
                 </div>
 
-                <!-- نموذج Player Assistant الفرعي (مخفي حتى يتم اختياره) -->
+                <!-- نموذج Player Assistant الفرعي -->
                 <div id="pa-auth-form-container" style="display: none; text-align: right;">
-                    <button class="auth-back-btn" onclick="backToAuthOptions()">⬅ رجوع للخيار الرئيسي</button>
+                    <button class="auth-back-btn" onclick="backToAuthOptions()">⬅ رجوع لخيارات التسجيل</button>
                     
                     <div style="display: flex; gap: 10px; margin-bottom: 15px; background: rgba(6, 9, 17, 0.9); padding: 4px; border-radius: 12px; border: 1px solid rgba(0, 242, 254, 0.2);">
                         <button id="tab-login" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</button>
@@ -866,7 +860,7 @@
         </div>
     </div>
 
-    <!-- نافذة إعدادات الحساب (تغيير كلمة السر يكلف 50 كوينز) -->
+    <!-- نافذة إعدادات الحساب -->
     <div id="profile-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px;">
             <button class="close-btn" onclick="closeProfileModal()">✖</button>
@@ -1078,12 +1072,10 @@
             }
         }
 
-        // التنقل بين الخيارات في نافذة تسجيل الدخول
-        function selectAuthOption(option) {
-            if (option === 'pa') {
-                document.getElementById('auth-main-options').style.display = 'none';
-                document.getElementById('pa-auth-form-container').style.display = 'block';
-            }
+        function openPaAuthMode(mode) {
+            document.getElementById('auth-main-options').style.display = 'none';
+            document.getElementById('pa-auth-form-container').style.display = 'block';
+            switchAuthTab(mode);
         }
 
         function backToAuthOptions() {
@@ -1164,9 +1156,9 @@
             }
         }
 
-        // تسجيل دخول جوجل أو مايكروسوفت مع اختيار اسم لاعب مخصص
+        // تسجيل الدخول بـ Google (تلقائياً يسجل دخول أو ينشئ حساب جديد)
         function socialLogin(providerType) {
-            let provider = (providerType === 'google') ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.OAuthProvider('microsoft.com');
+            const provider = new firebase.auth.GoogleAuthProvider();
 
             auth.signInWithPopup(provider).then((result) => {
                 const user = result.user;
@@ -1208,7 +1200,7 @@
                         const newAcc = {
                             password: 'social_login',
                             email: email,
-                            authMethod: providerType,
+                            authMethod: 'google',
                             roles: assignedRoles,
                             avatar: avatar,
                             coins: 0,
@@ -1391,7 +1383,6 @@
             }
         }
 
-        // تغيير كلمة السر يكلف 50 كوينز
         function saveProfileSettings() {
             const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
             if (!user || user.isGuest) return;
@@ -1407,7 +1398,7 @@
 
             if (oldPassInput || newPassInput) {
                 if (currentAcc.authMethod && currentAcc.authMethod !== 'player_assistant') {
-                    profileError.innerText = '❌ هذا الحساب مسجل عبر (Google/Microsoft)، لا يمكن تغيير كلمة السر!';
+                    profileError.innerText = '❌ هذا الحساب مسجل عبر (Google)، لا يمكن تغيير كلمة السر!';
                     profileError.style.display = 'block';
                     return;
                 }
@@ -1479,11 +1470,9 @@
                 const badgesHTML = uRoles.map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || '🎮 لاعب'}</span>`).join(' ');
                 const avatarHtml = acc.avatar ? `<img src="${acc.avatar}" alt="Avatar">` : uname.charAt(0).toUpperCase();
 
-                // عرض طريقة التسجيل بوضوح
                 let methodLabel = '🔑 Player Assistant';
                 let methodColor = '#3b82f6';
                 if (acc.authMethod === 'google') { methodLabel = '🌐 Google'; methodColor = '#ea4335'; }
-                else if (acc.authMethod === 'microsoft') { methodLabel = '🪟 Microsoft'; methodColor = '#00a4ef'; }
                 else if (acc.authMethod === 'guest') { methodLabel = '👤 ضيف'; methodColor = '#64748b'; }
 
                 return `
@@ -1525,7 +1514,6 @@
             });
         }
 
-        // عرض كلمة السر فقط إن كان مسجلاً عبر Player Assistant
         function showAccountPassword(targetUser) {
             const acc = accountsDB[targetUser];
             const method = acc.authMethod || 'player_assistant';
