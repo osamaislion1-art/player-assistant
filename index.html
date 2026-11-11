@@ -667,6 +667,16 @@
     </section>
 
     <main class="grid-container">
+        <!-- كرت حاسبة إحداثيات النذر (بصورة بلكة النذر RedNetherGrass.png) -->
+        <div class="card">
+            <div class="card-img-holder">
+                <img src="images/RedNetherGrass.png" class="mc-item-icon" alt="حاسبة الإحداثيات">
+            </div>
+            <h2>حاسبة إحداثيات النذر</h2>
+            <p>احسب بدقة إحداثيات بناء البوابات في النذر مقابل العالم العادي (تقسيم على 8) بدون أي أخطاء.</p>
+            <a href="nether-calc.html" class="btn">فتح حاسبة الإحداثيات</a>
+        </div>
+
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/community.png" class="mc-item-icon community-icon" alt="مجتمع اللاعبين">
@@ -730,13 +740,14 @@
             <a href="villagers.html" class="btn">دليل المقايضة والصفقات</a>
         </div>
 
+        <!-- كرت المتجر (قريباً) -->
         <div class="card">
             <div class="card-img-holder">
-                <img src="images/Question_mark.png" class="mc-item-icon" alt="قسم جديد">
+                <img src="images/couns.png" class="mc-item-icon" alt="المجر">
             </div>
-            <h2>قسم جديد</h2>
-            <p>هذا القسم قيد التطوير حالياً، انتظرونا في التحديثات القادمة لإضافة ميزات وأدوات جديدة مميزة داخل الموقع!</p>
-            <a href="#" class="btn">قريباً...</a>
+            <h2>متجر Player Assistant</h2>
+            <p>متجر الموقع لشراء الرتب والمميزات الحصرية باستخدام الكوينز المكتسبة. انتظرونا قريباً!</p>
+            <a href="#" class="btn" style="opacity: 0.7; pointer-events: none;">قريباً في التحديثات...</a>
         </div>
     </main>
 
@@ -762,7 +773,7 @@
             <button class="close-btn" onclick="closeRewardAdModal()">✖</button>
             <div class="modal-header">
                 <h3>🪙 إعلان مكافأة الكوينز</h3>
-                <p class="modal-subtitle">انتظر انتهاء المؤقت لاستلام هدية الكوينز</p>
+                <p class="modal-subtitle">انتظر انتهاء المؤقت لاستلاستلام هدية الكوينز</p>
             </div>
             <div class="modal-body">
                 <div class="ad-container-box">
@@ -777,7 +788,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار تسجيل الدخول (بزر واحد ذكي لجوجل) -->
+    <!-- نافذة اختيار تسجيل الدخول القديمة والمرتبة (بدون جوجل، مع تسجيل دخول وإنشاء حساب منفصلة للـ Player Assistant، وخيار الضيف) -->
     <div id="auth-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -805,17 +816,6 @@
                             <div class="auth-option-text">
                                 <h4>إنشاء حساب - Player Assistant</h4>
                                 <p>أنشئ حساباً جديداً برتبة لاعب فوراً</p>
-                            </div>
-                        </div>
-                        <span style="color: #00f2fe; font-weight: bold;">➔</span>
-                    </div>
-
-                    <div class="auth-option-card" onclick="socialLogin('google')">
-                        <div class="auth-option-info">
-                            <img src="images/Google.png" class="auth-option-icon" alt="Google">
-                            <div class="auth-option-text">
-                                <h4>تسجيل / إنشاء حساب عبر Google</h4>
-                                <p>دخول سريع وآمن (تسجيل دخول أو إنشاء حساب جديد تلقائياً)</p>
                             </div>
                         </div>
                         <span style="color: #00f2fe; font-weight: bold;">➔</span>
@@ -860,13 +860,13 @@
         </div>
     </div>
 
-    <!-- نافذة إعدادات الحساب -->
+    <!-- نافذة إعدادات الحساب مع توضيح تكلفة تغيير كلمة السر (50 كوينز) -->
     <div id="profile-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px;">
             <button class="close-btn" onclick="closeProfileModal()">✖</button>
             <div class="modal-header">
                 <h3>⚙️ إعدادات الحساب</h3>
-                <p class="modal-subtitle">تعديل الصورة الشخصية وكلمة السر (تغيير كلمة السر يكلف 50 🪙)</p>
+                <p class="modal-subtitle" style="color: #f59e0b; font-weight: 800;">⚠️ تغيير كلمة السر يكلف 50 كوينز 🪙</p>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -883,7 +883,7 @@
                     <input type="password" id="profile-old-password" class="form-input" placeholder="كلمة السر القديمة">
                 </div>
                 <div class="form-group">
-                    <label for="profile-new-password">كلمة السر الجديدة (تكلفة التغيير 50 كوينز):</label>
+                    <label for="profile-new-password">كلمة السر الجديدة (بخصم 50 🪙):</label>
                     <input type="password" id="profile-new-password" class="form-input" placeholder="كلمة السر الجديدة">
                 </div>
                 <p id="profile-error-msg" class="error-text"></p>
@@ -1156,71 +1156,6 @@
             }
         }
 
-        // تسجيل الدخول بـ Google (تلقائياً يسجل دخول أو ينشئ حساب جديد)
-        function socialLogin(providerType) {
-            const provider = new firebase.auth.GoogleAuthProvider();
-
-            auth.signInWithPopup(provider).then((result) => {
-                const user = result.user;
-                const email = user.email;
-                const avatar = user.photoURL || '';
-
-                db.ref('accounts').once('value').then((snapshot) => {
-                    const allAccs = snapshot.val() || {};
-                    let existingUname = null;
-                    for (let uname in allAccs) {
-                        if (allAccs[uname].email === email) {
-                            existingUname = uname;
-                            break;
-                        }
-                    }
-
-                    if (existingUname) {
-                        const acc = allAccs[existingUname];
-                        const userObj = { username: existingUname, roles: getAccountRolesArray(acc), avatar: acc.avatar || avatar, coins: acc.coins || 0, isGuest: false };
-                        localStorage.setItem('pa_user', JSON.stringify(userObj));
-                        document.getElementById('auth-modal').style.display = 'none';
-                        updateUserUI(userObj);
-                        showToast(`مرحباً بعودتك ${existingUname}! 🦁`, '🚀');
-                    } else {
-                        let chosenName = prompt("أدخل اسم اللاعب (Username) الخاص بك في الموقع:", user.displayName || email.split('@')[0]);
-                        if (!chosenName || chosenName.trim() === '') return;
-                        chosenName = chosenName.trim();
-
-                        if (allAccs[chosenName] || chosenName.toLowerCase() === 'ضيف') {
-                            alert("❌ اسم المستخدم هذا موجود بالفعل أو غير مسموح به! حاول مرة أخرى.");
-                            return;
-                        }
-
-                        let assignedRoles = ['player'];
-                        if (chosenName.toLowerCase() === 'أسامة') {
-                            assignedRoles = ['owner', 'developer', 'vip'];
-                        }
-
-                        const newAcc = {
-                            password: 'social_login',
-                            email: email,
-                            authMethod: 'google',
-                            roles: assignedRoles,
-                            avatar: avatar,
-                            coins: 0,
-                            createdAt: new Date().toISOString()
-                        };
-
-                        db.ref('accounts/' + chosenName).set(newAcc).then(() => {
-                            const userObj = { username: chosenName, roles: assignedRoles, avatar: avatar, coins: 0, isGuest: false };
-                            localStorage.setItem('pa_user', JSON.stringify(userObj));
-                            document.getElementById('auth-modal').style.display = 'none';
-                            updateUserUI(userObj);
-                            showToast(`أهلاً بك يا ${chosenName}! 🦁`, '🚀');
-                        });
-                    }
-                });
-            }).catch((error) => {
-                alert('فشل تسجيل الدخول: ' + error.message);
-            });
-        }
-
         function loginAsGuest() {
             const guestUser = {
                 username: 'ضيف',
@@ -1398,7 +1333,7 @@
 
             if (oldPassInput || newPassInput) {
                 if (currentAcc.authMethod && currentAcc.authMethod !== 'player_assistant') {
-                    profileError.innerText = '❌ هذا الحساب مسجل عبر (Google)، لا يمكن تغيير كلمة السر!';
+                    profileError.innerText = '❌ هذا الحساب مسجل عبر وسيلة خارجية، لا يمكن تغيير كلمة السر!';
                     profileError.style.display = 'block';
                     return;
                 }
@@ -1420,7 +1355,7 @@
 
                 updatedPassword = newPassInput;
                 if (user.username.toLowerCase() !== 'أسامة') {
-                    finalCoins -= 50;
+                    finalCoins -= 50; // خصم 50 كوينز لتغيير كلمة السر
                 }
             }
 
@@ -1444,7 +1379,7 @@
                 localStorage.setItem('pa_user', JSON.stringify(user));
                 updateUserUI(user);
                 closeProfileModal();
-                showToast(updatedPassword ? 'تم تغيير كلمة السر بخصم 50 كوينز وحفظ التعديلات بنجاح! 🪙' : 'تم حفظ التعديلات بنجاح! 💾', '✅');
+                showToast(updatedPassword ? 'تم تغيير كلمة السر بخصم 50 كوينز بنجاح! 🪙' : 'تم حفظ التعديلات بنجاح! 💾', '✅');
             });
         }
 
@@ -1472,8 +1407,7 @@
 
                 let methodLabel = '🔑 Player Assistant';
                 let methodColor = '#3b82f6';
-                if (acc.authMethod === 'google') { methodLabel = '🌐 Google'; methodColor = '#ea4335'; }
-                else if (acc.authMethod === 'guest') { methodLabel = '👤 ضيف'; methodColor = '#64748b'; }
+                if (acc.authMethod === 'guest') { methodLabel = '👤 ضيف'; methodColor = '#64748b'; }
 
                 return `
                     <tr>
@@ -1518,11 +1452,12 @@
             const acc = accountsDB[targetUser];
             const method = acc.authMethod || 'player_assistant';
             if (method !== 'player_assistant' || acc.password === 'social_login') {
-                alert(`❌ هذا الحساب مسجل عبر (${method.toUpperCase()}) ولا تتوفر له كلمة سر نصية في قاعدة البيانات!`);
+                alert(`❌ هذا الحساب لا توجد له كلمة سر نصية!`);
                 return;
             }
             if (acc && acc.password) {
-                alert(`🔑 كلمة السر الخاصة بحساب (${targetUser}) هي:\n\n[ ${acc.password} ]`);
+                const pass = acc.password;
+                prompt(`🔑 كلمة السر لحساب (${targetUser}):\n(قم بنسخها من الأسفل)`, pass);
             } else {
                 alert('❌ لا توجد كلمة سر مسجلة لهذا الحساب!');
             }
