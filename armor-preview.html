@@ -213,6 +213,7 @@
                 <button class="armor-btn" data-armor="diamond"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/diamond_chestplate.png"><span class="en-text">Diamond</span><span class="ar-text">دياموند</span></button>
                 <button class="armor-btn" data-armor="iron"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/iron_chestplate.png"><span class="en-text">Iron</span><span class="ar-text">حديد</span></button>
                 <button class="armor-btn" data-armor="gold"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/golden_chestplate.png"><span class="en-text">Gold</span><span class="ar-text">ذهب</span></button>
+                <button class="armor-btn" data-armor="copper"><img src="images/mc-items/copper_chestplate.png" onerror="this.onerror=null;this.src='https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.10/assets/minecraft/textures/item/copper_chestplate.png'"><span class="en-text">Copper</span><span class="ar-text">نحاس</span></button>
                 <button class="armor-btn" data-armor="chainmail"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/chainmail_chestplate.png"><span class="en-text">Chainmail</span><span class="ar-text">سلاسل</span></button>
                 <button class="armor-btn" data-armor="leather"><img id="img-leather-btn" src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/leather_chestplate.png"><span class="en-text">Leather</span><span class="ar-text">جلد</span></button>
                 <button class="armor-btn" data-armor="turtle" id="matTurtle"><img src="https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/turtle_helmet.png"><span class="en-text">Turtle</span><span class="ar-text">سلحفاة</span></button>
@@ -298,7 +299,7 @@
 
     const mcTextureNames = {
         gold: 'golden', netherite: 'netherite', diamond: 'diamond',
-        iron: 'iron', chainmail: 'chainmail', leather: 'leather', turtle: 'turtle', none: 'none'
+        iron: 'iron', copper: 'copper', chainmail: 'chainmail', leather: 'leather', turtle: 'turtle', none: 'none'
     };
 
     const PIECE_UV_BOUNDS = {
@@ -498,9 +499,10 @@
             }
 
             let targetArmor = mcTextureNames[pieceState.armor] || pieceState.armor;
+            const mcVersion = pieceState.armor === 'copper' ? '1.21.10' : '1.20.1';
             let iconUrls = [
                 `images/mc-items/${targetArmor}_${p}.png`,
-                `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item/${targetArmor}_${p}.png`
+                `https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/${mcVersion}/assets/minecraft/textures/item/${targetArmor}_${p}.png`
             ];
             if (pieceState.armor === 'turtle') {
                 iconUrls.unshift(`images/mc-items/turtle_helmet.png`);
@@ -717,7 +719,7 @@
 
     const ARMOR_FILE_PREFIX = {
         netherite: 'netherite', diamond: 'diamond', gold: 'gold', iron: 'iron',
-        chainmail: 'chainmail', leather: 'leather', turtle: 'turtle_scute'
+        copper: 'copper', chainmail: 'chainmail', leather: 'leather', turtle: 'turtle_scute'
     };
 
     function getArmorLayerUrls(armorType, layer) {
@@ -734,6 +736,9 @@
             urls.push(`images/humanoid/turtle_layer_1.png`);
             urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/models/armor/turtle_layer_1.png`);
             urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/models/armor/turtle_scute_layer_1.png`);
+        } else if (armorType === 'copper') {
+            urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.10/assets/minecraft/textures/models/armor/copper_layer_${layerStr}.png`);
+            urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.21.10/assets/minecraft/textures/entity/equipment/humanoid${layer === 2 ? '_leggings' : ''}/copper.png`);
         } else {
             urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/models/armor/${prefix}_layer_${layerStr}.png`);
             urls.push(`https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/models/armor/${armorType}_layer_${layerStr}.png`);
