@@ -58,10 +58,10 @@
         .lvl-4 { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
         .lvl-5 { background: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
         .trades-result { display: flex; flex-direction: column; gap: 10px; }
-        .trade-card { display: flex; align-items: center; justify-content: space-between; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 10px 16px; }
-        .trade-side { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 0.95rem; }
+        .trade-card { display: flex; align-items: center; justify-content: space-between; background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; padding: 10px 16px; gap: 10px; }
+        .trade-side { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 0.95rem; flex-wrap: wrap; }
         .trade-side img { width: 32px; height: 32px; object-fit: contain; image-rendering: pixelated; transition: all 0.3s ease; }
-        .trade-arrow { color: #00f2fe; font-size: 1.3rem; font-weight: 900; }
+        .trade-arrow { color: #00f2fe; font-size: 1.3rem; font-weight: 900; flex-shrink: 0; }
         .type-badge-buy { background: rgba(59, 130, 246, 0.2); border: 1px solid #3b82f6; color: #60a5fa; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; }
         .type-badge-sell { background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; color: #34d399; padding: 4px 10px; border-radius: 8px; font-size: 0.8rem; }
         footer { margin-top: auto; padding: 20px; background: rgba(6, 9, 17, 0.9); border-top: 1px solid rgba(0, 242, 254, 0.2); text-align: center; color: #94a3b8; font-weight: 600; }
@@ -100,7 +100,7 @@
 
         <div id="section-piglin" class="villager-box" style="display: none;">
             <h2 style="color: #f59e0b; font-size: 1.6rem; margin-bottom: 5px;">مقايضة البيقلن (Piglin Bartering)</h2>
-            <p style="color: #94a3b8; font-size: 0.95rem; font-weight: 600; margin-bottom: 20px;">أعطِ البيقلن سبيكة ذهبية ليعطيك العناصر التالية:</p>
+            <p style="color: #94a3b8; font-size: 0.95rem; font-weight: 600; margin-bottom: 20px;">أعطِ البيقلن سبيكة ذهبية (Gold Ingot) ليرمي لك أحد العناصر التالية عشوائياً:</p>
             <div class="trades-result" id="piglin-trades-container"></div>
         </div>
     </main>
@@ -135,27 +135,75 @@
             return jobImages[key] || 'images/صور بلوكات التوظيف/Lectern.png';
         }
 
+        const MC_ASSETS_ITEM = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/item';
+        const MC_ASSETS_BLOCK = 'https://raw.githubusercontent.com/InventivetalentDev/minecraft-assets/1.20.1/assets/minecraft/textures/block';
+
         const saplingImages = [
-            'images/mc-items/oak_sapling.png',
-            'images/mc-items/spruce_sapling.png',
-            'images/mc-items/birch_sapling.png',
-            'images/mc-items/jungle_sapling.png',
-            'images/mc-items/acacia_sapling.png',
-            'images/mc-items/dark_oak_sapling.png'
+            `${MC_ASSETS_BLOCK}/oak_sapling.png`,
+            `${MC_ASSETS_BLOCK}/spruce_sapling.png`,
+            `${MC_ASSETS_BLOCK}/birch_sapling.png`,
+            `${MC_ASSETS_BLOCK}/jungle_sapling.png`,
+            `${MC_ASSETS_BLOCK}/acacia_sapling.png`,
+            `${MC_ASSETS_BLOCK}/dark_oak_sapling.png`
         ];
 
         const flowerImages = [
-            'images/mc-items/poppy.png',
-            'images/mc-items/dandelion.png',
-            'images/mc-items/blue_orchid.png',
-            'images/mc-items/allium.png'
+            `${MC_ASSETS_BLOCK}/poppy.png`,
+            `${MC_ASSETS_BLOCK}/dandelion.png`,
+            `${MC_ASSETS_BLOCK}/blue_orchid.png`,
+            `${MC_ASSETS_BLOCK}/allium.png`
         ];
 
-        // خريطة دقيقة جداً وموجهة بناءً على نمط ملفاتك (مثل clock_01.png وغيرها)
-        const customImageMap = {
-            'clock': 'clock_01',
-            'compass': 'compass_01',
-            'clock_01': 'clock_01'
+        // خريطة شاملة تربط كل عنصر بالملف الصحيح في مجلدك المحلي ثم بالمسار الرسمي (item أو block) عند الحاجة
+        const itemTextureFallback = {
+            'clock': { local: 'clock_01', remote: `${MC_ASSETS_ITEM}/clock_00.png` },
+            'compass': { local: 'compass_01', remote: `${MC_ASSETS_ITEM}/compass_00.png` },
+            'book_and_quill': { local: 'writable_book', remote: `${MC_ASSETS_ITEM}/writable_book.png` },
+            'bookshelf': { local: 'bookshelf', remote: `${MC_ASSETS_BLOCK}/bookshelf.png` },
+            'glass': { local: 'glass', remote: `${MC_ASSETS_BLOCK}/glass.png` },
+            'glass_pane': { local: 'glass_pane', remote: `${MC_ASSETS_BLOCK}/glass.png` },
+            'glowstone': { local: 'glowstone', remote: `${MC_ASSETS_BLOCK}/glowstone.png` },
+            'melon': { local: 'melon', remote: `${MC_ASSETS_BLOCK}/melon_side.png` },
+            'pumpkin': { local: 'pumpkin', remote: `${MC_ASSETS_BLOCK}/pumpkin_side.png` },
+            'stone': { local: 'stone', remote: `${MC_ASSETS_BLOCK}/stone.png` },
+            'chiseled_stone_bricks': { local: 'chiseled_stone_bricks', remote: `${MC_ASSETS_BLOCK}/chiseled_stone_bricks.png` },
+            'terracotta': { local: 'terracotta', remote: `${MC_ASSETS_BLOCK}/terracotta.png` },
+            'glazed_terracotta': { local: 'magenta_glazed_terracotta', remote: `${MC_ASSETS_BLOCK}/magenta_glazed_terracotta.png` },
+            'quartz_block': { local: 'quartz_block', remote: `${MC_ASSETS_BLOCK}/quartz_block_side.png` },
+            'white_wool': { local: 'white_wool', remote: `${MC_ASSETS_BLOCK}/white_wool.png` },
+            'wool': { local: 'light_blue_wool', remote: `${MC_ASSETS_BLOCK}/light_blue_wool.png` },
+            'carpet': { local: 'red_carpet', remote: `${MC_ASSETS_BLOCK}/red_wool.png` },
+            'banner': { local: 'white_banner', remote: `${MC_ASSETS_ITEM}/globe_banner_pattern.png` },
+            'globe_banner_pattern': { local: 'globe_banner_pattern', remote: `${MC_ASSETS_ITEM}/globe_banner_pattern.png` },
+            'bed': { local: 'red_bed', remote: `${MC_ASSETS_ITEM}/red_bed.png` },
+            'barrel': { local: 'barrel', remote: `${MC_ASSETS_BLOCK}/barrel_side.png` },
+            'dried_kelp_block': { local: 'dried_kelp_block', remote: `${MC_ASSETS_BLOCK}/dried_kelp_block_side.png` },
+            'moss_block': { local: 'moss_block', remote: `${MC_ASSETS_BLOCK}/moss_block.png` },
+            'sand': { local: 'sand', remote: `${MC_ASSETS_BLOCK}/sand.png` },
+            'fern': { local: 'fern', remote: `${MC_ASSETS_BLOCK}/fern.png` },
+            'vine': { local: 'vine', remote: `${MC_ASSETS_BLOCK}/vine.png` },
+            'packed_ice': { local: 'packed_ice', remote: `${MC_ASSETS_BLOCK}/packed_ice.png` },
+            'blue_ice': { local: 'blue_ice', remote: `${MC_ASSETS_BLOCK}/blue_ice.png` },
+            'obsidian': { local: 'obsidian', remote: `${MC_ASSETS_BLOCK}/obsidian.png` },
+            'crying_obsidian': { local: 'crying_obsidian', remote: `${MC_ASSETS_BLOCK}/crying_obsidian.png` },
+            'gravel': { local: 'gravel', remote: `${MC_ASSETS_BLOCK}/gravel.png` },
+            'soul_sand': { local: 'soul_sand', remote: `${MC_ASSETS_BLOCK}/soul_sand.png` },
+            'blackstone': { local: 'blackstone', remote: `${MC_ASSETS_BLOCK}/blackstone.png` },
+            'hay_block': { local: 'hay_block', remote: `${MC_ASSETS_BLOCK}/hay_block_side.png` },
+            'scute': { local: 'scute', remote: `${MC_ASSETS_ITEM}/scute.png` },
+            'rabbit_foot': { local: 'rabbit_foot', remote: `${MC_ASSETS_ITEM}/rabbit_foot.png` },
+            'baked_potato': { local: 'baked_potato', remote: `${MC_ASSETS_ITEM}/baked_potato.png` },
+            'water_bucket': { local: 'water_bucket', remote: `${MC_ASSETS_ITEM}/water_bucket.png` },
+            'milk_bucket': { local: 'milk_bucket', remote: `${MC_ASSETS_ITEM}/milk_bucket.png` },
+            'fermented_spider_eye': { local: 'fermented_spider_eye', remote: `${MC_ASSETS_ITEM}/fermented_spider_eye.png` },
+            'potion': { local: 'potion', remote: `${MC_ASSETS_ITEM}/potion.png` },
+            'splash_potion': { local: 'splash_potion', remote: `${MC_ASSETS_ITEM}/splash_potion.png` },
+            'netherite_hoe': { local: 'netherite_hoe', remote: `${MC_ASSETS_ITEM}/netherite_hoe.png` },
+            'golden_boots': { local: 'golden_boots', remote: `${MC_ASSETS_ITEM}/golden_boots.png` },
+            'magma_cream': { local: 'magma_cream', remote: `${MC_ASSETS_ITEM}/magma_cream.png` },
+            'nether_brick': { local: 'nether_brick', remote: `${MC_ASSETS_ITEM}/nether_brick.png` },
+            'iron_nugget': { local: 'iron_nugget', remote: `${MC_ASSETS_ITEM}/iron_nugget.png` },
+            'spectral_arrow': { local: 'spectral_arrow', remote: `${MC_ASSETS_ITEM}/spectral_arrow.png` }
         };
 
         function getItemImgHtml(key) {
@@ -166,8 +214,12 @@
             if (cleanKey === 'flower_slideshow') {
                 return `<img src="${flowerImages[0]}" class="slideshow-flower" alt="Flower">`;
             }
-            let fileName = customImageMap[cleanKey] || cleanKey;
-            return `<img src="images/mc-items/${fileName}.png" alt="${key}" onerror="this.onerror=null; this.src='images/mc-items/${cleanKey}.png';">`;
+
+            const mapped = itemTextureFallback[cleanKey];
+            const localName = mapped ? mapped.local : cleanKey;
+            const remoteUrl = mapped ? mapped.remote : `${MC_ASSETS_ITEM}/${cleanKey}.png`;
+
+            return `<img src="images/mc-items/${localName}.png" alt="${key}" onerror="this.onerror=null; this.src='${remoteUrl}';">`;
         }
 
         const jobsList = [
@@ -192,24 +244,27 @@
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
                         { type: "sell", buyKey: "paper", buyText: "24 Paper", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "sell", buyKey: "book", buyText: "4 Book", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "sell", buyKey: "ink_sac", buyText: "5 Ink Sac", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "sell", buyKey: "book_and_quill", buyText: "2 Book and Quill", sellKey: "emerald", sellText: "1 Emerald" }
+                        { type: "buy", buyKey: "emerald", buyText: "9 Emeralds", sellKey: "bookshelf", sellText: "1 Bookshelf" },
+                        { type: "buy", buyKey: "emerald", buyText: "5-64 Emeralds + Book", sellKey: "enchanted_book", sellText: "1 Enchanted Book" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "9 Emeralds", sellKey: "bookshelf", sellText: "1 Bookshelf" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "lantern", sellText: "1 Lantern" }
+                        { type: "sell", buyKey: "book", buyText: "4 Book", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "lantern", sellText: "1 Lantern" },
+                        { type: "buy", buyKey: "emerald", buyText: "5-64 Emeralds + Book", sellKey: "enchanted_book", sellText: "1 Enchanted Book" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "glass", sellText: "4 Glass" }
+                        { type: "sell", buyKey: "ink_sac", buyText: "5 Ink Sac", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "glass", sellText: "4 Glass" },
+                        { type: "buy", buyKey: "emerald", buyText: "5-64 Emeralds + Book", sellKey: "enchanted_book", sellText: "1 Enchanted Book" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
+                        { type: "sell", buyKey: "book_and_quill", buyText: "2 Book and Quill", sellKey: "emerald", sellText: "1 Emerald" },
                         { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "clock", sellText: "1 Clock" },
-                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "compass", sellText: "1 Compass" }
+                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "compass", sellText: "1 Compass" },
+                        { type: "buy", buyKey: "emerald", buyText: "5-64 Emeralds + Book", sellKey: "enchanted_book", sellText: "1 Enchanted Book" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "20 Emeralds", sellKey: "name_tag", sellText: "1 Name Tag" },
-                        { type: "buy", buyKey: "emerald", buyText: "5-64 Emerald + Book", sellKey: "enchanted_book", sellText: "1 Enchanted Book" }
+                        { type: "buy", buyKey: "emerald", buyText: "20 Emeralds", sellKey: "name_tag", sellText: "1 Name Tag" }
                     ]}
                 ]
             },
@@ -217,28 +272,31 @@
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
                         { type: "sell", buyKey: "coal", buyText: "15 Coal", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "iron_boots", sellText: "Iron Boots" },
-                        { type: "buy", buyKey: "emerald", buyText: "7 Emeralds", sellKey: "iron_leggings", sellText: "Iron Leggings" },
-                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "iron_helmet", sellText: "Iron Helmet" },
-                        { type: "buy", buyKey: "emerald", buyText: "9 Emeralds", sellKey: "iron_chestplate", sellText: "Iron Chestplate" }
+                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "iron_boots", sellText: "1 Iron Boots" },
+                        { type: "buy", buyKey: "emerald", buyText: "7 Emeralds", sellKey: "iron_leggings", sellText: "1 Iron Leggings" },
+                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "iron_helmet", sellText: "1 Iron Helmet" },
+                        { type: "buy", buyKey: "emerald", buyText: "9 Emeralds", sellKey: "iron_chestplate", sellText: "1 Iron Chestplate" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
                         { type: "sell", buyKey: "iron_ingot", buyText: "4 Iron Ingot", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "shield", sellText: "Shield" }
+                        { type: "buy", buyKey: "emerald", buyText: "36 Emeralds", sellKey: "bell", sellText: "1 Bell" },
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "chainmail_leggings", sellText: "1 Chainmail Leggings" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "chainmail_boots", sellText: "1 Chainmail Boots" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
                         { type: "sell", buyKey: "lava_bucket", buyText: "1 Lava Bucket", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "chainmail_boots", sellText: "Chainmail Boots/Helmet" }
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "chainmail_helmet", sellText: "1 Chainmail Helmet" },
+                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "chainmail_chestplate", sellText: "1 Chainmail Chestplate" },
+                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "shield", sellText: "1 Shield" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
                         { type: "sell", buyKey: "diamond", buyText: "1 Diamond", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "chainmail_leggings", sellText: "Chainmail Leggings" },
-                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "chainmail_chestplate", sellText: "Chainmail Chestplate" }
+                        { type: "buy", buyKey: "emerald", buyText: "19-33 Emeralds", sellKey: "diamond_leggings", sellText: "1 Enchanted Diamond Leggings" },
+                        { type: "buy", buyKey: "emerald", buyText: "13-27 Emeralds", sellKey: "diamond_boots", sellText: "1 Enchanted Diamond Boots" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "11-27 Emeralds", sellKey: "diamond_boots", sellText: "Diamond Boots/Helmet" },
-                        { type: "buy", buyKey: "emerald", buyText: "19-35 Emeralds", sellKey: "diamond_leggings", sellText: "Diamond Leggings" },
-                        { type: "buy", buyKey: "emerald", buyText: "27-43 Emeralds", sellKey: "diamond_chestplate", sellText: "Diamond Chestplate" }
+                        { type: "buy", buyKey: "emerald", buyText: "21-35 Emeralds", sellKey: "diamond_chestplate", sellText: "1 Enchanted Diamond Chestplate" },
+                        { type: "buy", buyKey: "emerald", buyText: "13-27 Emeralds", sellKey: "diamond_helmet", sellText: "1 Enchanted Diamond Helmet" }
                     ]}
                 ]
             },
@@ -246,23 +304,26 @@
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
                         { type: "sell", buyKey: "coal", buyText: "15 Coal", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "iron_axe", sellText: "Iron Axe/Shovel/Hoe" }
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "stone_axe", sellText: "1 Stone Axe / Shovel / Pickaxe / Hoe" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
                         { type: "sell", buyKey: "iron_ingot", buyText: "4 Iron Ingot", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "iron_pickaxe", sellText: "Iron Pickaxe" }
+                        { type: "buy", buyKey: "emerald", buyText: "36 Emeralds", sellKey: "bell", sellText: "1 Bell" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
                         { type: "sell", buyKey: "flint", buyText: "30 Flint", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "36 Emeralds", sellKey: "bell", sellText: "Bell" }
+                        { type: "buy", buyKey: "emerald", buyText: "6-20 Emeralds", sellKey: "iron_axe", sellText: "1 Enchanted Iron Axe / Shovel / Pickaxe" },
+                        { type: "buy", buyKey: "emerald", buyText: "7-21 Emeralds", sellKey: "iron_pickaxe", sellText: "1 Enchanted Iron Pickaxe" },
+                        { type: "buy", buyKey: "emerald", buyText: "8-22 Emeralds", sellKey: "iron_shovel", sellText: "1 Enchanted Iron Shovel" },
+                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "diamond_hoe", sellText: "1 Diamond Hoe" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
                         { type: "sell", buyKey: "diamond", buyText: "1 Diamond", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "10-26 Emeralds", sellKey: "diamond_shovel", sellText: "Diamond Shovel" }
+                        { type: "buy", buyKey: "emerald", buyText: "17-31 Emeralds", sellKey: "diamond_axe", sellText: "1 Enchanted Diamond Axe" },
+                        { type: "buy", buyKey: "emerald", buyText: "10-24 Emeralds", sellKey: "diamond_shovel", sellText: "1 Enchanted Diamond Shovel" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "17-33 Emeralds", sellKey: "diamond_axe", sellText: "Diamond Axe/Hoe" },
-                        { type: "buy", buyKey: "emerald", buyText: "18-34 Emeralds", sellKey: "diamond_pickaxe", sellText: "Diamond Pickaxe" }
+                        { type: "buy", buyKey: "emerald", buyText: "18-32 Emeralds", sellKey: "diamond_pickaxe", sellText: "1 Enchanted Diamond Pickaxe" }
                     ]}
                 ]
             },
@@ -270,43 +331,47 @@
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
                         { type: "sell", buyKey: "coal", buyText: "15 Coal", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "iron_axe", sellText: "Iron Axe" }
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "iron_axe", sellText: "1 Iron Axe" },
+                        { type: "buy", buyKey: "emerald", buyText: "7-21 Emeralds", sellKey: "iron_sword", sellText: "1 Enchanted Iron Sword" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
                         { type: "sell", buyKey: "iron_ingot", buyText: "4 Iron Ingot", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "7-22 Emeralds", sellKey: "iron_sword", sellText: "Enchanted Iron Sword" }
+                        { type: "buy", buyKey: "emerald", buyText: "36 Emeralds", sellKey: "bell", sellText: "1 Bell" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
-                        { type: "sell", buyKey: "flint", buyText: "24 Flint", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "36 Emeralds", sellKey: "bell", sellText: "Bell" }
+                        { type: "sell", buyKey: "flint", buyText: "24 Flint", sellKey: "emerald", sellText: "1 Emerald" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
                         { type: "sell", buyKey: "diamond", buyText: "1 Diamond", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "17-33 Emeralds", sellKey: "diamond_axe", sellText: "Diamond Axe" }
+                        { type: "buy", buyKey: "emerald", buyText: "17-31 Emeralds", sellKey: "diamond_axe", sellText: "1 Enchanted Diamond Axe" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "12-28 Emeralds", sellKey: "diamond_sword", sellText: "Diamond Sword" }
+                        { type: "buy", buyKey: "emerald", buyText: "13-27 Emeralds", sellKey: "diamond_sword", sellText: "1 Enchanted Diamond Sword" }
                     ]}
                 ]
             },
             farmer: {
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
-                        { type: "sell", buyKey: "wheat", buyText: "20 Wheat / 26 Potatoes / 22 Carrots / 15 Beetroot", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "sell", buyKey: "wheat", buyText: "20 Wheat / 15 Beetroot / 22 Carrot / 26 Potato", sellKey: "emerald", sellText: "1 Emerald" },
                         { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "bread", sellText: "6 Bread" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
-                        { type: "sell", buyKey: "melon", buyText: "4 Melon Blocks / 6 Pumpkins", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "apple", sellText: "4 Apple / 4 Pumpkin Pie / 18 Cookie" }
+                        { type: "sell", buyKey: "pumpkin", buyText: "6 Pumpkin", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "pumpkin_pie", sellText: "4 Pumpkin Pie" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "apple", sellText: "4 Apple" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "suspicious_stew", sellText: "1 Suspicious Stew" }
+                        { type: "sell", buyKey: "melon", buyText: "4 Melon", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "cookie", sellText: "18 Cookie" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "glistering_melon_slice", sellText: "3 Glistering Melon Slice" }
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "cake", sellText: "1 Cake" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "suspicious_stew", sellText: "1 Suspicious Stew" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "golden_carrot", sellText: "3 Golden Carrot / 1 Golden Apple" }
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "golden_carrot", sellText: "3 Golden Carrot" },
+                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "glistering_melon_slice", sellText: "3 Glistering Melon Slice" }
                     ]}
                 ]
             },
@@ -321,14 +386,15 @@
                         { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "lapis_lazuli", sellText: "1 Lapis Lazuli" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
-                        { type: "sell", buyKey: "rabbit_foot", buyText: "2 Rabbit Foot / 2 Scute", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "sell", buyKey: "rabbit_foot", buyText: "2 Rabbit's Foot", sellKey: "emerald", sellText: "1 Emerald" },
                         { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "glowstone", sellText: "1 Glowstone" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
-                        { type: "sell", buyKey: "nether_wart", buyText: "7 Nether Wart", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "sell", buyKey: "scute", buyText: "4 Turtle Scute / 9 Glass Bottle", sellKey: "emerald", sellText: "1 Emerald" },
                         { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "ender_pearl", sellText: "1 Ender Pearl" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
+                        { type: "sell", buyKey: "nether_wart", buyText: "22 Nether Wart", sellKey: "emerald", sellText: "1 Emerald" },
                         { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "experience_bottle", sellText: "1 Bottle o' Enchanting" }
                     ]}
                 ]
@@ -341,41 +407,42 @@
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
                         { type: "sell", buyKey: "glass_pane", buyText: "11 Glass Pane", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "13 Emeralds + Compass", sellKey: "map", sellText: "1 Ocean Explorer Map" }
+                        { type: "buy", buyKey: "emerald", buyText: "13 Emeralds + Compass", sellKey: "filled_map", sellText: "1 Ocean Explorer Map" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
                         { type: "sell", buyKey: "compass", buyText: "1 Compass", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "14 Emeralds + Compass", sellKey: "map", sellText: "1 Woodland Explorer Map" }
+                        { type: "buy", buyKey: "emerald", buyText: "14 Emeralds + Compass", sellKey: "filled_map", sellText: "1 Woodland Explorer Map" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "12 Emeralds + Compass", sellKey: "map", sellText: "1 Trial Explorer Map" },
-                        { type: "buy", buyKey: "emerald", buyText: "7 Emeralds", sellKey: "item_frame", sellText: "1 Item Frame" }
+                        { type: "buy", buyKey: "emerald", buyText: "7 Emeralds", sellKey: "item_frame", sellText: "1 Item Frame" },
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "banner", sellText: "1 Banner (16 ألوان)" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "banner", sellText: "1 White Banner" },
-                        { type: "buy", buyKey: "emerald", buyText: "8 Emeralds", sellKey: "banner", sellText: "1 Globe Banner Pattern" }
+                        { type: "buy", buyKey: "emerald", buyText: "8 Emeralds", sellKey: "globe_banner_pattern", sellText: "1 Globe Banner Pattern" }
                     ]}
                 ]
             },
             mason: {
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
-                        { type: "sell", buyKey: "clay_ball", buyText: "10 Clay Balls", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "sell", buyKey: "clay_ball", buyText: "10 Clay Ball", sellKey: "emerald", sellText: "1 Emerald" },
                         { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "brick", sellText: "10 Brick" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
-                        { type: "sell", buyKey: "stone", buyText: "20 Stone / Granite / Andesite / Diorite", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "sell", buyKey: "stone", buyText: "20 Stone", sellKey: "emerald", sellText: "1 Emerald" },
                         { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "chiseled_stone_bricks", sellText: "4 Chiseled Stone Bricks" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
-                        { type: "sell", buyKey: "quartz", buyText: "12 Nether Quartz", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "terracotta", sellText: "1 Dyed Terracotta" }
+                        { type: "sell", buyKey: "stone", buyText: "16 Granite / Andesite / Diorite", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "stone", sellText: "4 Polished Andesite / Granite / Diorite" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "terracotta", sellText: "1 Glazed Terracotta" }
+                        { type: "sell", buyKey: "quartz", buyText: "12 Nether Quartz", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "terracotta", sellText: "1 Colored Terracotta" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "glazed_terracotta", sellText: "1 Glazed Terracotta" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "quartz_block", sellText: "1 Block of Quartz / Quartz Pillar" }
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "quartz_block", sellText: "1 Quartz Pillar / Block of Quartz" }
                     ]}
                 ]
             },
@@ -383,7 +450,8 @@
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
                         { type: "sell", buyKey: "stick", buyText: "32 Stick", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "arrow", sellText: "16 Arrow" }
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "arrow", sellText: "16 Arrow" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald + 10 Gravel", sellKey: "flint", sellText: "10 Flint" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
                         { type: "sell", buyKey: "flint", buyText: "26 Flint", sellKey: "emerald", sellText: "1 Emerald" },
@@ -398,74 +466,79 @@
                         { type: "buy", buyKey: "emerald", buyText: "7-21 Emeralds", sellKey: "bow", sellText: "1 Enchanted Bow" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "8-22 Emeralds", sellKey: "crossbow", sellText: "1 Enchanted Crossbow" },
-                        { type: "buy", buyKey: "emerald", buyText: "2 Emeralds + 5 Arrow", sellKey: "tipped_arrow", sellText: "5 Tipped Arrow" }
+                        { type: "sell", buyKey: "tripwire_hook", buyText: "8 Tripwire Hook", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "2 Emeralds + 5 Arrow", sellKey: "tipped_arrow", sellText: "5 Tipped Arrow" },
+                        { type: "buy", buyKey: "emerald", buyText: "8-22 Emeralds", sellKey: "crossbow", sellText: "1 Enchanted Crossbow" }
                     ]}
                 ]
             },
             fisherman: {
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
-                        { type: "sell", buyKey: "cod", buyText: "15 Raw Cod / 13 Raw Salmon", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "cooked_cod", sellText: "6 Cooked Cod / Salmon" }
+                        { type: "sell", buyKey: "string", buyText: "20 String / 10 Coal", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "cod_bucket", sellText: "1 Bucket of Cod" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald + 6 Raw Cod", sellKey: "cooked_cod", sellText: "6 Cooked Cod" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
-                        { type: "sell", buyKey: "tropical_fish", buyText: "6 Tropical Fish / 4 Pufferfish", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "barrel", sellText: "1 Barrel" }
+                        { type: "sell", buyKey: "cod", buyText: "15 Raw Cod", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "2 Emeralds", sellKey: "campfire", sellText: "1 Campfire" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald + 6 Raw Salmon", sellKey: "cooked_salmon", sellText: "6 Cooked Salmon" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
-                        { type: "sell", buyKey: "string", buyText: "20 String / 16 Coal", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "campfire", sellText: "1 Campfire" }
+                        { type: "sell", buyKey: "salmon", buyText: "13 Raw Salmon", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "7-22 Emeralds", sellKey: "fishing_rod", sellText: "1 Enchanted Fishing Rod" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "7-21 Emeralds", sellKey: "fishing_rod", sellText: "1 Enchanted Fishing Rod" }
+                        { type: "sell", buyKey: "tropical_fish", buyText: "6 Tropical Fish", sellKey: "emerald", sellText: "1 Emerald" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "tropical_fish_bucket", sellText: "1 Bucket of Tropical Fish" }
+                        { type: "sell", buyKey: "pufferfish", buyText: "4 Pufferfish", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "oak_boat", sellText: "1 Boat (حسب نوع القروي)" }
                     ]}
                 ]
             },
             shepherd: {
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
-                        { type: "sell", buyKey: "white_wool", buyText: "18 Wool (أبيض، أسود، رمادي، بني)", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "sell", buyKey: "white_wool", buyText: "18 White / Brown / Black / Gray Wool", sellKey: "emerald", sellText: "1 Emerald" },
                         { type: "buy", buyKey: "emerald", buyText: "2 Emeralds", sellKey: "shears", sellText: "1 Shears" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
-                        { type: "sell", buyKey: "red_dye", buyText: "12 Dye (أي صبغة)", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "wool", sellText: "1 Wool (ملون)" }
+                        { type: "sell", buyKey: "red_dye", buyText: "12 Dye (الصبغات الأساسية)", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "wool", sellText: "1 Colored Wool (16 لون)" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "carpet", sellText: "4 Colored Carpet (16 لون)" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "carpet", sellText: "4 Carpet" }
+                        { type: "sell", buyKey: "yellow_dye", buyText: "12 Dye (صبغات إضافية)", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "bed", sellText: "1 Colored Bed (16 لون)" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "painting", sellText: "3 Painting" },
-                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "banner", sellText: "1 Banner" }
+                        { type: "sell", buyKey: "light_blue_dye", buyText: "12 Dye (صبغات نادرة)", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "banner", sellText: "1 Colored Banner (16 لون)" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "bed", sellText: "1 Bed" }
+                        { type: "buy", buyKey: "emerald", buyText: "2 Emeralds", sellKey: "painting", sellText: "3 Painting" }
                     ]}
                 ]
             },
             butcher: {
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
-                        { type: "sell", buyKey: "chicken", buyText: "14 Raw Chicken / 7 Raw Porkchop / 7 Raw Mutton", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "cooked_chicken", sellText: "5 Cooked Chicken / Porkchop" }
+                        { type: "sell", buyKey: "chicken", buyText: "14 Raw Chicken / 7 Raw Porkchop / 4 Raw Rabbit", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "rabbit_stew", sellText: "1 Rabbit Stew" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
-                        { type: "sell", buyKey: "beef", buyText: "10 Raw Beef / 4 Raw Rabbit", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "cooked_mutton", sellText: "5 Cooked Mutton / 4 Cooked Beef" }
+                        { type: "sell", buyKey: "coal", buyText: "15 Coal", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "cooked_porkchop", sellText: "5 Cooked Porkchop / 8 Cooked Chicken" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
-                        { type: "sell", buyKey: "sweet_berries", buyText: "10 Sweet Berries", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "rabbit_stew", sellText: "1 Rabbit Stew" }
+                        { type: "sell", buyKey: "mutton", buyText: "7 Raw Mutton / 10 Raw Beef", sellKey: "emerald", sellText: "1 Emerald" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
                         { type: "sell", buyKey: "dried_kelp_block", buyText: "10 Dried Kelp Block", sellKey: "emerald", sellText: "1 Emerald" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "sell", buyKey: "coal", buyText: "15 Coal", sellKey: "emerald", sellText: "1 Emerald" }
+                        { type: "sell", buyKey: "sweet_berries", buyText: "10 Sweet Berries", sellKey: "emerald", sellText: "1 Emerald" }
                     ]}
                 ]
             },
@@ -473,42 +546,56 @@
                 levels: [
                     { name: "المستوى 1 (Novice)", class: "lvl-1", trades: [
                         { type: "sell", buyKey: "leather", buyText: "6 Leather", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "leather_helmet", sellText: "Leather Cap" }
+                        { type: "buy", buyKey: "emerald", buyText: "7 Emeralds", sellKey: "leather_chestplate", sellText: "1 Dyed Leather Tunic" },
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "leather_leggings", sellText: "1 Dyed Leather Pants" }
                     ]},
                     { name: "المستوى 2 (Apprentice)", class: "lvl-2", trades: [
                         { type: "sell", buyKey: "flint", buyText: "26 Flint", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "7 Emeralds", sellKey: "leather_chestplate", sellText: "Leather Tunic" }
+                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "leather_helmet", sellText: "1 Dyed Leather Cap" },
+                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "leather_boots", sellText: "1 Dyed Leather Boots" }
                     ]},
                     { name: "المستوى 3 (Journeyman)", class: "lvl-3", trades: [
                         { type: "sell", buyKey: "rabbit_hide", buyText: "9 Rabbit Hide", sellKey: "emerald", sellText: "1 Emerald" },
-                        { type: "buy", buyKey: "emerald", buyText: "6 Emeralds", sellKey: "leather_leggings", sellText: "Leather Pants" }
+                        { type: "buy", buyKey: "emerald", buyText: "7 Emeralds", sellKey: "leather_chestplate", sellText: "1 Dyed Leather Tunic" }
                     ]},
                     { name: "المستوى 4 (Expert)", class: "lvl-4", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "leather_boots", sellText: "Leather Boots" }
+                        { type: "sell", buyKey: "scute", buyText: "4 Turtle Scute", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "buy", buyKey: "emerald", buyText: "6 Emeralds", sellKey: "leather_horse_armor", sellText: "1 Leather Horse Armor" }
                     ]},
                     { name: "المستوى 5 (Master)", class: "lvl-5", trades: [
-                        { type: "buy", buyKey: "emerald", buyText: "6 Emeralds", sellKey: "leather_horse_armor", sellText: "Leather Horse Armor / Saddle" }
+                        { type: "buy", buyKey: "emerald", buyText: "6 Emeralds", sellKey: "saddle", sellText: "1 Saddle" },
+                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "leather_helmet", sellText: "1 Dyed Leather Cap" }
                     ]}
                 ]
             },
             wandering: {
                 levels: [
-                    { name: "قائمة عناصر وشتال التاجر المتجول الكاملة", class: "lvl-1", trades: [
+                    { name: "صفقات الشراء من اللاعب (يشتريها التاجر المتجول)", class: "lvl-2", trades: [
+                        { type: "sell", buyKey: "potion", buyText: "1 Water Bottle", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "sell", buyKey: "water_bucket", buyText: "1 Water Bucket", sellKey: "emerald", sellText: "2 Emeralds" },
+                        { type: "sell", buyKey: "milk_bucket", buyText: "1 Milk Bucket", sellKey: "emerald", sellText: "2 Emeralds" },
+                        { type: "sell", buyKey: "fermented_spider_eye", buyText: "1 Fermented Spider Eye", sellKey: "emerald", sellText: "3 Emeralds" },
+                        { type: "sell", buyKey: "baked_potato", buyText: "4 Baked Potato", sellKey: "emerald", sellText: "1 Emerald" },
+                        { type: "sell", buyKey: "hay_block", buyText: "1 Hay Bale", sellKey: "emerald", sellText: "1 Emerald" }
+                    ]},
+                    { name: "صفقات البيع العادية (1 إيميرالد)", class: "lvl-1", trades: [
                         { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "sapling_slideshow", sellKeyText: "1 Sapling (جميع أنواع الشتلات)" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "melon_seeds", sellKeyText: "1 Melon/Pumpkin Seeds" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "flower_slideshow", sellKeyText: "1 Flower (الزهور العادية)" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "sugar_cane", sellKeyText: "1 Sugar Cane / 2 Cactus" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "vine", sellKeyText: "1 Vine / 2 Kelp / 2 Lily Pad" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "moss_block", sellKeyText: "1 Moss Block / 2 Pointed Dripstone" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "sand", sellKeyText: "1 Sand / Red Sand / Rooted Dirt" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "fern", sellKeyText: "1 Fern / Small Dripleaf / Spore Blossom" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "glow_ink_sac", sellKeyText: "1 Glow Ink Sac / Gunpowder" },
-                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "lead", sellKeyText: "1 Lead (حبل)" },
-                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "packed_ice", sellKeyText: "3 Packed Ice / Podzol / Coral Block" },
-                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "slimeball", sellKeyText: "1 Slimeball" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "melon_seeds", sellKeyText: "1 Melon / Pumpkin / Beetroot / Wheat Seeds" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "flower_slideshow", sellKeyText: "1 Flower (جميع الزهور)" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "red_dye", sellKeyText: "3 Dye (جميع الصبغات)" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "sugar_cane", sellKeyText: "1 Sugar Cane / 3 Cactus / 1 Brown & Red Mushroom" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "vine", sellKeyText: "1 Vine / 3 Kelp / 2 Lily Pad" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "moss_block", sellKeyText: "1 Moss Block (2) / 2 Pointed Dripstone" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "sand", sellKeyText: "8 Sand / 4 Red Sand / 2 Rooted Dirt" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "fern", sellKeyText: "1 Fern / 2 Small Dripleaf" },
+                        { type: "buy", buyKey: "emerald", buyText: "1 Emerald", sellKey: "glow_ink_sac", sellKeyText: "3 Glow Ink Sac / 1 Gunpowder (8)" }
+                    ]},
+                    { name: "صفقات البيع النادرة والمميزة (2 - 6 إيميرالد)", class: "lvl-5", trades: [
+                        { type: "buy", buyKey: "emerald", buyText: "2 Emeralds", sellKey: "emerald", sellKeyText: "1 Sea Pickle / Glowstone / Cocoa Beans" },
+                        { type: "buy", buyKey: "emerald", buyText: "3 Emeralds", sellKey: "packed_ice", sellKeyText: "1 Packed Ice / 3 Podzol / 1 Coral Block" },
+                        { type: "buy", buyKey: "emerald", buyText: "4 Emeralds", sellKey: "slime_ball", sellKeyText: "1 Slimeball" },
                         { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "nautilus_shell", sellKeyText: "1 Nautilus Shell" },
-                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "pufferfish_bucket", sellKeyText: "1 Pufferfish/Tropical Fish Bucket" },
-                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "potion", sellKeyText: "1 Potion of Invisibility" },
+                        { type: "buy", buyKey: "emerald", buyText: "5 Emeralds", sellKey: "pufferfish_bucket", sellKeyText: "1 Bucket of Pufferfish / Tropical Fish" },
                         { type: "buy", buyKey: "emerald", buyText: "6 Emeralds", sellKey: "blue_ice", sellKeyText: "1 Blue Ice" }
                     ]}
                 ]
@@ -516,15 +603,26 @@
         };
 
         function getPiglinTrades() {
-            let arrowKey = currentEdition === 'java' ? 'spectral_arrow' : 'arrow';
-            let arrowText = currentEdition === 'java' ? '8-12x سهم توهج (Spectral Arrow)' : '8-12x سهام عادية';
+            const isJava = currentEdition === 'java';
             return [
-                { buyKey: "gold_ingot", buyText: "1x سبيكة ذهب", sellKey: "enchanted_book", sellText: "كتاب Soul Speed (1.1%)" },
-                { buyKey: "gold_ingot", buyText: "1x سبيكة ذهب", sellKey: "ender_pearl", sellText: "4-8x إندر بيرل (2.2%)" },
-                { buyKey: "gold_ingot", buyText: "1x سبيكة ذهب", sellKey: arrowKey, sellText: arrowText },
-                { buyKey: "gold_ingot", buyText: "1x سبيكة ذهب", sellKey: "fire_charge", sellText: "1x فاير تشارج (4.4%)" },
-                { buyKey: "gold_ingot", buyText: "1x سبيكة ذهب", sellKey: "obsidian", sellText: "1x أوبسيديان (8.8%)" },
-                { buyKey: "gold_ingot", buyText: "1x سبيكة ذهب", sellKey: "crying_obsidian", sellText: "1-3x أوبسيديان باكٍ (8.8%)" }
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "enchanted_book", sellText: "Enchanted Book (Soul Speed) — 1.09%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "golden_boots", sellText: "Iron Boots (Soul Speed) — 1.74%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "splash_potion", sellText: "Splash Potion of Fire Resistance — 1.74%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "potion", sellText: "Potion of Fire Resistance — 1.74%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "potion", sellText: "Water Bottle — 2.18%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "iron_nugget", sellText: "10–36x Iron Nugget — 2.18%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "ender_pearl", sellText: "2–4x Ender Pearl — 2.18%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "string", sellText: "3–9x String — 4.36%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "quartz", sellText: "5–12x Nether Quartz — 4.36%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "obsidian", sellText: "1x Obsidian — 8.71%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "crying_obsidian", sellText: "1–3x Crying Obsidian — 8.71%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "fire_charge", sellText: "1x Fire Charge — 8.71%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "leather", sellText: "2–4x Leather — 8.71%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "soul_sand", sellText: "2–8x Soul Sand — 8.71%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "nether_brick", sellText: "2–8x Nether Brick — 8.71%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: isJava ? "spectral_arrow" : "arrow", sellText: isJava ? "6–12x Spectral Arrow — 8.71%" : "6–12x Arrow — 8.71%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "gravel", sellText: "8–16x Gravel — 8.71%" },
+                { buyKey: "gold_ingot", buyText: "1x Gold Ingot", sellKey: "blackstone", sellText: "8–16x Blackstone — 8.71%" }
             ];
         }
 
