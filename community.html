@@ -101,6 +101,31 @@
             filter: drop-shadow(0 0 15px rgba(0, 242, 254, 0.7));
         }
 
+        /* دائرة الجليد حول البروفايل فقط للحسابات التي تملكها */
+        .avatar-ice-ring {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            padding: 2px;
+            background: transparent;
+            border: 2px solid transparent;
+            box-shadow: none;
+            flex-shrink: 0;
+        }
+
+        .avatar-ice-ring.has-ice-circle {
+            border-color: #bae6fd;
+            background: radial-gradient(circle, rgba(125, 211, 252, 0.28) 62%, rgba(0, 242, 254, 0.65) 100%);
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.65), inset 0 0 6px rgba(224, 242, 254, 0.55);
+        }
+
+        .avatar-ice-ring.has-ice-circle .user-avatar-sm,
+        .avatar-ice-ring.has-ice-circle .comment-avatar {
+            border-color: #e0f2fe;
+        }
+
         /* حاوية مجتمع اللاعبين */
         .feed-container {
             max-width: 720px;
@@ -452,7 +477,9 @@
         <!-- صندوق إنشاء منشور مع خيار رفع صورة -->
         <div class="create-post-card">
             <div class="create-post-header">
-                <div id="current-user-avatar" class="user-avatar-sm">👤</div>
+                <div id="current-user-ice-ring" class="avatar-ice-ring">
+                    <div id="current-user-avatar" class="user-avatar-sm">👤</div>
+                </div>
                 <span id="current-username-display" style="font-weight: 900; font-size: 1rem;">زائر</span>
             </div>
             <textarea id="post-content-input" placeholder="شارك إنجازاتك أو صور بناياتك مع مجتمع اللاعبين..."></textarea>
@@ -510,23 +537,74 @@
         };
 
         let tempPostImageData = null;
+        let accountsCache = {};
+        let latestPostsData = {};
+
+        function accountHasIceCircle(username, fallbackData) {
+            if (!username || username === 'ضيف') return false;
+            const acc = accountsCache[username] || {};
+            const roles = Array.isArray(acc.roles) ? acc.roles : ((fallbackData && Array.isArray(fallbackData.roles)) ? fallbackData.roles : []);
+            const ownedItems = Array.isArray(acc.ownedItems) ? acc.ownedItems : [];
+            const ownedStrips = Array.isArray(acc.ownedStrips) ? acc.ownedStrips : [];
+            const owned = Boolean(
+                username.toLowerCase() === 'أسامة' ||
+                roles.includes('owner') ||
+                acc.iceStrip ||
+                acc.iceCircle ||
+                acc.winterFrame ||
+                (fallbackData && (fallbackData.iceStrip || fallbackData.iceCircle || fallbackData.winterFrame)) ||
+                ownedItems.includes('ice_strip') ||
+                ownedItems.includes('ice_circle') ||
+                ownedItems.includes('winter_frame') ||
+                ownedStrips.includes('ice_strip') ||
+                ownedStrips.includes('ice_circle')
+            );
+            const selected = acc.selectedIceCircle || (fallbackData && fallbackData.selectedIceCircle) || 'ice_circle';
+            return owned && (selected === 'ice_circle');
+        }
+
+        function renderAvatarWithCircle(username, avatarSrc, avatarClass, fallbackData) {
+            const safeName = username || '👤';
+            const innerAvatar = avatarSrc
+                ? `<div class="${avatarClass}"><img src="${avatarSrc}" alt="Avatar"></div>`
+                : `<div class="${avatarClass}">${escapeHtml(safeName.charAt(0).toUpperCase())}</div>`;
+            const circleClass = accountHasIceCircle(username, fallbackData) ? ' has-ice-circle' : '';
+            return `<div class="avatar-ice-ring${circleClass}">${innerAvatar}</div>`;
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
             initUserUI();
+            initAccountsListener();
             loadPostsFromCloud();
         });
 
+        function initAccountsListener() {
+            db.ref('accounts').on('value', (snapshot) => {
+                accountsCache = snapshot.val() || {};
+                initUserUI();
+                renderPostsFeed(latestPostsData);
+            });
+        }
+
         function initUserUI() {
             const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
-            if (savedUser) {
-                document.getElementById('current-username-display').innerText = savedUser.username;
-                const avatarBox = document.getElementById('current-user-avatar');
-                if (savedUser.avatar) {
-                    avatarBox.innerHTML = `<img src="${savedUser.avatar}" alt="Avatar">`;
-                } else {
-                    avatarBox.innerHTML = savedUser.username.charAt(0).toUpperCase();
-                }
+            if (!savedUser) return;
+
+            const acc = accountsCache[savedUser.username] || {};
+            const displayAvatar = acc.avatar || savedUser.avatar || '';
+
+            document.getElementById('current-username-display').innerText = savedUser.username;
+            const avatarBox = document.getElementById('current-user-avatar');
+            if (displayAvatar) {
+                avatarBox.innerHTML = `<img src="${displayAvatar}" alt="Avatar">`;
+            } else {
+                avatarBox.innerHTML = savedUser.username.charAt(0).toUpperCase();
             }
+
+            document.getElementById('current-user-ice-ring').classList.toggle(
+                'has-ice-circle',
+                accountHasIceCircle(savedUser.username, savedUser)
+            );
         }
 
         function handlePostImageSelect(event) {
@@ -566,8 +644,10 @@
                 const acc = snapshot.val() || {};
                 const postData = {
                     author: savedUser.username,
-                    avatar: acc.avatar || '',
-                    roles: Array.isArray(acc.roles) ? acc.roles : ['player'],
+                    avatar: acc.avatar || savedUser.avatar || '',
+                    roles: Array.isArray(acc.roles) ? acc.roles : (Array.isArray(savedUser.roles) ? savedUser.roles : ['player']),
+                    iceStrip: Boolean(acc.iceStrip || acc.iceCircle || acc.winterFrame),
+                    selectedIceCircle: acc.selectedIceCircle || 'ice_circle',
                     content: content,
                     image: tempPostImageData || '',
                     timestamp: Date.now()
@@ -583,99 +663,107 @@
 
         function loadPostsFromCloud() {
             db.ref('community_posts').on('value', (snapshot) => {
-                const feed = document.getElementById('posts-feed');
-                const data = snapshot.val() || {};
-                const keys = Object.keys(data).reverse();
+                latestPostsData = snapshot.val() || {};
+                renderPostsFeed(latestPostsData);
+            });
+        }
 
-                if (keys.length === 0) {
-                    feed.innerHTML = `<p style="text-align: center; color: #64748b; margin-top: 30px;">لا توجد منشورات حالياً.</p>`;
-                    return;
-                }
+        function renderPostsFeed(data) {
+            const feed = document.getElementById('posts-feed');
+            if (!feed) return;
+            const keys = Object.keys(data || {}).reverse();
 
-                const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
-                const currentUsername = savedUser ? savedUser.username : '';
+            if (keys.length === 0) {
+                feed.innerHTML = `<p style="text-align: center; color: #64748b; margin-top: 30px;">لا توجد منشورات حالياً.</p>`;
+                return;
+            }
 
-                feed.innerHTML = keys.map(postId => {
-                    const post = data[postId];
-                    const avatarHtml = post.avatar ? `<img src="${post.avatar}" alt="Avatar">` : post.author.charAt(0).toUpperCase();
-                    const rolesHtml = (post.roles || ['player']).map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || 'لاعب'}</span>`).join(' ');
-                    
-                    const canDelete = (currentUsername === post.author || currentUsername.toLowerCase() === 'أسامة');
-                    const deleteBtnHtml = canDelete ? `<button class="btn-delete-post" onclick="deletePost('${postId}')">🗑️ حذف</button>` : '';
+            const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            const currentUsername = savedUser ? savedUser.username : '';
 
-                    // صور المنشور إن وجدت
-                    const postImageHtml = post.image ? `<div class="post-image-container"><img src="${post.image}" alt="Post Image"></div>` : '';
+            feed.innerHTML = keys.map(postId => {
+                const post = data[postId];
+                const authorAcc = accountsCache[post.author] || {};
+                const postAvatarSrc = authorAcc.avatar || post.avatar || '';
+                const postRoles = Array.isArray(authorAcc.roles) ? authorAcc.roles : (post.roles || ['player']);
+                const postAvatarHtml = renderAvatarWithCircle(post.author, postAvatarSrc, 'user-avatar-sm', post);
+                const rolesHtml = postRoles.map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || 'لاعب'}</span>`).join(' ');
+                
+                const canDelete = (currentUsername === post.author || currentUsername.toLowerCase() === 'أسامة');
+                const deleteBtnHtml = canDelete ? `<button class="btn-delete-post" onclick="deletePost('${postId}')">🗑️ حذف</button>` : '';
 
-                    // نظام التصويت الفريد (لايك أو دس لايك واحد فقط)
-                    const votes = post.votes || {};
-                    let likesCount = 0;
-                    let dislikesCount = 0;
-                    let userVote = null;
+                const postImageHtml = post.image ? `<div class="post-image-container"><img src="${post.image}" alt="Post Image"></div>` : '';
 
-                    Object.keys(votes).forEach(user => {
-                        if (votes[user] === 'like') likesCount++;
-                        if (votes[user] === 'dislike') dislikesCount++;
-                        if (user === currentUsername) userVote = votes[user];
-                    });
+                const votes = post.votes || {};
+                let likesCount = 0;
+                let dislikesCount = 0;
+                let userVote = null;
 
-                    // جلب التعليقات مع البروفايل والرتب المحدثة (شبل، يوتيوبر، إلخ)
-                    const commentsObj = post.comments || {};
-                    const commentKeys = Object.keys(commentsObj);
+                Object.keys(votes).forEach(user => {
+                    if (votes[user] === 'like') likesCount++;
+                    if (votes[user] === 'dislike') dislikesCount++;
+                    if (user === currentUsername) userVote = votes[user];
+                });
 
-                    const commentsHtml = commentKeys.map(cid => {
-                        const com = commentsObj[cid];
-                        const comAvatarHtml = com.avatar ? `<img src="${com.avatar}" alt="Avatar">` : com.author.charAt(0).toUpperCase();
-                        const comRolesHtml = (com.roles || ['player']).map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || 'لاعب'}</span>`).join(' ');
-                        const canDeleteComment = (currentUsername === com.author || currentUsername.toLowerCase() === 'أسامة');
+                const commentsObj = post.comments || {};
+                const commentKeys = Object.keys(commentsObj);
 
-                        return `
-                            <div class="comment-item">
-                                <div class="comment-user-box">
-                                    <div class="comment-avatar">${comAvatarHtml}</div>
-                                    <div class="comment-content-area">
-                                        <div class="comment-author-row">
-                                            <span class="comment-author-name">${escapeHtml(com.author)}</span>
-                                            ${comRolesHtml}
-                                        </div>
-                                        <div class="comment-text">${escapeHtml(com.text)}</div>
-                                    </div>
-                                </div>
-                                ${canDeleteComment ? `<span style="color:#ef4444; cursor:pointer; font-size:0.75rem; font-weight:700;" onclick="deleteComment('${postId}', '${cid}')">حذف</span>` : ''}
-                            </div>
-                        `;
-                    }).join('');
+                const commentsHtml = commentKeys.map(cid => {
+                    const com = commentsObj[cid];
+                    const comAcc = accountsCache[com.author] || {};
+                    const comAvatarSrc = comAcc.avatar || com.avatar || '';
+                    const comRoles = Array.isArray(comAcc.roles) ? comAcc.roles : (com.roles || ['player']);
+                    const comAvatarHtml = renderAvatarWithCircle(com.author, comAvatarSrc, 'comment-avatar', com);
+                    const comRolesHtml = comRoles.map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || 'لاعب'}</span>`).join(' ');
+                    const canDeleteComment = (currentUsername === com.author || currentUsername.toLowerCase() === 'أسامة');
 
                     return `
-                        <div class="instagram-card">
-                            <div class="ig-header">
-                                <div class="ig-user-info">
-                                    <div class="user-avatar-sm">${avatarHtml}</div>
-                                    <div>
-                                        <div class="ig-username">${escapeHtml(post.author)} ${rolesHtml}</div>
-                                        <div style="font-size: 0.72rem; color: #64748b; margin-top:2px;">${getTimeAgo(post.timestamp)}</div>
+                        <div class="comment-item">
+                            <div class="comment-user-box">
+                                ${comAvatarHtml}
+                                <div class="comment-content-area">
+                                    <div class="comment-author-row">
+                                        <span class="comment-author-name">${escapeHtml(com.author)}</span>
+                                        ${comRolesHtml}
                                     </div>
-                                </div>
-                                ${deleteBtnHtml}
-                            </div>
-                            ${post.content ? `<div class="ig-body">${escapeHtml(post.content)}</div>` : ''}
-                            ${postImageHtml}
-                            <div class="ig-actions">
-                                <button class="action-icon-btn ${userVote === 'like' ? 'active-like' : ''}" onclick="votePost('${postId}', 'like')">❤️ أعجبني (<span id="likes-${postId}">${likesCount}</span>)</button>
-                                <button class="action-icon-btn ${userVote === 'dislike' ? 'active-dislike' : ''}" onclick="votePost('${postId}', 'dislike')">👎 لا يعجبني (<span id="dislikes-${postId}">${dislikesCount}</span>)</button>
-                            </div>
-                            <div class="ig-comments-section">
-                                <div id="comments-list-${postId}">
-                                    ${commentsHtml || '<div style="color:#64748b; font-size:0.85rem; margin-bottom:10px;">لا توجد تعليقات بعد. كن أول من يعلق!</div>'}
-                                </div>
-                                <div class="comment-input-box">
-                                    <input type="text" id="comment-input-${postId}" class="comment-input" placeholder="اكتب تعليقاً...">
-                                    <button class="btn-comment" onclick="addComment('${postId}')">تعليق</button>
+                                    <div class="comment-text">${escapeHtml(com.text)}</div>
                                 </div>
                             </div>
+                            ${canDeleteComment ? `<span style="color:#ef4444; cursor:pointer; font-size:0.75rem; font-weight:700;" onclick="deleteComment('${postId}', '${cid}')">حذف</span>` : ''}
                         </div>
                     `;
                 }).join('');
-            });
+
+                return `
+                    <div class="instagram-card">
+                        <div class="ig-header">
+                            <div class="ig-user-info">
+                                ${postAvatarHtml}
+                                <div>
+                                    <div class="ig-username">${escapeHtml(post.author)} ${rolesHtml}</div>
+                                    <div style="font-size: 0.72rem; color: #64748b; margin-top:2px;">${getTimeAgo(post.timestamp)}</div>
+                                </div>
+                            </div>
+                            ${deleteBtnHtml}
+                        </div>
+                        ${post.content ? `<div class="ig-body">${escapeHtml(post.content)}</div>` : ''}
+                        ${postImageHtml}
+                        <div class="ig-actions">
+                            <button class="action-icon-btn ${userVote === 'like' ? 'active-like' : ''}" onclick="votePost('${postId}', 'like')">❤️ أعجبني (<span id="likes-${postId}">${likesCount}</span>)</button>
+                            <button class="action-icon-btn ${userVote === 'dislike' ? 'active-dislike' : ''}" onclick="votePost('${postId}', 'dislike')">👎 لا يعجبني (<span id="dislikes-${postId}">${dislikesCount}</span>)</button>
+                        </div>
+                        <div class="ig-comments-section">
+                            <div id="comments-list-${postId}">
+                                ${commentsHtml || '<div style="color:#64748b; font-size:0.85rem; margin-bottom:10px;">لا توجد تعليقات بعد. كن أول من يعلق!</div>'}
+                            </div>
+                            <div class="comment-input-box">
+                                <input type="text" id="comment-input-${postId}" class="comment-input" placeholder="اكتب تعليقاً...">
+                                <button class="btn-comment" onclick="addComment('${postId}')">تعليق</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
         function votePost(postId, type) {
@@ -717,8 +805,10 @@
                 const acc = snapshot.val() || {};
                 const commentData = {
                     author: savedUser.username,
-                    avatar: acc.avatar || '',
-                    roles: Array.isArray(acc.roles) ? acc.roles : ['player'],
+                    avatar: acc.avatar || savedUser.avatar || '',
+                    roles: Array.isArray(acc.roles) ? acc.roles : (Array.isArray(savedUser.roles) ? savedUser.roles : ['player']),
+                    iceStrip: Boolean(acc.iceStrip || acc.iceCircle || acc.winterFrame),
+                    selectedIceCircle: acc.selectedIceCircle || 'ice_circle',
                     text: text,
                     timestamp: Date.now()
                 };

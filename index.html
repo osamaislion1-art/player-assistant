@@ -98,6 +98,27 @@
             gap: 12px;
         }
 
+        /* دائرة الجليد حول البروفايل فقط بدون ثلج متراكم */
+        .avatar-ice-ring {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            padding: 3px;
+            background: transparent;
+            border: 2px solid transparent;
+            box-shadow: none;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .avatar-ice-ring.has-ice-circle {
+            border-color: #bae6fd;
+            background: radial-gradient(circle, rgba(125, 211, 252, 0.28) 62%, rgba(0, 242, 254, 0.65) 100%);
+            box-shadow: 0 0 14px rgba(0, 242, 254, 0.7), inset 0 0 8px rgba(224, 242, 254, 0.6);
+        }
+
         .user-avatar {
             width: 42px;
             height: 42px;
@@ -113,6 +134,10 @@
             overflow: hidden;
             border: 2px solid #00f2fe;
             flex-shrink: 0;
+        }
+
+        .avatar-ice-ring.has-ice-circle .user-avatar {
+            border-color: #e0f2fe;
         }
 
         .user-avatar img {
@@ -520,6 +545,40 @@
             width: 100%; padding: 12px 16px; background: rgba(6, 9, 17, 0.9);
             border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px;
             color: #ffffff; font-size: 0.95rem; font-weight: 600; outline: none;
+            transition: border-color 0.25s ease;
+        }
+        .form-input:focus {
+            border-color: #00f2fe;
+        }
+
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-input-wrapper .form-input {
+            padding-left: 44px;
+        }
+        .toggle-password-btn {
+            position: absolute;
+            left: 12px;
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .toggle-password-btn:hover {
+            color: #00f2fe;
+            transform: scale(1.08);
+        }
+        .toggle-password-btn svg {
+            width: 20px;
+            height: 20px;
         }
 
         .submit-btn {
@@ -625,7 +684,9 @@
 
     <header class="user-top-bar">
         <div class="user-info-box">
-            <div id="user-avatar" class="user-avatar">👤</div>
+            <div id="avatar-ice-ring" class="avatar-ice-ring">
+                <div id="user-avatar" class="user-avatar">👤</div>
+            </div>
             <div class="user-details">
                 <div class="user-name-text">
                     <span id="user-display-name">جاري التحميل...</span>
@@ -667,7 +728,7 @@
     </section>
 
     <main class="grid-container">
-        <!-- كرت حاسبة إحداثيات النذر (بصورة بلكة النذر RedNetherGrass.png) -->
+        <!-- كرت حاسبة إحداثيات النذر -->
         <div class="card">
             <div class="card-img-holder">
                 <img src="images/RedNetherGrass.png" class="mc-item-icon" alt="حاسبة الإحداثيات">
@@ -740,14 +801,14 @@
             <a href="villagers.html" class="btn">دليل المقايضة والصفقات</a>
         </div>
 
-        <!-- كرت المتجر (قريباً) -->
+        <!-- كرت المتجر (مفعّل ويفتح store.html) -->
         <div class="card">
             <div class="card-img-holder">
-                <img src="images/couns.png" class="mc-item-icon" alt="المجر">
+                <img src="images/couns.png" class="mc-item-icon" alt="المتجر">
             </div>
             <h2>متجر Player Assistant</h2>
-            <p>متجر الموقع لشراء الرتب والمميزات الحصرية باستخدام الكوينز المكتسبة. انتظرونا قريباً!</p>
-            <a href="#" class="btn" style="opacity: 0.7; pointer-events: none;">قريباً في التحديثات...</a>
+            <p>متجر الموقع لشراء الرتب والمميزات الحصرية باستخدام الكوينز المكتسبة.</p>
+            <a href="store.html" class="btn">دخول المتجر</a>
         </div>
     </main>
 
@@ -773,7 +834,7 @@
             <button class="close-btn" onclick="closeRewardAdModal()">✖</button>
             <div class="modal-header">
                 <h3>🪙 إعلان مكافأة الكوينز</h3>
-                <p class="modal-subtitle">انتظر انتهاء المؤقت لاستلاستلام هدية الكوينز</p>
+                <p class="modal-subtitle">انتظر انتهاء المؤقت لاستلام هدية الكوينز</p>
             </div>
             <div class="modal-body">
                 <div class="ad-container-box">
@@ -788,7 +849,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار تسجيل الدخول القديمة والمرتبة (بدون جوجل، مع تسجيل دخول وإنشاء حساب منفصلة للـ Player Assistant، وخيار الضيف) -->
+    <!-- نافذة تسجيل الدخول -->
     <div id="auth-modal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -797,7 +858,6 @@
             </div>
             
             <div class="modal-body" style="padding-top: 10px;">
-                <!-- القائمة الرئيسية -->
                 <div id="auth-main-options" class="auth-options-container">
                     <div class="auth-option-card" onclick="openPaAuthMode('login')">
                         <div class="auth-option-info">
@@ -833,7 +893,6 @@
                     </div>
                 </div>
 
-                <!-- نموذج Player Assistant الفرعي -->
                 <div id="pa-auth-form-container" style="display: none; text-align: right;">
                     <button class="auth-back-btn" onclick="backToAuthOptions()">⬅ رجوع لخيارات التسجيل</button>
                     
@@ -848,7 +907,15 @@
                     </div>
                     <div class="form-group">
                         <label for="auth-password">كلمة السر:</label>
-                        <input type="password" id="auth-password" class="form-input" placeholder="كلمة السر..." autocomplete="off">
+                        <div class="password-input-wrapper">
+                            <input type="password" id="auth-password" class="form-input" placeholder="كلمة السر..." autocomplete="off">
+                            <button type="button" class="toggle-password-btn" title="إظهار / إخفاء كلمة السر" onclick="togglePasswordVisibility('auth-password', this)">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <p id="auth-error-msg" class="error-text"></p>
                     <button id="auth-submit-btn" class="submit-btn" onclick="handleAuthSubmit()">
@@ -860,7 +927,7 @@
         </div>
     </div>
 
-    <!-- نافذة إعدادات الحساب مع توضيح تكلفة تغيير كلمة السر (50 كوينز) -->
+    <!-- نافذة إعدادات الحساب -->
     <div id="profile-modal" class="modal-overlay">
         <div class="modal-content" style="max-width: 480px;">
             <button class="close-btn" onclick="closeProfileModal()">✖</button>
@@ -873,18 +940,48 @@
                     <label>اختيار صورة شخصية من الملفات:</label>
                     <div class="file-upload-box" onclick="document.getElementById('profile-avatar-file').click()" style="background: rgba(6,9,17,0.9); border: 2px dashed rgba(0,242,254,0.4); border-radius:14px; padding:16px; text-align:center; cursor:pointer;">
                         <span style="font-size: 1.8rem; display: block; margin-bottom: 5px;">📁</span>
-                        <span style="color: #00f2fe; font-weight: 700;">اضغط هنا لاختيار صورة من جهازك</span>
+                        <span id="profile-avatar-status" style="color: #00f2fe; font-weight: 700;">اضغط هنا لاختيار صورة من جهازك</span>
                         <input type="file" id="profile-avatar-file" accept="image/*" style="display:none;" onchange="handleFileSelect(event)">
                     </div>
+                    <div style="margin-top: 12px; display: flex; justify-content: center;">
+                        <div id="profile-preview-ring" class="avatar-ice-ring">
+                            <div id="profile-avatar-preview" class="user-avatar" style="width: 64px; height: 64px; font-size: 1.4rem;">👤</div>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="form-group" id="profile-ice-circle-group" style="display: none;">
+                    <label for="profile-ice-circle-select">شريط الجليد (دائرة حول البروفايل):</label>
+                    <select id="profile-ice-circle-select" class="form-input" onchange="previewAccountIceCircle()">
+                        <option value="ice_circle">❄️ تفعيل دائرة الجليد</option>
+                        <option value="none">إخفاء دائرة الجليد</option>
+                    </select>
+                </div>
+
                 <hr style="border: 0; border-top: 1px solid rgba(0, 242, 254, 0.2); margin: 20px 0;">
                 <div class="form-group">
                     <label for="profile-old-password">كلمة السر القديمة:</label>
-                    <input type="password" id="profile-old-password" class="form-input" placeholder="كلمة السر القديمة">
+                    <div class="password-input-wrapper">
+                        <input type="password" id="profile-old-password" class="form-input" placeholder="كلمة السر القديمة">
+                        <button type="button" class="toggle-password-btn" title="إظهار / إخفاء كلمة السر" onclick="togglePasswordVisibility('profile-old-password', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="profile-new-password">كلمة السر الجديدة (بخصم 50 🪙):</label>
-                    <input type="password" id="profile-new-password" class="form-input" placeholder="كلمة السر الجديدة">
+                    <div class="password-input-wrapper">
+                        <input type="password" id="profile-new-password" class="form-input" placeholder="كلمة السر الجديدة">
+                        <button type="button" class="toggle-password-btn" title="إظهار / إخفاء كلمة السر" onclick="togglePasswordVisibility('profile-new-password', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <p id="profile-error-msg" class="error-text"></p>
                 <button class="submit-btn" onclick="saveProfileSettings()">
@@ -961,6 +1058,92 @@
             guest:     { name: '👤 ضيف',    class: 'role-guest' }
         };
 
+        function mergeRolesSafely(acc, fallbackUser) {
+            const set = new Set();
+            if (acc && Array.isArray(acc.roles)) acc.roles.forEach(r => r && set.add(r));
+            else if (acc && acc.role) set.add(acc.role);
+
+            if (fallbackUser && Array.isArray(fallbackUser.roles)) {
+                fallbackUser.roles.forEach(r => r && set.add(r));
+            }
+
+            const uname = (fallbackUser && fallbackUser.username) || '';
+            if (uname.toLowerCase() === 'أسامة' || set.has('owner')) {
+                set.add('owner');
+                set.add('developer');
+                set.add('vip');
+            }
+
+            if (set.size === 0) {
+                set.add((fallbackUser && fallbackUser.isGuest) ? 'guest' : 'player');
+            }
+            if (set.size > 1 && set.has('guest')) {
+                set.delete('guest');
+            }
+            return Array.from(set);
+        }
+
+        function hasAccountIceCircle(user, acc) {
+            if (!user || user.isGuest) return false;
+            const roles = (acc && Array.isArray(acc.roles)) ? acc.roles : (user.roles || []);
+            const ownedItems = (acc && Array.isArray(acc.ownedItems)) ? acc.ownedItems : (user.ownedItems || []);
+            const ownedStrips = (acc && Array.isArray(acc.ownedStrips)) ? acc.ownedStrips : (user.ownedStrips || []);
+            return Boolean(
+                roles.includes('owner') ||
+                (acc && acc.iceStrip) ||
+                (acc && acc.iceCircle) ||
+                (acc && acc.winterFrame) ||
+                (user && user.iceStrip) ||
+                (user && user.iceCircle) ||
+                (user && user.winterFrame) ||
+                ownedItems.includes('ice_strip') ||
+                ownedItems.includes('ice_circle') ||
+                ownedItems.includes('winter_frame') ||
+                ownedStrips.includes('ice_strip') ||
+                ownedStrips.includes('ice_circle')
+            );
+        }
+
+        function applyAccountIceCircle(user, acc) {
+            const owned = hasAccountIceCircle(user, acc);
+            const selected = (acc && acc.selectedIceCircle) || (user && user.selectedIceCircle) || 'ice_circle';
+            const show = owned && (selected === 'ice_circle');
+            document.getElementById('avatar-ice-ring').classList.toggle('has-ice-circle', show);
+        }
+
+        function previewAccountIceCircle() {
+            const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
+            const acc = user ? accountsDB[user.username] : null;
+            const owned = hasAccountIceCircle(user, acc);
+            const chosen = document.getElementById('profile-ice-circle-select').value;
+            document.getElementById('profile-preview-ring').classList.toggle('has-ice-circle', owned && chosen === 'ice_circle');
+        }
+
+        function togglePasswordVisibility(inputId, btnElement) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                btnElement.style.color = '#00f2fe';
+                btnElement.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                `;
+            } else {
+                input.type = 'password';
+                btnElement.style.color = '#94a3b8';
+                btnElement.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                `;
+            }
+        }
+
         function generateSnowflakes() {
             const snowContainer = document.getElementById('snowContainer');
             if (!snowContainer) return;
@@ -1021,13 +1204,14 @@
                         roles: ['owner', 'developer', 'vip'],
                         avatar: '',
                         coins: 100,
+                        iceStrip: true,
+                        selectedIceCircle: 'ice_circle',
                         createdAt: new Date().toISOString()
                     });
                 } else {
                     let acc = accountsDB['أسامة'];
-                    let currentRoles = getAccountRolesArray(acc);
-                    if (!currentRoles.includes('owner')) {
-                        currentRoles.push('owner', 'developer', 'vip');
+                    let currentRoles = mergeRolesSafely(acc, { username: 'أسامة' });
+                    if (JSON.stringify(currentRoles) !== JSON.stringify(acc.roles || [])) {
                         db.ref('accounts/أسامة/roles').set(currentRoles);
                     }
                 }
@@ -1035,9 +1219,11 @@
                 const savedUser = JSON.parse(localStorage.getItem('pa_user') || 'null');
                 if (savedUser && accountsDB[savedUser.username]) {
                     const acc = accountsDB[savedUser.username];
-                    savedUser.roles = getAccountRolesArray(acc);
-                    savedUser.avatar = acc.avatar || '';
-                    savedUser.coins = acc.coins || 0;
+                    savedUser.roles = mergeRolesSafely(acc, savedUser);
+                    savedUser.avatar = acc.avatar || savedUser.avatar || '';
+                    savedUser.coins = typeof acc.coins === 'number' ? acc.coins : (savedUser.coins || 0);
+                    savedUser.iceStrip = Boolean(acc.iceStrip || acc.iceCircle || acc.winterFrame || savedUser.iceStrip);
+                    savedUser.selectedIceCircle = acc.selectedIceCircle || savedUser.selectedIceCircle || 'ice_circle';
                     localStorage.setItem('pa_user', JSON.stringify(savedUser));
                     updateUserUI(savedUser);
                 } else if (savedUser && savedUser.isGuest) {
@@ -1051,6 +1237,7 @@
         }
 
         function getAccountRolesArray(acc) {
+            if (!acc) return ['player'];
             if (Array.isArray(acc.roles)) return acc.roles;
             if (acc.role) return [acc.role];
             return ['player'];
@@ -1063,9 +1250,11 @@
             } else {
                 if (accountsDB[savedUser.username]) {
                     const acc = accountsDB[savedUser.username];
-                    savedUser.roles = getAccountRolesArray(acc);
-                    savedUser.avatar = acc.avatar || '';
-                    savedUser.coins = acc.coins || 0;
+                    savedUser.roles = mergeRolesSafely(acc, savedUser);
+                    savedUser.avatar = acc.avatar || savedUser.avatar || '';
+                    savedUser.coins = typeof acc.coins === 'number' ? acc.coins : (savedUser.coins || 0);
+                    savedUser.iceStrip = Boolean(acc.iceStrip || acc.iceCircle || acc.winterFrame || savedUser.iceStrip);
+                    savedUser.selectedIceCircle = acc.selectedIceCircle || savedUser.selectedIceCircle || 'ice_circle';
                     localStorage.setItem('pa_user', JSON.stringify(savedUser));
                 }
                 updateUserUI(savedUser);
@@ -1115,8 +1304,10 @@
                 }
 
                 let assignedRoles = ['player'];
+                let hasCircle = false;
                 if (usernameInput.toLowerCase() === 'أسامة') {
                     assignedRoles = ['owner', 'developer', 'vip'];
+                    hasCircle = true;
                 }
 
                 const newAccount = {
@@ -1125,11 +1316,21 @@
                     roles: assignedRoles,
                     avatar: '',
                     coins: 0,
+                    iceStrip: hasCircle,
+                    selectedIceCircle: 'ice_circle',
                     createdAt: new Date().toISOString()
                 };
 
                 db.ref('accounts/' + usernameInput).set(newAccount).then(() => {
-                    const userObj = { username: usernameInput, roles: assignedRoles, avatar: '', coins: 0, isGuest: false };
+                    const userObj = {
+                        username: usernameInput,
+                        roles: assignedRoles,
+                        avatar: '',
+                        coins: 0,
+                        iceStrip: hasCircle,
+                        selectedIceCircle: 'ice_circle',
+                        isGuest: false
+                    };
                     localStorage.setItem('pa_user', JSON.stringify(userObj));
                     document.getElementById('auth-modal').style.display = 'none';
                     updateUserUI(userObj);
@@ -1147,8 +1348,17 @@
                     errorMsg.style.display = 'block';
                     return;
                 }
-                const userRoles = getAccountRolesArray(account);
-                const userObj = { username: usernameInput, roles: userRoles, avatar: account.avatar || '', coins: account.coins || 0, isGuest: false };
+                const userRoles = mergeRolesSafely(account, { username: usernameInput });
+                const hasCircle = hasAccountIceCircle({ username: usernameInput, roles: userRoles }, account);
+                const userObj = {
+                    username: usernameInput,
+                    roles: userRoles,
+                    avatar: account.avatar || '',
+                    coins: account.coins || 0,
+                    iceStrip: hasCircle,
+                    selectedIceCircle: account.selectedIceCircle || 'ice_circle',
+                    isGuest: false
+                };
                 localStorage.setItem('pa_user', JSON.stringify(userObj));
                 document.getElementById('auth-modal').style.display = 'none';
                 updateUserUI(userObj);
@@ -1162,6 +1372,8 @@
                 roles: ['guest'],
                 avatar: '',
                 coins: 0,
+                iceStrip: false,
+                selectedIceCircle: 'none',
                 isGuest: true
             };
             localStorage.setItem('pa_user', JSON.stringify(guestUser));
@@ -1181,9 +1393,11 @@
                 avatarBox.innerHTML = user.username.charAt(0).toUpperCase();
             }
 
+            applyAccountIceCircle(user, accountsDB[user.username]);
+
             const badgesContainer = document.getElementById('role-badges-container');
             badgesContainer.innerHTML = '';
-            const rolesList = user.roles && user.roles.length > 0 ? user.roles : ['player'];
+            const rolesList = (user.roles && user.roles.length > 0) ? user.roles : ['player'];
 
             rolesList.forEach(rKey => {
                 const rInfo = ROLES[rKey] || ROLES.player;
@@ -1297,10 +1511,36 @@
 
         function openProfileModal() {
             const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
-            if (user && user.isGuest) {
+            if (!user || user.isGuest) {
                 alert('⚠️ حساب الضيف لا يملك إعدادات خاصة. يرجى إنشاء حساب حقيقي لتخصيص صورتك.');
                 return;
             }
+
+            const acc = accountsDB[user.username] || {};
+            tempSelectedAvatarData = acc.avatar || user.avatar || null;
+            document.getElementById('profile-avatar-file').value = '';
+            document.getElementById('profile-avatar-status').innerText = 'اضغط هنا لاختيار صورة من جهازك';
+
+            const previewEl = document.getElementById('profile-avatar-preview');
+            if (tempSelectedAvatarData) {
+                previewEl.innerHTML = `<img src="${tempSelectedAvatarData}" alt="Preview">`;
+            } else {
+                previewEl.innerHTML = user.username.charAt(0).toUpperCase();
+            }
+
+            const ownedCircle = hasAccountIceCircle(user, acc);
+            const circleGroup = document.getElementById('profile-ice-circle-group');
+            const circleSelect = document.getElementById('profile-ice-circle-select');
+            if (ownedCircle) {
+                circleGroup.style.display = 'block';
+                circleSelect.value = acc.selectedIceCircle || user.selectedIceCircle || 'ice_circle';
+            } else {
+                circleGroup.style.display = 'none';
+                circleSelect.value = 'none';
+            }
+
+            previewAccountIceCircle();
+
             document.getElementById('profile-old-password').value = '';
             document.getElementById('profile-new-password').value = '';
             document.getElementById('profile-error-msg').style.display = 'none';
@@ -1310,26 +1550,50 @@
         function closeProfileModal() { document.getElementById('profile-modal').style.display = 'none'; }
 
         function handleFileSelect(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) { tempSelectedAvatarData = e.target.result; };
-                reader.readAsDataURL(file);
-            }
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            document.getElementById('profile-avatar-status').innerText = `جاري تجهيز الصورة: ${file.name}...`;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const size = 160;
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+
+                    const minSide = Math.min(img.width, img.height);
+                    const sx = (img.width - minSide) / 2;
+                    const sy = (img.height - minSide) / 2;
+                    ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+
+                    tempSelectedAvatarData = canvas.toDataURL('image/jpeg', 0.82);
+                    document.getElementById('profile-avatar-preview').innerHTML = `<img src="${tempSelectedAvatarData}" alt="Preview">`;
+                    document.getElementById('profile-avatar-status').innerText = `تم اختيار الصورة: ${file.name}`;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
 
         function saveProfileSettings() {
             const user = JSON.parse(localStorage.getItem('pa_user') || 'null');
             if (!user || user.isGuest) return;
-            const currentAcc = accountsDB[user.username];
-            if (!currentAcc) return;
+            const currentAcc = accountsDB[user.username] || {};
 
             const oldPassInput = document.getElementById('profile-old-password').value.trim();
             const newPassInput = document.getElementById('profile-new-password').value.trim();
             const profileError = document.getElementById('profile-error-msg');
 
+            const currentRoles = mergeRolesSafely(currentAcc, user);
+            const ownedCircle = hasAccountIceCircle({ ...user, roles: currentRoles }, currentAcc);
+            const chosenIceCircle = ownedCircle ? document.getElementById('profile-ice-circle-select').value : 'none';
+
             let updatedPassword = null;
-            let finalCoins = user.coins || 0;
+            let finalCoins = typeof currentAcc.coins === 'number' ? currentAcc.coins : (user.coins || 0);
 
             if (oldPassInput || newPassInput) {
                 if (currentAcc.authMethod && currentAcc.authMethod !== 'player_assistant') {
@@ -1355,32 +1619,38 @@
 
                 updatedPassword = newPassInput;
                 if (user.username.toLowerCase() !== 'أسامة') {
-                    finalCoins -= 50; // خصم 50 كوينز لتغيير كلمة السر
+                    finalCoins -= 50;
                 }
             }
 
-            let currentRoles = getAccountRolesArray(currentAcc);
-            if (user.username.toLowerCase() === 'أسامة') {
-                currentRoles = ['owner', 'developer', 'vip'];
-            }
+            const finalAvatar = (tempSelectedAvatarData !== null) ? tempSelectedAvatarData : (currentAcc.avatar || user.avatar || '');
 
             const newAccData = {
                 ...currentAcc,
-                password: updatedPassword || currentAcc.password,
+                password: updatedPassword || currentAcc.password || '',
+                authMethod: currentAcc.authMethod || 'player_assistant',
                 roles: currentRoles,
                 coins: finalCoins,
-                avatar: tempSelectedAvatarData || currentAcc.avatar || ''
+                avatar: finalAvatar,
+                selectedIceCircle: chosenIceCircle
             };
 
-            db.ref('accounts/' + user.username).set(newAccData).then(() => {
-                user.roles = currentRoles;
-                user.coins = finalCoins;
-                user.avatar = newAccData.avatar;
-                localStorage.setItem('pa_user', JSON.stringify(user));
-                updateUserUI(user);
+            const applyUpdates = () => {
+                const updatedUser = {
+                    ...user,
+                    roles: currentRoles,
+                    coins: finalCoins,
+                    avatar: finalAvatar,
+                    selectedIceCircle: chosenIceCircle
+                };
+                accountsDB[user.username] = newAccData;
+                localStorage.setItem('pa_user', JSON.stringify(updatedUser));
+                updateUserUI(updatedUser);
                 closeProfileModal();
                 showToast(updatedPassword ? 'تم تغيير كلمة السر بخصم 50 كوينز بنجاح! 🪙' : 'تم حفظ التعديلات بنجاح! 💾', '✅');
-            });
+            };
+
+            db.ref('accounts/' + user.username).set(newAccData).then(applyUpdates).catch(applyUpdates);
         }
 
         function openAdminModal() {
@@ -1400,7 +1670,7 @@
             tbody.innerHTML = Object.keys(accountsDB).map(uname => {
                 if (searchVal && !uname.toLowerCase().includes(searchVal)) return '';
                 const acc = accountsDB[uname];
-                const uRoles = getAccountRolesArray(acc);
+                const uRoles = mergeRolesSafely(acc, { username: uname });
                 const isUsama = (uname.toLowerCase() === 'أسامة');
                 const badgesHTML = uRoles.map(r => `<span class="role-badge ${ROLES[r]?.class || 'role-player'}">${ROLES[r]?.name || '🎮 لاعب'}</span>`).join(' ');
                 const avatarHtml = acc.avatar ? `<img src="${acc.avatar}" alt="Avatar">` : uname.charAt(0).toUpperCase();

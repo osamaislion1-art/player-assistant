@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Assistant | المتجر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- مكتبات Firebase السحابية -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background: #060911;
+            background-image:
+                radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.24) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(14, 165, 233, 0.14) 0%, transparent 40%);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* الشريط العلوي المتناسق مع باقي صفحات الموقع */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 24px;
+            background: rgba(8, 13, 25, 0.88);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 242, 254, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+        }
+
+        .user-info-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .avatar-wrapper.has-winter-frame::before {
+            content: '';
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            border: 3px solid #7dd3fc;
+            box-shadow: 0 0 16px #00f2fe, inset 0 0 8px rgba(224, 242, 254, 0.75);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .avatar-wrapper.has-winter-frame::after {
+            content: '❄️';
+            position: absolute;
+            top: -8px;
+            right: -6px;
+            font-size: 0.9rem;
+            filter: drop-shadow(0 0 6px #00f2fe);
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.1rem;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.4);
+            overflow: hidden;
+            border: 2px solid #00f2fe;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .user-name-text {
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .roles-container {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .role-badge {
+            font-size: 0.74rem;
+            padding: 2px 9px;
+            border-radius: 8px;
+            font-weight: 900;
+            letter-spacing: 0.4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #ffffff;
+        }
+
+        .role-owner { background: linear-gradient(135deg, #1d4ed8, #00f2fe); box-shadow: 0 0 10px rgba(0, 242, 254, 0.45); }
+        .role-cub { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; }
+        .role-developer { background: linear-gradient(135deg, #10b981, #059669); }
+        .role-vip { background: linear-gradient(135deg, #f59e0b, #eab308); color: #000; }
+        .role-youtuber { background: linear-gradient(135deg, #dc2626, #ef4444); }
+        .role-player { background: linear-gradient(135deg, #64748b, #475569); border: 1px solid rgba(255, 255, 255, 0.15); }
+        .role-guest { background: linear-gradient(135deg, #4b5563, #374151); border: 1px dashed rgba(255, 255, 255, 0.3); color: #d1d5db; }
+
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .coins-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .coins-display {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 6px 14px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: #FFD700;
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+        }
+
+        .coins-display img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .btn-add-coin {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.45);
+            transition: transform 0.2s;
+        }
+
+        .btn-add-coin:hover {
+            transform: scale(1.08);
+        }
+
+        .coin-popup-menu {
+            display: none;
+            position: absolute;
+            top: 44px;
+            right: 0;
+            background: #080d19;
+            border: 1px solid #00f2fe;
+            box-shadow: 0 5px 20px rgba(0, 242, 254, 0.3);
+            border-radius: 12px;
+            padding: 10px;
+            z-index: 2000;
+            width: 205px;
+        }
+
+        .coin-popup-menu.show {
+            display: block;
+        }
+
+        .btn-watch-from-menu {
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.85rem;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-nav {
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.25s ease;
+        }
+
+        .btn-owner-apps {
+            background: linear-gradient(135deg, #1d4ed8, #00f2fe);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 242, 254, 0.35);
+        }
+
+        .btn-back-home {
+            background: rgba(59, 130, 246, 0.18);
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            color: #00f2fe;
+        }
+
+        .btn-back-home:hover {
+            background: rgba(0, 242, 254, 0.22);
+            transform: translateY(-1px);
+        }
+
+        /* ترويسة الصفحة المطابقة لهوية الموقع */
+        .page-hero {
+            text-align: center;
+            margin: 30px 20px 24px;
+        }
+
+        .hero-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .hero-logo {
+            width: 82px;
+            height: 82px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px rgba(0, 242, 254, 0.5));
+        }
+
+        .page-hero h1 {
+            font-size: 2.7rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ffffff 30%, #38bdf8 70%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-hero p {
+            color: #cbd5e1;
+            font-size: 1.08rem;
+            font-weight: 700;
+        }
+
+        /* شبكة البطاقات بنفس ستايل باقي صفحات الموقع */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 26px;
+            max-width: 1120px;
+            margin: 10px auto 46px;
+            padding: 0 20px;
+            width: 100%;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.84) 0%, rgba(6, 9, 17, 0.94) 100%);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 24px;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 242, 254, 0.65);
+            box-shadow: 0 22px 42px -14px rgba(0, 242, 254, 0.45);
+        }
+
+        .sale-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            color: #ffffff;
+            font-size: 0.78rem;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.45);
+        }
+
+        .card-visual-box {
+            width: 100%;
+            height: 160px;
+            background: rgba(6, 9, 17, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.28);
+            border-radius: 16px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-emoji {
+            font-size: 4.1rem;
+            filter: drop-shadow(0 0 14px rgba(0, 242, 254, 0.35));
+        }
+
+        .winter-ring-preview {
+            position: relative;
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #00f2fe);
+            border: 3px solid #bae6fd;
+            box-shadow: 0 0 22px rgba(0, 242, 254, 0.85), inset 0 0 10px rgba(255, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .winter-ring-preview::after {
+            content: '❄️';
+            position: absolute;
+            top: -10px;
+            right: -8px;
+            font-size: 1.15rem;
+            filter: drop-shadow(0 0 6px #00f2fe);
+        }
+
+        .card h2 {
+            font-size: 1.42rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .card p {
+            color: #94a3b8;
+            font-size: 0.94rem;
+            line-height: 1.65;
+            margin-bottom: 18px;
+            flex-grow: 1;
+            font-weight: 600;
+        }
+
+        .price-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            color: #FFD700;
+            padding: 6px 16px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 0.98rem;
+            margin-bottom: 16px;
+        }
+
+        .old-price {
+            color: #94a3b8;
+            text-decoration: line-through;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .btn-card {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #2563eb 0%, #00f2fe 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-card:hover:not(:disabled) {
+            transform: translateY(-2px);
+            filter: brightness(1.08);
+        }
+
+        .btn-card.owned {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            cursor: default;
+        }
+
+        .btn-card:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        /* النوافذ المنبثقة */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(4, 7, 13, 0.88);
+            backdrop-filter: blur(10px);
+            z-index: 99999;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #080d19;
+            border: 2px solid #00f2fe;
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.4);
+            border-radius: 22px;
+            width: 100%;
+            max-width: 460px;
+            max-height: 88vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+            background: rgba(12, 20, 38, 0.95);
+            position: relative;
+            z-index: 20;
+        }
+
+        .modal-header h3 {
+            color: #00f2fe;
+            font-size: 1.2rem;
+            font-weight: 900;
+        }
+
+        .modal-x-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 1px solid rgba(239, 68, 68, 0.45);
+            background: rgba(239, 68, 68, 0.16);
+            color: #ff4d4d;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .modal-x-btn:hover {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
+        .modal-body {
+            padding: 18px 22px 24px;
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #cbd5e1;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            background: rgba(6, 9, 17, 0.92);
+            border: 1px solid rgba(0, 242, 254, 0.35);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 600;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #00f2fe;
+        }
+
+        .error-text {
+            color: #ff4d4d;
+            font-size: 0.88rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .app-card {
+            background: rgba(15, 23, 42, 0.88);
+            border: 1px solid rgba(0, 242, 254, 0.25);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            text-align: right;
+        }
+
+        .app-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .app-channel-link {
+            color: #38bdf8;
+            word-break: break-all;
+            font-size: 0.88rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 10px;
+            text-decoration: none;
+        }
+
+        .app-channel-link:hover {
+            text-decoration: underline;
+        }
+
+        .app-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-approve {
+            background: #10b981;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.82rem;
+            cursor: pointer;
+        }
+
+        .ad-container-box {
+            width: 300px;
+            height: 250px;
+            margin: 10px auto 14px;
+            background: #000;
+            border-radius: 12px;
+            border: 1px solid #00f2fe;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .ad-timer-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.85);
+            color: #00f2fe;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.82rem;
+            border: 1px solid rgba(0, 242, 254, 0.4);
+            z-index: 10;
+        }
+
+        .custom-toast {
+            position: fixed;
+            bottom: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #080d19;
+            border: 1px solid #00f2fe;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            z-index: 999999;
+            transition: bottom 0.35s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .custom-toast.show {
+            bottom: 28px;
+        }
+
+        /* تذييل الصفحة المطابق لهوية الموقع */
+        footer {
+            margin-top: auto;
+            padding: 24px 30px 20px;
+            background: rgba(6, 9, 17, 0.95);
+            border-top: 1px solid rgba(0, 242, 254, 0.25);
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .footer-right { display: flex; align-items: center; gap: 12px; }
+        .footer-center { color: #94a3b8; font-weight: 600; font-size: 0.95rem; text-align: center; }
+        .made-in-text { color: #ffffff; font-weight: 800; }
+
+        @media (max-width: 768px) {
+            footer { grid-template-columns: 1fr; text-align: center; }
+            .footer-right { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-bar">
+        <div class="user-info-box">
+            <div id="avatar-wrapper" class="avatar-wrapper">
+                <div id="user-avatar" class="user-avatar">👤</div>
+            </div>
+            <div class="user-details">
+                <div class="user-name-text">
+                    <span id="user-display-name">جاري التحميل...</span>
+                    <div id="role-badges-container" class="roles-container">
+                        <span class="role-badge role-player">🎮 لاعب</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-controls">
+            <div class="coins-wrapper">
+                <div class="coins-display" title="رصيد الكوينز الحالي">
+                    <img src="images/couns.png" alt="Coins">
+                    <span id="user-coins-count">0</span> كوينز 🪙
+                </div>
+                <button type="button" class="btn-add-coin" title="إضافة كوينز مجانية" onclick="toggleCoinMenu(event)">+</button>
+
+                <div id="coin-popup-menu" class="coin-popup-menu">
+                    <button type="button" class="btn-watch-from-menu" onclick="openRewardAdModal()">
+                        🎬 شاهد إعلان واربح +10
+                    </button>
+                </div>
+            </div>
+
+            <button type="button" id="owner-apps-btn" class="btn-nav btn-owner-apps" style="display: none;" onclick="openApplicationsModal()">
+                🦁 طلبات اليوتيوبر (<span id="apps-count">0</span>)
+            </button>
+
+            <a href="index.html" class="btn-nav btn-back-home">🏠 الرئيسية</a>
+        </div>
+    </header>
+
+    <section class="page-hero">
+        <div class="hero-title-row">
+            <img src="images/logo.png" alt="شعار الموقع" class="hero-logo">
+            <h1>متجر Player Assistant</h1>
+        </div>
+        <p>استبدل كوينزك برتب ومميزات خاصة لحسابك داخل الموقع</p>
+    </section>
+
+    <main class="cards-grid">
+        <!-- 1. رتبة VIP -->
+        <div class="card">
+            <div class="card-visual-box">
+                <span class="card-emoji">⭐</span>
+            </div>
+            <h2>رتبة VIP</h2>
+            <p>تمنحك شارة رتبة VIP المميزة بجانب اسمك داخل الموقع.</p>
+            <div class="price-tag">
+                <span>250 كوينز 🪙</span>
+            </div>
+            <button type="button" id="btn-buy-vip" class="btn-card" onclick="buyVipRole()">شراء رتبة VIP</button>
+        </div>
+
+        <!-- 2. التقديم على رتبة اليوتيوبر -->
+        <div class="card">
+            <div class="card-visual-box">
+                <span class="card-emoji">🎬</span>
+            </div>
+            <h2>التقديم على رتبة اليوتيوبر</h2>
+            <p>أرسل رابط قناتك مع طلب التقديم ليصل إلى قائمة الأسد للمراجعة.</p>
+            <div class="price-tag">
+                <span>20 كوينز 🪙</span>
+            </div>
+            <button type="button" id="btn-apply-youtuber" class="btn-card" onclick="openYoutuberModal()">تقديم الطلب</button>
+        </div>
+
+        <!-- 3. الإطار الشتوي مع تخفيض -->
+        <div class="card">
+            <span class="sale-badge">تخفيض 20%</span>
+            <div class="card-visual-box">
+                <div class="winter-ring-preview">🦁</div>
+            </div>
+            <h2>الإطار الشتوي</h2>
+            <p>إطار جليدي مضيء يحيط بصورتك الشخصية في الموقع.</p>
+            <div class="price-tag">
+                <span class="old-price">200</span>
+                <span>160 كوينز 🪙</span>
+            </div>
+            <button type="button" id="btn-buy-winter-frame" class="btn-card" onclick="buyWinterFrame()">شراء الإطار الشتوي</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-right">
+            <img class="palestine-flag" src="https://flagcdn.com/w40/ps.png" alt="علم فلسطين" title="فلسطين حرة" width="30" height="20" style="border-radius: 3px; object-fit: cover;">
+            <span class="made-in-text">Developed in Palestine</span>
+        </div>
+        <div class="footer-center">
+            <span>© 2026 جميع الحقوق محفوظة لـ Osama is Lion - Player Assistant</span>
+        </div>
+        <div></div>
+    </footer>
+
+    <div id="toast" class="custom-toast">
+        <span id="toast-icon">✨</span>
+        <span id="toast-text">تمت العملية بنجاح</span>
+    </div>
+
+    <!-- نافذة التقديم على رتبة اليوتيوبر -->
+    <div id="youtuber-modal" class="modal-backdrop" onclick="backdropClose(event, 'youtuber-modal')">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>🎬 التقديم على رتبة اليوتيوبر</h3>
+                <button type="button" class="modal-x-btn" aria-label="إغلاق" onclick="closeModalById('youtuber-modal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="channel-url-input">رابط قناة اليوتيوب (20 كوينز):</label>
+                    <input type="url" id="channel-url-input" class="form-input" placeholder="https://youtube.com/@channel">
+                </div>
+                <p id="yt-error-msg" class="error-text"></p>
+                <button type="button" class="btn-card" onclick="submitYoutuberApplication()">إرسال الطلب (20 🪙)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- قائمة طلبات اليوتيوبر (لرتبة الأسد فقط) -->
+    <div id="applications-modal" class="modal-backdrop" onclick="backdropClose(event, 'applications-modal')">
+        <div class="modal-box" style="max-width: 540px;" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>🦁 طلبات رتبة اليوتيوبر</h3>
+                <button type="button" class="modal-x-btn" aria-label="إغلاق" onclick="closeModalById('applications-modal')">✕</button>
+            </div>
+            <div class="modal-body" id="applications-list-body"></div>
+        </div>
+    </div>
+
+    <!-- نافذة إعلان الكوينز -->
+    <div id="reward-video-modal" class="modal-backdrop" onclick="backdropClose(event, 'reward-video-modal')">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>🪙 مكافأة الكوينز</h3>
+                <button type="button" class="modal-x-btn" aria-label="إغلاق" onclick="closeRewardAdModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="ad-container-box">
+                    <div class="ad-timer-badge" id="ad-timer-text">التايمر: 10 ثوانٍ</div>
+                    <div id="dynamic-ad-wrapper" style="width: 300px; height: 250px; display:flex; align-items:center; justify-content:center;"></div>
+                </div>
+                <p id="ad-status-msg" style="color:#94a3b8; font-size:0.88rem; margin-bottom:10px;">انتظر انتهاء المؤقت لاستلام الكوينز...</p>
+                <button type="button" id="claim-reward-btn" class="btn-card" style="opacity:0.5; pointer-events:none;" onclick="claimRewardCoins()">
+                    استلام +10 كوينز 🪙
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBiU1han_ruJl-U2EoK0ShEVm31MW3im1I",
+            authDomain: "player-assistant-c8d93.firebaseapp.com",
+            databaseURL: "https://player-assistant-c8d93-default-rtdb.firebaseio.com",
+            projectId: "player-assistant-c8d93",
+            storageBucket: "player-assistant-c8d93.firebasestorage.app",
+            messagingSenderId: "331981263283",
+            appId: "1:331981263283:web:2a8996acc4edf06de4fbc6"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        const adKeysList = [
+            'fd35cc1eabd28ddd8193e6e79056cd83',
+            'fd35cc1eabd28ddd8193e6e79056cd83'
+        ];
+
+        const ROLES = {
+            owner:     { name: '🦁 أسد',      class: 'role-owner' },
+            cub:       { name: '🦁 شبل',     class: 'role-cub' },
+            youtuber:  { name: '🔴 يوتيوبر',  class: 'role-youtuber' },
+            developer: { name: '💻 مطور',   class: 'role-developer' },
+            vip:       { name: '⭐ VIP',    class: 'role-vip' },
+            player:    { name: '🎮 لاعب',    class: 'role-player' },
+            guest:     { name: '👤 ضيف',    class: 'role-guest' }
+        };
+
+        let accountsDB = {};
+        let youtuberAppsDB = {};
+        let adInterval = null;
+
+        function getAccountRolesArray(acc) {
+            if (!acc) return ['player'];
+            if (Array.isArray(acc.roles)) return acc.roles;
+            if (acc.role) return [acc.role];
+            return ['player'];
+        }
+
+        function getCurrentUser() {
+            return JSON.parse(localStorage.getItem('pa_user') || 'null');
+        }
+
+        function isOwnerUser(user) {
+            if (!user) return false;
+            const roles = user.roles || [];
+            return (user.username || '').toLowerCase() === 'أسامة' || roles.includes('owner');
+        }
+
+        function closeModalById(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('open');
+        }
+
+        function backdropClose(event, id) {
+            if (event.target.id === id) {
+                closeModalById(id);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeModalById('youtuber-modal');
+                closeModalById('applications-modal');
+                closeRewardAdModal();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const initialUser = getCurrentUser() || { username: 'ضيف', roles: ['guest'], coins: 0, isGuest: true };
+            updateStoreUI(initialUser);
+
+            db.ref('accounts').on('value', (snapshot) => {
+                accountsDB = snapshot.val() || {};
+                const user = getCurrentUser();
+                if (user && !user.isGuest && accountsDB[user.username]) {
+                    const acc = accountsDB[user.username];
+                    const updatedUser = {
+                        ...user,
+                        roles: getAccountRolesArray(acc),
+                        avatar: acc.avatar || '',
+                        coins: acc.coins || 0,
+                        winterFrame: Boolean(acc.winterFrame)
+                    };
+                    localStorage.setItem('pa_user', JSON.stringify(updatedUser));
+                    updateStoreUI(updatedUser);
+                }
+                renderYoutuberApplications();
+            });
+
+            db.ref('youtuberApplications').on('value', (snapshot) => {
+                youtuberAppsDB = snapshot.val() || {};
+                const user = getCurrentUser() || { username: 'ضيف', roles: ['guest'], coins: 0, isGuest: true };
+                updateStoreUI(user);
+                renderYoutuberApplications();
+            });
+
+            window.addEventListener('click', (e) => {
+                if (!e.target.closest('.coins-wrapper')) {
+                    document.getElementById('coin-popup-menu').classList.remove('show');
+                }
+            });
+        });
+
+        function updateStoreUI(user) {
+            const roles = user.roles || ['guest'];
+            const coins = user.coins || 0;
+
+            document.getElementById('user-display-name').innerText = user.username || 'ضيف';
+            document.getElementById('user-coins-count').innerText = coins;
+
+            const wrapper = document.getElementById('avatar-wrapper');
+            wrapper.classList.toggle('has-winter-frame', Boolean(user.winterFrame));
+
+            const avatarBox = document.getElementById('user-avatar');
+            if (user.avatar) {
+                avatarBox.innerHTML = `<img src="${user.avatar}" alt="Avatar">`;
+            } else {
+                avatarBox.innerHTML = (user.username || 'ض').charAt(0).toUpperCase();
+            }
+
+            const badgesContainer = document.getElementById('role-badges-container');
+            badgesContainer.innerHTML = '';
+            roles.forEach(rKey => {
+                const rInfo = ROLES[rKey] || ROLES.player;
+                const badge = document.createElement('span');
+                badge.className = `role-badge ${rInfo.class}`;
+                badge.innerText = rInfo.name;
+                badgesContainer.appendChild(badge);
+            });
+
+            const ownerBtn = document.getElementById('owner-apps-btn');
+            if (isOwnerUser(user)) {
+                ownerBtn.style.display = 'inline-flex';
+                const pendingCount = Object.values(youtuberAppsDB).filter(item => item.status === 'pending').length;
+                document.getElementById('apps-count').innerText = pendingCount;
+            } else {
+                ownerBtn.style.display = 'none';
+            }
+
+            const vipBtn = document.getElementById('btn-buy-vip');
+            if (roles.includes('vip') || roles.includes('owner')) {
+                vipBtn.innerText = 'ممتلكة بالفعل ✅';
+                vipBtn.className = 'btn-card owned';
+                vipBtn.disabled = true;
+            } else {
+                vipBtn.innerText = 'شراء رتبة VIP';
+                vipBtn.className = 'btn-card';
+                vipBtn.disabled = false;
+            }
+
+            const frameBtn = document.getElementById('btn-buy-winter-frame');
+            if (user.winterFrame) {
+                frameBtn.innerText = 'مفعّل على حسابك ✅';
+                frameBtn.className = 'btn-card owned';
+                frameBtn.disabled = true;
+            } else {
+                frameBtn.innerText = 'شراء الإطار الشتوي';
+                frameBtn.className = 'btn-card';
+                frameBtn.disabled = false;
+            }
+        }
+
+        function ensureLoggedInAccount(user) {
+            if (!user || user.isGuest) {
+                showToast('سجّل الدخول بحسابك في الصفحة الرئيسية أولاً', '⚠️');
+                return false;
+            }
+            return true;
+        }
+
+        function deductCoins(user, cost) {
+            const currentCoins = user.coins || 0;
+            if (currentCoins < cost) {
+                showToast(`رصيدك غير كافٍ! تحتاج إلى ${cost} كوينز.`, '❌');
+                return false;
+            }
+            const newCoins = currentCoins - cost;
+            user.coins = newCoins;
+            localStorage.setItem('pa_user', JSON.stringify(user));
+            document.getElementById('user-coins-count').innerText = newCoins;
+            if (accountsDB[user.username]) {
+                db.ref('accounts/' + user.username + '/coins').set(newCoins);
+            }
+            return true;
+        }
+
+        function buyVipRole() {
+            const user = getCurrentUser();
+            if (!ensureLoggedInAccount(user)) return;
+            if (!deductCoins(user, 250)) return;
+
+            const acc = accountsDB[user.username] || {};
+            const currentRoles = getAccountRolesArray(acc);
+            if (!currentRoles.includes('vip')) {
+                currentRoles.push('vip');
+            }
+
+            user.roles = currentRoles;
+            localStorage.setItem('pa_user', JSON.stringify(user));
+            if (accountsDB[user.username]) {
+                db.ref('accounts/' + user.username + '/roles').set(currentRoles);
+            }
+            updateStoreUI(user);
+            showToast('تم شراء رتبة VIP بنجاح ⭐', '🎉');
+        }
+
+        function buyWinterFrame() {
+            const user = getCurrentUser();
+            if (!ensureLoggedInAccount(user)) return;
+            if (!deductCoins(user, 160)) return;
+
+            user.winterFrame = true;
+            localStorage.setItem('pa_user', JSON.stringify(user));
+            if (accountsDB[user.username]) {
+                db.ref('accounts/' + user.username + '/winterFrame').set(true);
+            }
+            updateStoreUI(user);
+            showToast('تم تفعيل الإطار الشتوي بنجاح ❄️', '✨');
+        }
+
+        function openYoutuberModal() {
+            const user = getCurrentUser();
+            if (!ensureLoggedInAccount(user)) return;
+            document.getElementById('channel-url-input').value = '';
+            document.getElementById('yt-error-msg').style.display = 'none';
+            document.getElementById('youtuber-modal').classList.add('open');
+        }
+
+        function submitYoutuberApplication() {
+            const user = getCurrentUser();
+            if (!ensureLoggedInAccount(user)) return;
+
+            const urlInput = document.getElementById('channel-url-input').value.trim();
+            const errEl = document.getElementById('yt-error-msg');
+
+            if (!urlInput || (!urlInput.includes('youtube.com') && !urlInput.includes('youtu.be'))) {
+                errEl.innerText = 'يرجى إدخال رابط قناة يوتيوب صحيح.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            if ((user.coins || 0) < 20) {
+                errEl.innerText = 'رصيدك غير كافٍ! التقديم يحتاج 20 كوينز.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            deductCoins(user, 20);
+
+            const appId = 'app_' + Date.now();
+            db.ref('youtuberApplications/' + appId).set({
+                id: appId,
+                username: user.username,
+                channelUrl: urlInput,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            }).then(() => {
+                closeModalById('youtuber-modal');
+                showToast('تم إرسال الطلب إلى قائمة الأسد', '🎬');
+            });
+        }
+
+        function openApplicationsModal() {
+            const user = getCurrentUser();
+            if (!isOwnerUser(user)) return;
+            renderYoutuberApplications();
+            document.getElementById('applications-modal').classList.add('open');
+        }
+
+        function renderYoutuberApplications() {
+            const container = document.getElementById('applications-list-body');
+            if (!container) return;
+
+            const pendingApps = Object.values(youtuberAppsDB).filter(item => item.status === 'pending');
+            if (!pendingApps.length) {
+                container.innerHTML = '<p style="color:#94a3b8; padding:12px 0;">لا توجد طلبات قيد المراجعة حالياً.</p>';
+                return;
+            }
+
+            container.innerHTML = pendingApps.map(app => `
+                <div class="app-card">
+                    <div class="app-card-top">
+                        <strong style="color:#fff;">${escapeHtml(app.username)}</strong>
+                        <span style="color:#f59e0b; font-size:0.8rem; font-weight:800;">قيد المراجعة</span>
+                    </div>
+                    <a class="app-channel-link" href="${escapeHtml(app.channelUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(app.channelUrl)}</a>
+                    <div class="app-actions">
+                        <button type="button" class="btn-approve" onclick="approveYoutuberApp('${app.id}', '${escapeHtml(app.username)}')">قبول ومنح الرتبة</button>
+                        <button type="button" class="btn-reject" onclick="rejectYoutuberApp('${app.id}')">رفض</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function approveYoutuberApp(appId, targetUsername) {
+            const acc = accountsDB[targetUsername];
+            if (acc) {
+                const roles = getAccountRolesArray(acc);
+                if (!roles.includes('youtuber')) {
+                    roles.push('youtuber');
+                }
+                db.ref('accounts/' + targetUsername + '/roles').set(roles);
+            }
+            db.ref('youtuberApplications/' + appId).update({ status: 'approved' }).then(() => {
+                delete youtuberAppsDB[appId];
+                renderYoutuberApplications();
+                const user = getCurrentUser();
+                if (user) updateStoreUI(user);
+                showToast(`تم قبول ${targetUsername} ومنحه رتبة يوتيوبر`, '🔴');
+            });
+        }
+
+        function rejectYoutuberApp(appId) {
+            db.ref('youtuberApplications/' + appId).update({ status: 'rejected' }).then(() => {
+                delete youtuberAppsDB[appId];
+                renderYoutuberApplications();
+                const user = getCurrentUser();
+                if (user) updateStoreUI(user);
+                showToast('تم رفض الطلب وإزالته من القائمة', 'ℹ️');
+            });
+        }
+
+        function toggleCoinMenu(event) {
+            event.stopPropagation();
+            document.getElementById('coin-popup-menu').classList.toggle('show');
+        }
+
+        function openRewardAdModal() {
+            document.getElementById('coin-popup-menu').classList.remove('show');
+            const user = getCurrentUser();
+            if (!ensureLoggedInAccount(user)) return;
+
+            let timeLeft = Math.random() < 0.5 ? 8 : 10;
+            document.getElementById('reward-video-modal').classList.add('open');
+            const claimBtn = document.getElementById('claim-reward-btn');
+            claimBtn.style.opacity = '0.5';
+            claimBtn.style.pointerEvents = 'none';
+
+            const timerBadge = document.getElementById('ad-timer-text');
+            const statusMsg = document.getElementById('ad-status-msg');
+            timerBadge.innerText = `التايمر: ${timeLeft} ثوانٍ`;
+            statusMsg.innerText = 'انتظر انتهاء المؤقت لاستلام الكوينز...';
+
+            const adWrapper = document.getElementById('dynamic-ad-wrapper');
+            adWrapper.innerHTML = '';
+            const randomKey = adKeysList[Math.floor(Math.random() * adKeysList.length)];
+
+            const s1 = document.createElement('script');
+            s1.type = 'text/javascript';
+            s1.text = `atOptions = {'key':'${randomKey}','format':'iframe','height':250,'width':300,'params':{}};`;
+            const s2 = document.createElement('script');
+            s2.type = 'text/javascript';
+            s2.src = `https://bauval.org/22/${randomKey}`;
+            adWrapper.appendChild(s1);
+            adWrapper.appendChild(s2);
+
+            if (adInterval) clearInterval(adInterval);
+            adInterval = setInterval(() => {
+                timeLeft--;
+                timerBadge.innerText = `التايمر: ${timeLeft} ثوانٍ`;
+                if (timeLeft <= 0) {
+                    clearInterval(adInterval);
+                    timerBadge.innerText = '✅ اكتمل الإعلان';
+                    statusMsg.innerText = 'يمكنك الآن استلام +10 كوينز.';
+                    claimBtn.style.opacity = '1';
+                    claimBtn.style.pointerEvents = 'auto';
+                }
+            }, 1000);
+        }
+
+        function closeRewardAdModal() {
+            if (adInterval) clearInterval(adInterval);
+            closeModalById('reward-video-modal');
+        }
+
+        function claimRewardCoins() {
+            const user = getCurrentUser();
+            if (!ensureLoggedInAccount(user)) return;
+
+            const newCoins = (user.coins || 0) + 10;
+            user.coins = newCoins;
+            localStorage.setItem('pa_user', JSON.stringify(user));
+            document.getElementById('user-coins-count').innerText = newCoins;
+
+            if (accountsDB[user.username]) {
+                db.ref('accounts/' + user.username + '/coins').set(newCoins);
+            }
+
+            closeRewardAdModal();
+            showToast('تمت إضافة +10 كوينز إلى رصيدك 🪙', '💰');
+        }
+
+        function showToast(message, icon = "✅") {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-text').innerText = message;
+            document.getElementById('toast-icon').innerText = icon;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text).replace(/[&<>"']/g, function(m) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+            });
+        }
+    </script>
+</body>
+</html>
